@@ -1,9 +1,9 @@
 
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import Login from "../components/login";
-import profileManagement from "../components/profileManagement";
-import surveyFeedback from "../components/surveyFeedback";
+import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import Login from "../pages/login";
+import profileManagement from "../pages/profileManagement";
+import surveyFeedback from "../pages/surveyFeedback";
 
 class Routes extends React.Component {
   render() {
@@ -11,8 +11,12 @@ class Routes extends React.Component {
       <div>
         <Router>
           <Route exact path="/" component={Login} />
-          <Route exact path="/profileManagement" component={profileManagement} />
-          <Route exact path="/components/surveyFeedback" component={surveyFeedback} />
+          {/* <Route exact path="/profileManagement" component={profileManagement} />
+          <Route exact path="/pages/surveyFeedback" component={surveyFeedback} />
+          <Switch>
+            <Route path="/admin" render={props => <AdminLayout {...props} />} />
+            <Redirect to="/admin/dashboard" />
+          </Switch> */}
         </Router>
       </div>
     )
