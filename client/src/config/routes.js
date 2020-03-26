@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-d
 import Login from "../pages/login";
 import profileManagement from "../pages/profileManagement";
 import surveyFeedback from "../pages/surveyFeedback";
+import AdminLayout from '../layouts/Admin';
 
 class Routes extends React.Component {
   render() {
@@ -11,12 +12,10 @@ class Routes extends React.Component {
       <div>
         <Router>
           <Route exact path="/" component={Login} />
-          {/* <Route exact path="/profileManagement" component={profileManagement} />
-          <Route exact path="/pages/surveyFeedback" component={surveyFeedback} />
           <Switch>
             <Route path="/admin" render={props => <AdminLayout {...props} />} />
             <Redirect to="/admin/dashboard" />
-          </Switch> */}
+          </Switch>
         </Router>
       </div>
     )
