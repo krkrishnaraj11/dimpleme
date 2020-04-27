@@ -23,6 +23,7 @@ class Login extends React.Component {
     this.state = {
       scan: false,
       result: 'No Result',
+      forgot: false,
       user: '',
       token: '',
       isAuthenticated: false
@@ -30,7 +31,7 @@ class Login extends React.Component {
   }
 
   enableScan(){
-    this.setState({ scan: true })
+    this.setState({ scan: !this.state.scan })
   }
 
   handleScan = data => {
@@ -43,6 +44,10 @@ class Login extends React.Component {
 
   handleError = err => {
     console.error(err)
+  }
+
+  handleForgot = () => {
+    this.setState({ forgot: !this.state.forgot })
   }
 
   facebookResponse = (response) => {
@@ -66,7 +71,7 @@ responseGoogle = (response) => {
       <>
         <Col lg="5" md="7" xs="0">
 
-          <Card className="bg-secondary shadow border-0 mb-4 d-block d-sm-none">
+          <Card className="bg-secondary shadow border-0 mb-4 d-block">
             <CardHeader className="bg-transparent p-5">
               <div className="btn-wrapper text-center">
                 <Button
@@ -104,7 +109,7 @@ responseGoogle = (response) => {
           </Card>
           
           <Card className="bg-secondary shadow border-0">
-            <CardHeader className="bg-transparent pb-5">
+            {/* <CardHeader className="bg-transparent pb-5">
               <div className="text-muted text-center mt-2 mb-3">
                 <small>Sign in with</small>
               </div>
@@ -157,7 +162,11 @@ responseGoogle = (response) => {
               />
 
               </div>
-            </CardHeader>
+            </CardHeader> */}
+
+            { !this.state.forgot
+              ?
+            
             <CardBody className="px-lg-5 py-lg-5">
               <div className="text-center text-muted mb-4">
                 <small>Or sign in with credentials</small>
@@ -203,18 +212,48 @@ responseGoogle = (response) => {
                 </div>
               </Form>
             </CardBody>
+
+            :
+
+            <CardBody className="px-lg-5 py-lg-5">
+              <div className="text-center text-muted mb-4">
+                <large>Forgot Password</large>
+              </div>
+              <Form role="form">
+                <FormGroup className="mb-3">
+                  <InputGroup className="input-group-alternative">
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i className="ni ni-email-83" />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input placeholder="Email" type="email" autoComplete="new-email"/>
+                  </InputGroup>
+                </FormGroup>
+                <FormGroup>
+                </FormGroup>
+                <div className="text-center">
+                  <Button className="my-4" color="primary" type="button">
+                    Reset Password
+                  </Button>
+                </div>
+              </Form>
+            </CardBody>
+  }
+
+
           </Card>
           <Row className="mt-3">
             <Col xs="6">
               <a
                 className="text-light"
-                href="#pablo"
-                onClick={e => e.preventDefault()}
+                href={ this.state.forgot ? "#forgot" : "" }
+                onClick={() => this.handleForgot()}
               >
-                <small>Forgot password?</small>
+                <small>{ this.state.forgot ? "Admin Login" : "Forgot password ?" }</small>
               </a>
             </Col>
-            <Col className="text-right" xs="6">
+            {/* <Col className="text-right" xs="6">
               <a
                 className="text-light"
                 href="#pablo"
@@ -222,7 +261,7 @@ responseGoogle = (response) => {
               >
                 <small>Create new account</small>
               </a>
-            </Col>
+            </Col> */}
           </Row>
         </Col>
       </>
