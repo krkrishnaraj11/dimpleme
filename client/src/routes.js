@@ -1,7 +1,7 @@
 import Index from "./pages/Index.js";
 import Profile from "./pages/Profile.js";
 import Group from "./pages/Group.js";
-import login from "./pages/Login";
+import {Login} from "./pages/login";
 
 const routes = [
   {
@@ -36,14 +36,14 @@ const routes = [
     path: "/login",
     name: "Login",
     icon: "ni ni-key-25 text-info",
-    component: login,
+    component: Login,
     layout: "/auth"
   },
   {
     path: "/register",
     name: "Register",
     icon: "ni ni-key-25 text-info",
-    component: login,
+    component: Login,
     layout: "/auth" 
   }
 ];

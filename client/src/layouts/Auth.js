@@ -13,6 +13,7 @@ import routes from "../routes";
 class Auth extends React.Component {
   componentDidMount() {
     document.body.classList.add("bg-default");
+    return <Redirect to="/admin"/>
   }
   componentWillUnmount() {
     document.body.classList.remove("bg-default");

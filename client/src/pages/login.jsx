@@ -13,22 +13,47 @@ import {
   Row,
   Col
 } from "reactstrap";
-import QrReader from 'react-qr-reader'
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { userActions } from '../../_actions';
+import QrReader from 'react-qr-reader';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import GoogleLogin from 'react-google-login';
 
 class Login extends React.Component {
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
+
+    console.log(this.props)
+
+    // reset login status
+    this.props.logout();
+
+
     this.state = {
       scan: false,
       result: 'No Result',
       forgot: false,
-      user: '',
-      token: '',
-      isAuthenticated: false
+      email: '',
+      password:'',
+      submitted: false
     }
   }
+
+  handleChange(e) {
+    const { type, value } = e.target;
+    this.setState({ [type]: value });
+}
+
+handleSubmit(e) {
+  e.preventDefault();
+
+  this.setState({ submitted: true });
+  const { email, password } = this.state;
+  if (email && password) {
+      this.props.login(email, password);
+  }
+}
 
   enableScan(){
     this.setState({ scan: !this.state.scan })
@@ -41,6 +66,16 @@ class Login extends React.Component {
       })
     }
   }
+
+  handleSubmit(e) {
+    e.preventDefault();
+
+    this.setState({ submitted: true });
+    const { email, password } = this.state;
+    if (email && password) {
+        this.props.login(email, password);
+    }
+}
 
   handleError = err => {
     console.error(err)
@@ -67,6 +102,8 @@ responseGoogle = (response) => {
 
 
   render() {
+    const { loggingIn } = this.props;
+    const {email, password, submitted} = this.state;
     return (
       <>
         <Col lg="5" md="7" xs="0">
@@ -83,7 +120,7 @@ responseGoogle = (response) => {
                   <span className="btn-large--icon">
                     <img
                       alt="..."
-                      src={require("../assets/img/icons/common/github.svg")}
+                      src={"/src/assets/img/icons/common/github.svg"}
                     />
                   </span>
                   <span className="btn-large--text ml-2">Scan QR Code</span>
@@ -169,9 +206,9 @@ responseGoogle = (response) => {
             
             <CardBody className="px-lg-5 py-lg-5">
               <div className="text-center text-muted mb-4">
-                <small>Or sign in with credentials</small>
+                <small>Log in with credentials</small>
               </div>
-              <Form role="form">
+              <Form role="form" onSubmit={e => this.handleSubmit(e)}>
                 <FormGroup className="mb-3">
                   <InputGroup className="input-group-alternative">
                     <InputGroupAddon addonType="prepend">
@@ -179,7 +216,7 @@ responseGoogle = (response) => {
                         <i className="ni ni-email-83" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Email" type="email" autoComplete="new-email"/>
+                    <Input placeholder="Email" type="email" autoComplete="new-email" value={email} onChange={(e) => this.handleChange(e)}/>
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -189,24 +226,11 @@ responseGoogle = (response) => {
                         <i className="ni ni-lock-circle-open" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Password" type="password" autoComplete="new-password"/>
+                    <Input placeholder="Password" type="password" autoComplete="new-password" value={password}  onChange={(e) => this.handleChange(e)}/>
                   </InputGroup>
                 </FormGroup>
-                <div className="custom-control custom-control-alternative custom-checkbox">
-                  <input
-                    className="custom-control-input"
-                    id=" customCheckLogin"
-                    type="checkbox"
-                  />
-                  <label
-                    className="custom-control-label"
-                    htmlFor=" customCheckLogin"
-                  >
-                    <span className="text-muted">Remember me</span>
-                  </label>
-                </div>
                 <div className="text-center">
-                  <Button className="my-4" color="primary" type="button">
+                  <Button className="my-4" color="primary" type="submit">
                     Sign in
                   </Button>
                 </div>
@@ -269,4 +293,15 @@ responseGoogle = (response) => {
   }
 }
 
-export default Login;
+function mapState(state) {
+  const { loggingIn } = state.authentication;
+  return { loggingIn };
+}
+
+const actionCreators = {
+  login: userActions.login,
+  logout: userActions.logout
+};
+
+const connectedLoginPage = connect(mapState, actionCreators)(Login);
+export { connectedLoginPage as Login };
