@@ -10,6 +10,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "chart.js": "^2.9.3",
+    "classnames": "^2.2.6",
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^3.5.3",
     "dynamic-qr-code-generator": "^0.1.0",

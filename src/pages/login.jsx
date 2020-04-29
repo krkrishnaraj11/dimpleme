@@ -15,10 +15,12 @@ import {
 } from "reactstrap";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import classnames from "classnames";
 import { userActions } from '../../_actions';
 import QrReader from 'react-qr-reader';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import GoogleLogin from 'react-google-login';
+var emailregex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
 
 class Login extends React.Component {
   constructor(props){
@@ -35,8 +37,14 @@ class Login extends React.Component {
       result: 'No Result',
       forgot: false,
       email: '',
+      emailState: '',
+      focusedEmail: false,
       password:'',
+      passwordState: '',
+      focusedPassword: false,
       dcode: '',
+      dcodeState: '',
+      focusedDcode: false,
       submitted: false
     }
   }
@@ -44,15 +52,30 @@ class Login extends React.Component {
   handleChange(e) {
     const { type, value } = e.target;
     this.setState({ [type]: value });
+    if(e.target.value == "" || e.target.type == "email" && !emailregex.test(e.target.value)) {
+      this.setState({ [type + "State"]: "invalid"})
+    }
+    else{
+      this.setState({ [type + "State"]: "valid"})
+    }
 }
 
 handleSubmit(e) {
   e.preventDefault();
+  const { email, password, emailState, passwordState } = this.state;
 
-  this.setState({ submitted: true });
-  const { email, password } = this.state;
-  if (email && password) {
-      this.props.login(email, password);
+  if(email == '' || password == '' || !emailregex.test(email)){
+    this.setState({ focusedEmail: true , focusedPassword: true })
+    this.setState( email == "" ? { emailState: "invalid"} : {passwordState: "invalid"})
+    this.setState( password == "" ? { passwordState: "invalid"} : {emailState: "invalid"})
+    console.log(this.state)
+  }
+  else{
+    this.setState({ submitted: true });
+    const { email, password } = this.state;
+    if (email && password) {
+        this.props.login(email, password);
+    }
   }
 }
 
@@ -67,16 +90,6 @@ handleSubmit(e) {
       })
     }
   }
-
-  handleSubmit(e) {
-    e.preventDefault();
-
-    this.setState({ submitted: true });
-    const { email, password } = this.state;
-    if (email && password) {
-        this.props.login(email, password);
-    }
-}
 
   handleError = err => {
     console.error(err)
@@ -146,14 +159,14 @@ responseGoogle = (response) => {
               
               <CardBody className="px-lg-5 py-lg-5">
               <div className="text-center text-muted mb-4">
-                <large>Dimple Code</large>
+                <big>Dimple Code</big>
               </div>
               <Form role="form">
-                <FormGroup className="mb-3">
-                  <InputGroup className="input-group-alternative">
+                <FormGroup className="mb-3 has-danger">
+                  <InputGroup className="input-group-alternative is-valid">
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
-                        <i className="ni ni-key-25" />
+                        <i className="ni ni-key-25 text-danger" />
                       </InputGroupText>
                     </InputGroupAddon>
                     <Input placeholder="code" type="code" autoComplete="new-code" value={dcode} onChange={(e) => this.handleChange(e)}/>
@@ -235,25 +248,87 @@ responseGoogle = (response) => {
                 <small>Log in with credentials</small>
               </div>
               <Form role="form" onSubmit={e => this.handleSubmit(e)}>
-                <FormGroup className="mb-3">
-                  <InputGroup className="input-group-alternative">
+
+                <FormGroup 
+                  className={classnames(
+                    "mb-3",
+                    { focused: this.state.focusedEmail },
+                    { "has-danger": this.state.emailState === "invalid" },
+                    { "has-success": this.state.emailState === "valid" }
+                  )}
+                >
+                  <InputGroup
+                    className={classnames("input-group-merge input-group-alternative", {
+                      "is-invalid": this.state.emailState === "invalid"
+                    })}
+                  >
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
-                        <i className="ni ni-email-83" />
+                        <i
+                          className={classnames(
+                            "ni ni-email-83",
+                            { "text-danger": this.state.emailState === "invalid" },
+                            { "text-success": this.state.emailState === "valid" }
+                          )} 
+                         />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Email" type="email" autoComplete="new-email" value={email} onChange={(e) => this.handleChange(e)}/>
+                    <Input 
+                      placeholder="Email" 
+                      type="email" 
+                      className={classnames(
+                        { "text-danger": this.state.emailState === "invalid" },
+                        { "text-success": this.state.emailState === "valid" }
+                      )}
+                      autoComplete="new-email" 
+                      value={email} 
+                      onChange={(e) => this.handleChange(e)}
+                      onFocus={() => this.setState({ focusedEmail: true })}
+                      onBlur={() => this.setState({ focusedEmail: false })}
+                    />
                   </InputGroup>
+                  <div className="invalid-feedback">Please provide a valid email.</div>
                 </FormGroup>
-                <FormGroup>
-                  <InputGroup className="input-group-alternative">
+
+                <FormGroup
+                  className={classnames(
+                    "mb-3",
+                    { focused: this.state.focusedPassword },
+                    { "has-danger": this.state.passwordState === "invalid" },
+                    { "has-success": this.state.passwordState === "valid" }
+                  )}
+                >
+                  <InputGroup 
+                    className={classnames("input-group-merge input-group-alternative", {
+                      "is-invalid": this.state.passwordState === "invalid"
+                    })}
+                  >
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
-                        <i className="ni ni-lock-circle-open" />
+                        <i 
+                          className={classnames(
+                            "ni ni-lock-circle-open",
+                            { "text-danger": this.state.passwordState === "invalid" },
+                            { "text-success": this.state.passwordState === "valid" }
+                          )} 
+                        />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Password" type="password" autoComplete="new-password" value={password}  onChange={(e) => this.handleChange(e)}/>
+                    <Input 
+                      placeholder="Password" 
+                      type="password" 
+                      autoComplete="new-password" 
+                      className={classnames(
+                        { "text-danger": this.state.passwordState === "invalid" },
+                        { "text-success": this.state.passwordState === "valid" }
+                      )}
+                      value={password}  
+                      onChange={(e) => this.handleChange(e)}
+                      onFocus={() => this.setState({ focusedPassword: true })}
+                      onBlur={() => this.setState({ focusedPassword: false })}
+                    />
                   </InputGroup>
+                  <div className="invalid-feedback">Please enter the password.</div>
                 </FormGroup>
                 <div className="text-center">
                   <Button className="my-4" color="primary" type="submit">
