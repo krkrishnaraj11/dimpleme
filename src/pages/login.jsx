@@ -7,11 +7,13 @@ import {
   FormGroup,
   Form,
   Input,
+  Alert,
   InputGroupAddon,
   InputGroupText,
   InputGroup,
   Row,
-  Col
+  Col,
+  Spinner
 } from "reactstrap";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -101,7 +103,7 @@ handleSubmit(e) {
     this.setState({ submitted: true });
     const { email, password } = this.state;
     if (email && password) {
-        this.props.login(email, password);
+        this.props.login(email, password)
     }
   }
 }
@@ -148,7 +150,6 @@ responseGoogle = (response) => {
     return (
       <>
         <Col lg="5" md="7" xs="0">
-
           <Card className="bg-secondary shadow border-0 mb-4 d-block">
             <CardHeader className="bg-transparent p-5 d-block d-sm-none">
               <div className="btn-wrapper text-center">
@@ -388,8 +389,8 @@ responseGoogle = (response) => {
                   <div className="invalid-feedback">Please enter the password.</div>
                 </FormGroup>
                 <div className="text-center">
-                  <Button className="my-4" color="primary" type="submit">
-                    Sign in
+                  <Button className="my-4" color="primary" type="submit" size="lg">
+                    Sign in   
                   </Button>
                 </div>
               </Form>

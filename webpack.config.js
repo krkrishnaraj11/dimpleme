@@ -61,14 +61,12 @@ module.exports = {
     ],
     devServer: {
         historyApiFallback: true,
-        contentBase: './',
-        watchContentBase: true,
-        compress: true
+        hot: true,
     },
     externals: {
         // global app config object
         config: JSON.stringify({
-            apiUrl: 'http://dimpleme-api.herokuapp.com'
+            apiUrl: 'https://dimpleme-api.herokuapp.com'
         })
     }
 }

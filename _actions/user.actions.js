@@ -23,6 +23,7 @@ function login(email, password) {
                     history.push('/');
                 },
                 error => {
+                    console.log(error)
                     dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
