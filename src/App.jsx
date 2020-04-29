@@ -22,9 +22,6 @@ class App extends React.Component {
     return (
       
       <div className="App">
-          {alert.message &&
-            <div className={`alert ${alert.type} float-left`} role="alert">{alert.message}</div>
-          }
           <Router history={history}>
             <Switch>
               <ProtectedRoute path="/admin" component={props => <AdminLayout {...props} />} />

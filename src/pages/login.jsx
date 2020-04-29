@@ -17,8 +17,9 @@ import {
 } from "reactstrap";
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { history } from '../../_helpers';
 import classnames from "classnames";
-import { userActions } from '../../_actions';
+import { userActions, alertActions } from '../../_actions';
 import QrReader from 'react-qr-reader';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import GoogleLogin from 'react-google-login';
@@ -28,11 +29,12 @@ class Login extends React.Component {
   constructor(props){
     super(props);
 
-    console.log(this.props)
 
+    history.listen((location, action) => {
+      this.props.clearAlerts();
+  });
     // reset login status
     this.props.logout();
-
 
     this.state = {
       scan: false,
@@ -146,6 +148,7 @@ responseGoogle = (response) => {
 
   render() {
     const { loggingIn } = this.props;
+    const alert = this.props.alert;
     const {email, password, dcode, submitted} = this.state;
     return (
       <>
@@ -303,7 +306,7 @@ responseGoogle = (response) => {
             
             <CardBody className="px-lg-5 py-lg-5">
               <div className="text-center text-muted mb-4">
-                <small>Log in with credentials</small>
+            <small>Log in with credentials</small>
               </div>
               <Form role="form" onSubmit={e => this.handleSubmit(e)}>
 
@@ -394,7 +397,15 @@ responseGoogle = (response) => {
                   </Button>
                 </div>
               </Form>
+              {
+                alert.message ?
+                    <Alert color={alert.type} fade={true}>
+                        {alert.message}
+                    </Alert>
+                    : null
+              }
             </CardBody>
+            
 
             :
 
@@ -454,12 +465,14 @@ responseGoogle = (response) => {
 
 function mapState(state) {
   const { loggingIn } = state.authentication;
-  return { loggingIn };
+  const { alert } = state;
+  return { loggingIn, alert };
 }
 
 const actionCreators = {
   login: userActions.login,
-  logout: userActions.logout
+  logout: userActions.logout,
+  clearAlerts: alertActions.clear
 };
 
 const connectedLoginPage = connect(mapState, actionCreators)(Login);
