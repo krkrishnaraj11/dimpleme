@@ -36,6 +36,7 @@ class Login extends React.Component {
       forgot: false,
       email: '',
       password:'',
+      dcode: '',
       submitted: false
     }
   }
@@ -103,13 +104,13 @@ responseGoogle = (response) => {
 
   render() {
     const { loggingIn } = this.props;
-    const {email, password, submitted} = this.state;
+    const {email, password, dcode, submitted} = this.state;
     return (
       <>
         <Col lg="5" md="7" xs="0">
 
           <Card className="bg-secondary shadow border-0 mb-4 d-block">
-            <CardHeader className="bg-transparent p-5">
+            <CardHeader className="bg-transparent p-5 d-block d-sm-none">
               <div className="btn-wrapper text-center">
                 <Button
                   className="btn-neutral btn-icon"
@@ -142,6 +143,31 @@ responseGoogle = (response) => {
                   <p>{this.state.result}</p>
                 </CardBody>
               : null}
+              
+              <CardBody className="px-lg-5 py-lg-5">
+              <div className="text-center text-muted mb-4">
+                <large>Dimple Code</large>
+              </div>
+              <Form role="form">
+                <FormGroup className="mb-3">
+                  <InputGroup className="input-group-alternative">
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i className="ni ni-key-25" />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input placeholder="code" type="code" autoComplete="new-code" value={dcode} onChange={(e) => this.handleChange(e)}/>
+                  </InputGroup>
+                </FormGroup>
+                <FormGroup>
+                </FormGroup>
+                <div className="text-center">
+                  <Button className="my-4" color="primary" type="button">
+                    Start Dimpling
+                  </Button>
+                </div>
+              </Form>
+            </CardBody>
             
           </Card>
           
