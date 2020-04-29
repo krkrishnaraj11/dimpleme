@@ -251,7 +251,7 @@ responseGoogle = (response) => {
                         <i className="ni ni-email-83" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Email" type="email" autoComplete="new-email"/>
+                    <Input placeholder="Email" type="email" autoComplete="new-email" value={email} onChange={(e) => this.handleChange(e)}/>
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -271,7 +271,7 @@ responseGoogle = (response) => {
             <Col xs="6">
               <a
                 className="text-light"
-                href={ this.state.forgot ? "#forgot" : "" }
+                // href={ this.state.forgot ? "#forgot" : "" }
                 onClick={() => this.handleForgot()}
               >
                 <small>{ this.state.forgot ? "Admin Login" : "Forgot password ?" }</small>
