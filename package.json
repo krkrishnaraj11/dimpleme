@@ -39,7 +39,9 @@
     "ttf-loader": "^1.0.2"
   },
   "scripts": {
-    "start": "webpack-dev-server --start",
+    "start": "node server.js",
+    "start-dev": "webpack-dev-server --start",
+    "post-prod": "webpack -p",
     "build": "webpack --mode production",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
