@@ -51,13 +51,41 @@ class Login extends React.Component {
 
   handleChange(e) {
     const { type, value } = e.target;
-    this.setState({ [type]: value });
-    if(e.target.value == "" || e.target.type == "email" && !emailregex.test(e.target.value)) {
-      this.setState({ [type + "State"]: "invalid"})
+    if(e.target.placeholder == "dcode" ){
+      this.setState({ dcode: e.target.value })
     }
     else{
-      this.setState({ [type + "State"]: "valid"})
+      this.setState({ [type]: value });
     }
+
+    if(e.target.value == "" || e.target.type == "email" && !emailregex.test(e.target.value)) {
+      if(e.target.placeholder == "dcode" ){
+        this.setState({ dcodeState: "invalid"})
+      }
+      else
+        this.setState({ [type + "State"]: "invalid"})
+    }
+    else{
+      if(e.target.placeholder == "dcode" ){
+        this.setState({ dcodeState: "valid"})
+      }
+      else
+        this.setState({ [type + "State"]: "valid"})
+    }
+}
+
+handleDcode(e){
+  e.preventDefault();
+  const {dcode, dcodeState} = this.state;
+
+  if(dcode == ''){
+    this.setState({ focusedDcode: true })
+    this.setState(dcode == "" ? { dcodeState: "invalid"} : {dcodeState: "valid"})
+  }
+
+  else{
+    console.log(dcodeState, dcode );
+  }
 }
 
 handleSubmit(e) {
@@ -68,7 +96,6 @@ handleSubmit(e) {
     this.setState({ focusedEmail: true , focusedPassword: true })
     this.setState( email == "" ? { emailState: "invalid"} : {passwordState: "invalid"})
     this.setState( password == "" ? { passwordState: "invalid"} : {emailState: "invalid"})
-    console.log(this.state)
   }
   else{
     this.setState({ submitted: true });
@@ -161,21 +188,51 @@ responseGoogle = (response) => {
               <div className="text-center text-muted mb-4">
                 <big>Dimple Code</big>
               </div>
-              <Form role="form">
-                <FormGroup className="mb-3 has-danger">
-                  <InputGroup className="input-group-alternative is-valid">
+              <Form role="form" onSubmit={(e) => this.handleDcode(e)}>
+                <FormGroup                   
+                  className={classnames(
+                    "mb-3",
+                    { focused: this.state.focusedDcode },
+                    { "has-danger": this.state.dcodeState === "invalid" },
+                    { "has-success": this.state.dcodeState === "valid" }
+                  )}
+                >
+                  <InputGroup 
+                    className={classnames("input-group-merge input-group-alternative", {
+                      "is-invalid": this.state.dcodeState === "invalid"
+                    })}
+                  >
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
-                        <i className="ni ni-key-25 text-danger" />
+                        <i
+                          className={classnames(
+                            "ni ni-key-25",
+                            { "text-danger": this.state.dcodeState === "invalid" },
+                            { "text-success": this.state.dcodeState === "valid" }
+                          )}
+                         />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="code" type="code" autoComplete="new-code" value={dcode} onChange={(e) => this.handleChange(e)}/>
+                    <Input 
+                      placeholder="dcode" 
+                      type="dcode" 
+                      autoComplete="new-dcode"
+                      className={classnames(
+                        { "text-danger": this.state.dcodeState === "invalid" },
+                        { "text-success": this.state.dcodeState === "valid" }
+                      )}
+                      value={dcode} 
+                      onChange={(e) => this.handleChange(e)}
+                      onFocus={() => this.setState({ focusedDcode: true })}
+                      onBlur={() => this.setState({ focusedDcode: false })}
+                    />
                   </InputGroup>
+                  <div className="invalid-feedback">Please enter the dimple code.</div>
                 </FormGroup>
                 <FormGroup>
                 </FormGroup>
                 <div className="text-center">
-                  <Button className="my-4" color="primary" type="button">
+                  <Button className="my-4" color="primary" type="submit">
                     Start Dimpling
                   </Button>
                 </div>
