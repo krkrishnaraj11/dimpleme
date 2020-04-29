@@ -1,9 +1,9 @@
 import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { Container } from "reactstrap";
-import AdminNavbar from "../components/Navbars/AdminNavbar.js";
+import {AdminNavbar} from "../components/Navbars/AdminNavbar.js";
 import AdminFooter from "../components/Footers/AdminFooter.js";
-import Sidebar from "../components/Sidebar/Sidebar.js";
+import {Sidebar} from "../components/Sidebar/Sidebar.js";
 
 import routes from "../routes";
 
@@ -52,7 +52,7 @@ class Admin extends React.Component {
           routes={routes}
           logo={{
             innerLink: "/admin/index",
-            imgSrc: require("../assets/img/brand/argon-react.png"),
+            imgSrc: "/src/assets/img/brand/argon-react.png",
             imgAlt: "..."
           }}
         />

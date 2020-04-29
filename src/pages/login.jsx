@@ -49,6 +49,9 @@ class Login extends React.Component {
       dcode: '',
       dcodeState: '',
       focusedDcode: false,
+      forgot: '',
+      forgotState: '',
+      focusedForgot: false,
       submitted: false
     }
   }
@@ -92,6 +95,23 @@ handleDcode(e){
   }
 }
 
+handleForgot(e) {
+  e.preventDefault();
+  const { email, emailState } = this.state;
+
+  if(email == '' || !emailregex.test(email)){
+    this.setState({ focusedForgot: true })
+    this.setState( email == "" ? { emailState: "invalid"} : {emailState: "valid"})
+  }
+  else{
+    this.setState({ submitted: true });
+    const { email } = this.state;
+    if (email) {
+        this.props.forgot(email)
+    }
+  }
+}
+
 handleSubmit(e) {
   e.preventDefault();
   const { email, password, emailState, passwordState } = this.state;
@@ -126,7 +146,7 @@ handleSubmit(e) {
     console.error(err)
   }
 
-  handleForgot = () => {
+  Forgot = () => {
     this.setState({ forgot: !this.state.forgot })
   }
 
@@ -149,6 +169,8 @@ responseGoogle = (response) => {
   render() {
     const { loggingIn } = this.props;
     const alert = this.props.alert;
+    const user = this.props.user;
+    console.log("user", user)
     const {email, password, dcode, submitted} = this.state;
     return (
       <>
@@ -413,25 +435,62 @@ responseGoogle = (response) => {
               <div className="text-center text-muted mb-4">
                 <large>Forgot Password</large>
               </div>
-              <Form role="form">
-                <FormGroup className="mb-3">
-                  <InputGroup className="input-group-alternative">
+              <Form role="form" onSubmit={(e) => this.handleForgot(e)}>
+                <FormGroup
+                  className={classnames(
+                    "mb-3",
+                    { focused: this.state.focusedForgot },
+                    { "has-danger": this.state.emailState === "invalid" },
+                    { "has-success": this.state.emailState === "valid" }
+                  )}
+                >
+                  <InputGroup
+                    className={classnames("input-group-merge input-group-alternative", {
+                      "is-invalid": this.state.emailState === "invalid"
+                    })}
+                  >
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
-                        <i className="ni ni-email-83" />
+                        <i 
+                          className={classnames(
+                            "ni ni-email-83",
+                            { "text-danger": this.state.emailState === "invalid" },
+                            { "text-success": this.state.emailState === "valid" }
+                          )} 
+                        />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Email" type="email" autoComplete="new-email" value={email} onChange={(e) => this.handleChange(e)}/>
+                    <Input 
+                      placeholder="Email" 
+                      type="email" 
+                      autoComplete="new-email" 
+                      className={classnames(
+                        { "text-danger": this.state.emailState === "invalid" },
+                        { "text-success": this.state.emailState === "valid" }
+                      )}
+                      value={email} 
+                      onChange={(e) => this.handleChange(e)}
+                      onFocus={() => this.setState({ focusedForgot: true })}
+                      onBlur={() => this.setState({ focusedForgot: false })}
+                    />
                   </InputGroup>
+                  <div className="invalid-feedback">Please enter valid email.</div>
                 </FormGroup>
                 <FormGroup>
                 </FormGroup>
                 <div className="text-center">
-                  <Button className="my-4" color="primary" type="button">
+                  <Button className="my-4" color="primary" type="submit">
                     Reset Password
                   </Button>
                 </div>
               </Form>
+              {
+                alert.message ?
+                    <Alert color={alert.type} fade={true}>
+                        {alert.message}
+                    </Alert>
+                    : null
+              }
             </CardBody>
   }
 
@@ -442,7 +501,7 @@ responseGoogle = (response) => {
               <a
                 className="text-light"
                 // href={ this.state.forgot ? "#forgot" : "" }
-                onClick={() => this.handleForgot()}
+                onClick={() => this.Forgot()}
               >
                 <small>{ this.state.forgot ? "Admin Login" : "Forgot password ?" }</small>
               </a>
@@ -465,13 +524,14 @@ responseGoogle = (response) => {
 
 function mapState(state) {
   const { loggingIn } = state.authentication;
-  const { alert } = state;
-  return { loggingIn, alert };
+  const { alert, user } = state;
+  return { loggingIn, alert, user };
 }
 
 const actionCreators = {
   login: userActions.login,
   logout: userActions.logout,
+  forgot: userActions.forgot,
   clearAlerts: alertActions.clear
 };
 

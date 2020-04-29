@@ -33,12 +33,14 @@ function logout() {
     localStorage.removeItem('user');
 }
 
-function forgot(){
+function forgot(email){
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username })
+        body: JSON.stringify({ email })
     };
+
+    return fetch(`${config.apiUrl}/forgotPassword`, requestOptions).then(handleResponse)
 }
 
 function getAll() {

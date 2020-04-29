@@ -33,7 +33,9 @@ import {
   Row,
   Col
 } from "reactstrap";
-
+import { connect } from 'react-redux';
+import { history } from '../../../_helpers';
+import { userActions, alertActions } from '../../../_actions';
 var ps;
 
 class Sidebar extends React.Component {
@@ -143,7 +145,7 @@ class Sidebar extends React.Component {
                   <span className="avatar avatar-sm rounded-circle">
                     <img
                       alt="..."
-                      src={require("../../assets/img/theme/team-1-800x800.jpg")}
+                      src={"/src/assets/img/theme/team-4-800x800.jpg"}
                     />
                   </span>
                 </Media>
@@ -155,18 +157,6 @@ class Sidebar extends React.Component {
                 <DropdownItem to="/admin/user-profile" tag={Link}>
                   <i className="ni ni-single-02" />
                   <span>My profile</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-settings-gear-65" />
-                  <span>Settings</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-calendar-grid-58" />
-                  <span>Activity</span>
-                </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
-                  <i className="ni ni-support-16" />
-                  <span>Support</span>
                 </DropdownItem>
                 <DropdownItem divider />
                 <DropdownItem href="#pablo" onClick={e => e.preventDefault()}>
@@ -209,7 +199,7 @@ class Sidebar extends React.Component {
               </Row>
             </div>
             {/* Form */}
-            <Form className="mt-4 mb-3 d-md-none">
+            {/* <Form className="mt-4 mb-3 d-md-none">
               <InputGroup className="input-group-rounded input-group-merge">
                 <Input
                   aria-label="Search"
@@ -223,7 +213,7 @@ class Sidebar extends React.Component {
                   </InputGroupText>
                 </InputGroupAddon>
               </InputGroup>
-            </Form>
+            </Form> */}
             {/* Navigation */}
             <Nav navbar>{this.createLinks(routes)}</Nav>
             <Nav className="mb-md-3" navbar>
@@ -256,4 +246,16 @@ Sidebar.propTypes = {
   })
 };
 
-export default Sidebar;
+function mapState(state) {
+  const { alert } = state;
+  return { alert };
+}
+
+const actionCreators = {
+  logout: userActions.logout,
+  clearAlerts: alertActions.clear
+};
+
+
+const connectedAdminNavbarPage = connect(mapState, actionCreators)(Sidebar);
+export { connectedAdminNavbarPage as Sidebar };
