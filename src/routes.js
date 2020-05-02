@@ -13,7 +13,7 @@ const routes = [
   },
   {
     path: "/group",
-    name: "Group",
+    name: "Question Bank",
     icon: "ni ni-badge text-red",
     component: Group,
     layout: "/admin"

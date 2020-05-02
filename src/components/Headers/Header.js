@@ -50,7 +50,7 @@ class Header extends React.Component {
                             tag="h5"
                             className="text-uppercase text-muted mb-0"
                           >
-                            Group
+                            Question Bank
                           </CardTitle>
                           <span className="h2 font-weight-bold mb-0">
                             2,356
