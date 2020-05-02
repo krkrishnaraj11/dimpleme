@@ -66,7 +66,7 @@ module.exports = {
     externals: {
         // global app config object
         config: JSON.stringify({
-            apiUrl: 'http://dimpleme-apis.herokuapp.com'
+            apiUrl: 'https://dimpleme-apis.herokuapp.com'
         })
     }
 }
