@@ -1,6 +1,6 @@
 import Index from "./pages/Index.js";
 import Profile from "./pages/Profile.js";
-import Group from "./pages/Group.js";
+import {Group} from "./pages/Group.js";
 import {Login} from "./pages/login";
 
 const routes = [

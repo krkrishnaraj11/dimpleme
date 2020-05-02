@@ -25,7 +25,12 @@ class App extends React.Component {
           <Router history={history}>
             <Switch>
               <ProtectedRoute path="/admin" component={props => <AdminLayout {...props} />} />
-              <Route path="/auth" render={props => <AuthLayout {...props} />} />
+              {
+                !localStorage.getItem('user')
+                  ? <Route path="/auth" render={props => <AuthLayout {...props} />} />
+                  : <ProtectedRoute path="/admin" component={props => <AdminLayout {...props} />} />
+              }
+              
               <Redirect from="*" to="/admin" />
             </Switch>
           </Router>
