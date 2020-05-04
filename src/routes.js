@@ -2,6 +2,8 @@ import Index from "./pages/Index.js";
 import Profile from "./pages/Profile.js";
 import {Group} from "./pages/Group.js";
 import {Login} from "./pages/login";
+import {Survey} from "./pages/Survey";
+import {SurveyEdit} from "./pages/SurveyEdit.jsx";
 
 const routes = [
   {
@@ -19,10 +21,17 @@ const routes = [
     layout: "/admin"
   },
   {
-    path: "/survey",
+    path: "/surveys",
     name: "Survey",
     icon: "ni ni-bullet-list-67 text-green",
-    component: Index,
+    component: Survey,
+    layout: "/admin"
+  },
+  {
+    path: "/survey/edit",
+    name: "Survey Edit",
+    icon: "ni ni-bullet-list-67 text-black",
+    component: SurveyEdit,
     layout: "/admin"
   },
   {

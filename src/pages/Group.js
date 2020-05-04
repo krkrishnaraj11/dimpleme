@@ -111,8 +111,7 @@ class Group extends React.Component {
         {/* Page content */}
         <Container className="mt--7" fluid>
           {/* Dark table */}
-          <Row className="mt-5">
-            <div className="col">
+
               <Card className="bg-default shadow">
                 <CardHeader className="bg-transparent border-1">
                   <Row className="align-items-center">
@@ -259,9 +258,9 @@ class Group extends React.Component {
                                 
                                 : 
                                 <div>
-                                  <body2>
+                                  <span>
                                   {item.question}
-                                  </body2>
+                                  </span>
                                 </div>
                               }
                                 
@@ -317,8 +316,6 @@ class Group extends React.Component {
                   </tbody>
                 </Table>
               </Card>
-            </div>
-          </Row>
         </Container>
       </>
     );

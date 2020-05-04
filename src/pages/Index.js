@@ -5,9 +5,8 @@ import classnames from "classnames";
 import Chart from "chart.js";
 // react plugin used to create charts
 import { Line, Bar } from "react-chartjs-2";
+import QRCode from 'qrcode.react';
 // reactstrap components
-// import {QRGenerator} from 'dynamic-qr-code-generator';
-
 import {
   Button,
   Card,
@@ -138,13 +137,26 @@ class Index extends React.Component {
               </Card>
             </Col>
           </Row>
-
-          {/* <div id="qr-container"></div>
-        <button onClick={()=>QRGenerator(props)}>generate</button>
-        <img id='qr-logo-image' src={require("../assets/img/icons/common/github.svg")} style={{ display: 'none' }} /> */}
+          {/* <QRCode
+            value={"src/public/build/logo192.png"}
+            size={128}
+            bgColor={"#ffffff"}
+            fgColor={"#000000"}
+            level={"H"}
+            includeMargin={true}
+            renderAs={"svg"}
+            imageSettings={{
+              src: "https://static.zpao.com/favicon.png",
+              x: null,
+              y: null,
+              height: 24,
+              width: 24,
+              excavate: true,
+            }}
+          /> */}
           
           <Row className="mt-5">
-            <Col className="mb-5 mb-xl-0" xl="8">
+            <Col className="mb-5 mb-xl-0" xl="12">
               <Card className="shadow">
                 <CardHeader className="border-0">
                   <Row className="align-items-center">
@@ -216,114 +228,6 @@ class Index extends React.Component {
                       <td>
                         <i className="fas fa-arrow-down text-danger mr-3" />{" "}
                         46,53%
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
-              </Card>
-            </Col>
-            <Col xl="4">
-              <Card className="shadow">
-                <CardHeader className="border-0">
-                  <Row className="align-items-center">
-                    <div className="col">
-                      <h3 className="mb-0">Social traffic</h3>
-                    </div>
-                    <div className="col text-right">
-                      <Button
-                        color="primary"
-                        href="#pablo"
-                        onClick={e => e.preventDefault()}
-                        size="sm"
-                      >
-                        See all
-                      </Button>
-                    </div>
-                  </Row>
-                </CardHeader>
-                <Table className="align-items-center table-flush" responsive>
-                  <thead className="thead-light">
-                    <tr>
-                      <th scope="col">Referral</th>
-                      <th scope="col">Visitors</th>
-                      <th scope="col" />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">Facebook</th>
-                      <td>1,480</td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <span className="mr-2">60%</span>
-                          <div>
-                            <Progress
-                              max="100"
-                              value="60"
-                              barClassName="bg-gradient-danger"
-                            />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Facebook</th>
-                      <td>5,480</td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <span className="mr-2">70%</span>
-                          <div>
-                            <Progress
-                              max="100"
-                              value="70"
-                              barClassName="bg-gradient-success"
-                            />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Google</th>
-                      <td>4,807</td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <span className="mr-2">80%</span>
-                          <div>
-                            <Progress max="100" value="80" />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">Instagram</th>
-                      <td>3,678</td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <span className="mr-2">75%</span>
-                          <div>
-                            <Progress
-                              max="100"
-                              value="75"
-                              barClassName="bg-gradient-info"
-                            />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">twitter</th>
-                      <td>2,645</td>
-                      <td>
-                        <div className="d-flex align-items-center">
-                          <span className="mr-2">30%</span>
-                          <div>
-                            <Progress
-                              max="100"
-                              value="30"
-                              barClassName="bg-gradient-warning"
-                            />
-                          </div>
-                        </div>
                       </td>
                     </tr>
                   </tbody>

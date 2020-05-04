@@ -2,8 +2,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 import Login from "../pages/login";
-import profileManagement from "../pages/profileManagement";
-import surveyFeedback from "../pages/surveyFeedback";
 import AdminLayout from '../layouts/Admin';
 
 class Routes extends React.Component {

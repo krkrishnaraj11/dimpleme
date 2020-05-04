@@ -7,6 +7,7 @@ import { alertActions } from '../_actions';
 
 import AuthLayout from './layouts/Auth';
 import { ProtectedRoute } from './components/ProtectedRoute/protectedroute';
+import { SurveyEdit } from './pages/SurveyEdit';
 class App extends React.Component {
   constructor(props) {
     super(props);
