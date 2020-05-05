@@ -23,8 +23,15 @@ export function survey(state = initialState, action) {
       return { loading: true };
     case surveyConstants.GETALL_SUCCESS:
       return  action.surveys
-      
     case surveyConstants.GETALL_FAILURE:
+      return { 
+        error: action.error
+      };
+    case surveyConstants.GETBYID_REQUEST:
+      return { loading: true };
+    case surveyConstants.GETBYID_SUCCESS:
+      return  action.survey
+    case surveyConstants.GETBYID_FAILURE:
       return { 
         error: action.error
       };
@@ -47,7 +54,3 @@ export function survey(state = initialState, action) {
       return state
   }
 }
-
-export const createQuestionBank = state => state.surveys;
-export const createQuestionBankPending = state => state.pending;
-export const createQuestionBankError = state => state.error;

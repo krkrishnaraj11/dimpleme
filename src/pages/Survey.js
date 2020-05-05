@@ -57,6 +57,14 @@ class Survey extends React.Component {
         })
       }
 
+      deleteSurvey(surveyCustId){
+        this.props.deleteSurveys(surveyCustId);
+      }
+
+      addSurvey(){
+        history.push('/admin/survey/add')
+      }
+
   render() {
     const {survey}  = this.props;
     return (
@@ -75,7 +83,7 @@ class Survey extends React.Component {
                       <Button
                         color="primary"
                         href="#pablo"
-                        onClick={e => e.preventDefault()}
+                        onClick={() => this.addSurvey()}
                         size="sm"
                       >
                         Add
@@ -96,14 +104,14 @@ class Survey extends React.Component {
                   </thead>
                   <tbody>
                   {
-                    survey.data && survey.data.map((item, i) => (
+                    survey.data && survey.data instanceof Array && survey.data.map((item, i) => (
                       <tr>
                       <th scope="row">{item.surveyName}</th>
                       <td>{item.totalQuestions}</td>
                       <td>
                         {(item.active) 
-                          ? <i className="fas fa-plus-circle text-success"/>
-                          : <i className="fas fa-minus-circle text-danger"/> }
+                          ? <i className="fas fa-check-circle fa-2x text-success"/>
+                          : <i className="fas fa-times-circle fa-2x text-danger"/> }
                       </td>
                       <td>
                         <Button size="sm" className="btn btn-icon btn-3 btn-outline-success" onClick={() => this.editSurvey(item)}>
@@ -111,7 +119,7 @@ class Survey extends React.Component {
                         </Button>
                       </td>
                       <td>
-                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-danger" >
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-danger" onClick={() => this.deleteSurvey(item.surveyCustId)}>
                           <span className="btn-inner--text">DELETE</span>
                         </Button>
                       </td>

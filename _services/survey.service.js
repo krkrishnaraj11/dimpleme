@@ -7,6 +7,7 @@ export const surveyService = {
     create,
     getAll,
     update,
+    getById,
     delete: _delete
 };
 
@@ -19,33 +20,35 @@ function getAll() {
     return fetch(`${config.apiUrl}/survey/list`, requestOptions).then(handleResponse);
 }
 
-function getById(id) {
-    const requestOptions = {
-        method: 'GET',
-        headers: authHeader()
-    };
-
-    return fetch(`${config.apiUrl}/users/${id}`, requestOptions).then(handleResponse);
-}
-
-function create(survey) {
+function getById(dcode) {
     const requestOptions = {
         method: 'POST',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({survey})
+        body: JSON.stringify({dcode})
+    };
+
+    return fetch(`${config.apiUrl}/survey/read_dcode`, requestOptions).then(handleResponse);
+}
+
+function create(questions, surveyName, dcode) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({questions, surveyName, dcode})
     };
 
     return fetch(`${config.apiUrl}/survey/create`, requestOptions).then(handleResponse);
 }
 
-function update(id, survey) {
+function update(id, questions, surveyName, active) {
     const requestOptions = {
         method: 'POST',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({id, survey})
+        body: JSON.stringify({surveyName, questions, active})
     };
 
-    return fetch(`${config.apiUrl}/question/update`, requestOptions).then(handleResponse);;
+    console.log(requestOptions)
+    return fetch(`${config.apiUrl}/survey/update/${id}`, requestOptions).then(handleResponse);;
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript
@@ -53,12 +56,10 @@ function _delete(id) {
     const requestOptions = {
         method: 'POST',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id })
+        body: JSON.stringify({ surveyCustId: id })
     };
-
-    console.log(requestOptions)
-
-    return fetch(`${config.apiUrl}/question/delete`, requestOptions).then(handleResponse);
+    
+    return fetch(`${config.apiUrl}/survey/delete`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

@@ -6,18 +6,20 @@ import { history } from '../_helpers';
 export const surveyActions = {
     create,
     getAll,
+    getById,
     update,
     _delete
 };
 
-function create(question) {
+function create(questions, surveyName, dcode) {
     return dispatch => {
-        dispatch(request(question));
+        dispatch(request(questions, surveyName, dcode));
 
-        questionbankService.create(question)
+        surveyService.create(questions, surveyName, dcode)
             .then(
-                question => { 
+                survey => { 
                     dispatch(success());
+                    history.push('/admin/surveys');
                     dispatch(alertActions.success('Question Created Successful'));
                 },
                 error => {
@@ -27,20 +29,21 @@ function create(question) {
             );
     };
 
-    function request(question) { return { type: questionbankConstants.CREATE_REQUEST, question } }
-    function success(question) { return { type: questionbankConstants.CREATE_SUCCESS, question } }
-    function failure(error) { return { type: questionbankConstants.CREATE_FAILURE, error } }
+    function request(survey) { return { type: surveyConstants.CREATE_REQUEST, survey } }
+    function success(survey) { return { type: surveyConstants.CREATE_SUCCESS, survey } }
+    function failure(error) { return { type: surveyConstants.CREATE_FAILURE, error } }
 }
 
-function update(id, question) {
+function update(id, question, surveyName, active) {
     return dispatch => {
-        dispatch(request(id, question))
+        dispatch(request(id, question, surveyName, active))
 
-        questionbankService.update(id, question)
+        surveyService.update(id, question, surveyName, active)
             .then(
-                question => {
+                survey => {
                     dispatch(success());
-                    dispatch(alertActions.success('Question Updated Successful'));
+                    history.push('/admin/surveys');
+                    dispatch(alertActions.success('Survey Updated Successful'));
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -48,9 +51,27 @@ function update(id, question) {
                 }
             )
     }
-    function request(question) { return { type: questionbankConstants.UPDATE_REQUEST, question } }
-    function success(question) { return { type: questionbankConstants.UPDATE_SUCCESS, question } }
-    function failure(error) { return { type: questionbankConstants.UPDATE_FAILURE, error } }
+    function request(survey) { return { type: surveyConstants.UPDATE_REQUEST, survey } }
+    function success(survey) { return { type: surveyConstants.UPDATE_SUCCESS, survey } }
+    function failure(error) { return { type: surveyConstants.UPDATE_FAILURE, error } }
+}
+
+function getById(dcode) {
+    return dispatch => {
+        dispatch(request(dcode))
+
+        surveyService.getById(dcode)
+            .then(
+                surveys => dispatch(success(surveys)),
+                error => {
+                    dispatch(failure(error.toString()));
+                    dispatch(alertActions.error(error.toString()));
+                }
+            )
+    }
+    function request(survey) { return { type: surveyConstants.GETBYID_REQUEST, survey } }
+    function success(survey) { return { type: surveyConstants.GETBYID_SUCCESS, survey } }
+    function failure(error) { return { type: surveyConstants.GETBYID_FAILURE, error } }
 }
 
 function getAll() {
@@ -73,11 +94,11 @@ function getAll() {
 function _delete(id) {
     return dispatch => {
         dispatch(request(id));
-        surveyActions.delete(id)
+        surveyService.delete(id)
             .then(
                 user => {
                     dispatch(success(id));
-                    history.push('/admin/survey');
+                    history.push('/admin/surveys');
                 },
                 error => dispatch(failure(id, error.toString()))
             );

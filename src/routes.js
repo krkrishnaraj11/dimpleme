@@ -29,7 +29,14 @@ const routes = [
   },
   {
     path: "/survey/edit",
-    name: "Survey Edit",
+    name: "Edit Survey",
+    icon: "ni ni-bullet-list-67 text-black",
+    component: SurveyEdit,
+    layout: "/admin"
+  },
+  {
+    path: "/survey/add",
+    name: "Add Survey",
     icon: "ni ni-bullet-list-67 text-black",
     component: SurveyEdit,
     layout: "/admin"
