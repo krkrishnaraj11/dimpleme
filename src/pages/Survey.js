@@ -23,6 +23,10 @@ import {
   Row,
   UncontrolledTooltip,
   Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   InputGroup,
   InputGroupAddon,
   InputGroupText,
@@ -41,7 +45,8 @@ class Survey extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-
+          deleteModal: false,
+          surveyCustId: ''
         }
       }
       
@@ -58,11 +63,21 @@ class Survey extends React.Component {
       }
 
       deleteSurvey(surveyCustId){
+        console.log(surveyCustId)
+        this.toggleModal();
         this.props.deleteSurveys(surveyCustId);
       }
 
       addSurvey(){
         history.push('/admin/survey/add')
+      }
+
+      toggleDeleteModal(surveyCustId){
+        this.setState({ deleteModal: !this.state.deleteModal, surveyCustId: surveyCustId})
+      }
+
+      toggleModal(){
+        this.setState({ deleteModal: !this.state.deleteModal })
       }
 
   render() {
@@ -72,6 +87,18 @@ class Survey extends React.Component {
         <Header />
         {/* Page content */}
         <Container className="mt--7" fluid>
+
+        {/* Delete Confirmation Modal */}
+        <Modal isOpen={this.state.deleteModal} toggle={() => toggleModal()}>
+        <ModalHeader>Delete Survey</ModalHeader>
+        <ModalBody>
+          Are you Sure to Delete Survey?
+        </ModalBody>
+        <ModalFooter>
+          <Button color="danger" onClick={() => this.deleteSurvey(this.state.surveyCustId)}>Delete</Button>{' '}
+          <Button color="secondary" onClick={() => this.toggleModal()} >Cancel</Button>
+        </ModalFooter>
+      </Modal>
           {/* Dark table */}
             <Card className="bg-default shadow">
                 <CardHeader className="bg-transparent border-1">
@@ -119,7 +146,7 @@ class Survey extends React.Component {
                         </Button>
                       </td>
                       <td>
-                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-danger" onClick={() => this.deleteSurvey(item.surveyCustId)}>
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-danger" data-toggle="modal" data-target="#modal-default" onClick={() => this.toggleDeleteModal(item.surveyCustId)}>
                           <span className="btn-inner--text">DELETE</span>
                         </Button>
                       </td>
