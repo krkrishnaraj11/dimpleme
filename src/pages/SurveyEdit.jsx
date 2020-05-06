@@ -63,9 +63,6 @@ class SurveyEdit extends React.Component {
           var dcode = this.props.location.data.dcode;
           this.props.getByIdSurvey(dcode);
         }
-        else{
-          
-        }
       }
       
       componentWillReceiveProps(nextProps) {

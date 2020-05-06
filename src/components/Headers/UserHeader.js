@@ -5,6 +5,7 @@ import { Button, Container, Row, Col } from "reactstrap";
 
 class UserHeader extends React.Component {
   render() {
+    const {name} = this.props;
     return (
       <>
         <div
@@ -12,7 +13,7 @@ class UserHeader extends React.Component {
           style={{
             minHeight: "400px",
             backgroundImage:
-              "url(" + require("../../assets/img/theme/profile-cover.jpg") + ")",
+              "url(/src/assets/img/theme/profile-cover.jpg)",
             backgroundSize: "cover",
             backgroundPosition: "center top"
           }}
@@ -23,7 +24,7 @@ class UserHeader extends React.Component {
           <Container className="d-flex align-items-center" fluid>
             <Row>
               <Col>
-                <h1 className="display-2 text-white">Hello Jesse</h1>
+                <h1 className="display-3 text-white ">{name}</h1>
               </Col>
             </Row>
           </Container>

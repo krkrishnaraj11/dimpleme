@@ -7,9 +7,31 @@ export const surveyActions = {
     create,
     getAll,
     getById,
+    submitAnswer,
     update,
     _delete
 };
+
+function submitAnswer(surveyCustId, answers){
+    return dispatch => {
+        dispatch(request(surveyCustId, answers));
+
+        surveyService.submitAnswer(surveyCustId, answers)
+            .then(
+                survey => { 
+                    dispatch(success());
+                    dispatch(alertActions.success('Survey Submitted Successfully'));
+                },
+                error => {
+                    dispatch(failure(error.toString()));
+                    dispatch(alertActions.error("Submit Failed"));
+                }
+            )
+    };
+    function request(survey) { return { type: surveyConstants.SUBMIT_ANSWER_REQUEST, survey } }
+    function success(survey) { return { type: surveyConstants.SUBMIT_ANSWER_SUCCESS, survey } }
+    function failure(error) { return { type: surveyConstants.SUBMIT_ANSWER_FAILURE, error } }
+}
 
 function create(questions, surveyName, dcode) {
     return dispatch => {

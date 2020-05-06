@@ -19,6 +19,12 @@ export function survey(state = initialState, action) {
       return {};
     case surveyConstants.UPDATE_FAILURE:
       return {};
+    case surveyConstants.SUBMIT_ANSWER_REQUEST:
+      return { loading: true };
+    case surveyConstants.SUBMIT_ANSWER_SUCCESS:
+      return {};
+    case surveyConstants.SUBMIT_ANSWER_FAILURE:
+      return {};
     case surveyConstants.GETALL_REQUEST:
       return { loading: true };
     case surveyConstants.GETALL_SUCCESS:

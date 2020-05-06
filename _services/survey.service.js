@@ -7,6 +7,7 @@ export const surveyService = {
     create,
     getAll,
     update,
+    submitAnswer,
     getById,
     delete: _delete
 };
@@ -28,6 +29,16 @@ function getById(dcode) {
     };
 
     return fetch(`${config.apiUrl}/survey/read_dcode`, requestOptions).then(handleResponse);
+}
+
+function submitAnswer(surveyCustId, answers) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({surveyCustId, answers })
+    };
+
+    return fetch(`${config.apiUrl}/answer/submit`, requestOptions).then(handleResponse);
 }
 
 function create(questions, surveyName, dcode) {

@@ -8,6 +8,7 @@ import { alertActions } from '../_actions';
 import AuthLayout from './layouts/Auth';
 import { ProtectedRoute } from './components/ProtectedRoute/protectedroute';
 import { SurveyEdit } from './pages/SurveyEdit';
+import {SurveyPage} from './pages/SurveyPage';
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -25,13 +26,13 @@ class App extends React.Component {
       <div className="App">
           <Router history={history}>
             <Switch>
+              <Route path="/survey/:dcode" render={props => <SurveyPage {...props}/>} />
               <ProtectedRoute path="/admin" component={props => <AdminLayout {...props} />} />
               {
                 !localStorage.getItem('user')
                   ? <Route path="/auth" render={props => <AuthLayout {...props} />} />
                   : <ProtectedRoute path="/admin" component={props => <AdminLayout {...props} />} />
               }
-              
               <Redirect from="*" to="/admin" />
             </Switch>
           </Router>
