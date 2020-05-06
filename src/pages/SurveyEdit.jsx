@@ -37,6 +37,7 @@ import {
 import { connect } from 'react-redux';
 import { history } from '../../_helpers';
 import classnames from "classnames";
+import { store } from 'react-notifications-component';
 import { surveyActions, alertActions, questionbankActions } from '../../_actions';
 import Header from "../components/Headers/Header.js";
 
@@ -84,6 +85,19 @@ class SurveyEdit extends React.Component {
         }
         if(nextProps.questionbank.data && nextProps.questionbank.data instanceof Array){
           this.setState({ questionbank: nextProps.questionbank.data })
+        }
+        if(nextProps.alert.message){
+          store.addNotification({
+            title: 'Survey',
+            message: nextProps.alert.message,
+            type: nextProps.alert.type,                         // 'default', 'success', 'info', 'warning'
+            container: 'top-right',                // where to position the notifications
+            animationIn: ["animated", "fadeIn"],     // animate.css classes that's applied
+            animationOut: ["animated", "fadeOut"],   // animate.css classes that's applied
+            dismiss: {
+              duration: 1000 
+            }
+          })
         }
       }
 
@@ -278,8 +292,8 @@ class SurveyEdit extends React.Component {
 }
 
 function mapState(state) {
-  const {survey,questionbank} = state;
-  return { survey, questionbank };
+  const {survey,questionbank, alert} = state;
+  return { survey, questionbank, alert};
 }
 
 const actionCreators = {

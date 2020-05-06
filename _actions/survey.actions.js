@@ -19,12 +19,12 @@ function create(questions, surveyName, dcode) {
             .then(
                 survey => { 
                     dispatch(success());
+                    dispatch(alertActions.success('Survey Created Successfully'));
                     history.push('/admin/surveys');
-                    dispatch(alertActions.success('Question Created Successful'));
                 },
                 error => {
                     dispatch(failure(error.toString()));
-                    dispatch(alertActions.error(error.toString()));
+                    dispatch(alertActions.error("Survey Create Failed"));
                 }
             );
     };
@@ -42,12 +42,12 @@ function update(id, question, surveyName, active) {
             .then(
                 survey => {
                     dispatch(success());
-                    history.push('/admin/surveys');
                     dispatch(alertActions.success('Survey Updated Successful'));
+                    history.push('/admin/surveys');
                 },
                 error => {
                     dispatch(failure(error.toString()));
-                    dispatch(alertActions.error(error.toString()));
+                    dispatch(alertActions.error("Survey Update Failed"));
                 }
             )
     }
@@ -62,7 +62,10 @@ function getById(dcode) {
 
         surveyService.getById(dcode)
             .then(
-                surveys => dispatch(success(surveys)),
+                surveys => {
+                    dispatch(success(surveys))
+                    // dispatch(alertActions.success('Survey Fetch Successful'));
+                },
                 error => {
                     dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
@@ -80,8 +83,14 @@ function getAll() {
 
         surveyService.getAll()
             .then(
-                surveys => dispatch(success(surveys)),
-                error => dispatch(failure(error.toString()))
+                surveys => {
+                    dispatch(success(surveys))
+                    // dispatch(alertActions.success('Survey List Fetched Successful'));
+                },
+                error => {
+                    dispatch(failure(error.toString()))
+                    dispatch(alertActions.error(error.toString()));
+                }
             );
     };
 
@@ -98,9 +107,13 @@ function _delete(id) {
             .then(
                 user => {
                     dispatch(success(id));
+                    dispatch(alertActions.success('Survey Deleted Successful'));
                     history.push('/admin/surveys');
                 },
-                error => dispatch(failure(id, error.toString()))
+                error => {
+                    dispatch(failure(id, error.toString()))
+                    dispatch(alertActions.error("Survey Delete Failed"))
+                }
             );
     };
 

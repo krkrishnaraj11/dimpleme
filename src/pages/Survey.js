@@ -34,6 +34,7 @@ import {
   Input
 } from "reactstrap";
 // core components
+import { store } from 'react-notifications-component';
 import { connect } from 'react-redux';
 import { history } from '../../_helpers';
 import classnames from "classnames";
@@ -46,7 +47,8 @@ class Survey extends React.Component {
         super(props);
         this.state = {
           deleteModal: false,
-          surveyCustId: ''
+          surveyCustId: '',
+          survey: {}
         }
       }
       
@@ -54,8 +56,27 @@ class Survey extends React.Component {
         this.props.getSurveys();
       }
 
+      componentWillReceiveProps(nextProps){
+        if(nextProps.alert.message){
+          store.addNotification({
+            title: 'Survey',
+            message: nextProps.alert.message,
+            type: nextProps.alert.type,             // 'default', 'success', 'info', 'warning'
+            container: 'top-right',                // where to position the notifications
+            animationIn: ["animated", "fadeIn"],     // animate.css classes that's applied
+            animationOut: ["animated", "fadeOut"],   // animate.css classes that's applied
+            dismiss: {
+              duration: 1000 
+            }
+          })
+        }
+        if(nextProps.survey.data){
+          this.setState({ survey: nextProps.survey })
+        }
+
+      }
+
       editSurvey(data){
-        console.log(data)
         history.push({
           pathname: '/admin/survey/edit',
           data: data
@@ -63,7 +84,6 @@ class Survey extends React.Component {
       }
 
       deleteSurvey(surveyCustId){
-        console.log(surveyCustId)
         this.toggleModal();
         this.props.deleteSurveys(surveyCustId);
       }
@@ -81,7 +101,6 @@ class Survey extends React.Component {
       }
 
   render() {
-    const {survey}  = this.props;
     return (
       <>
         <Header />
@@ -131,7 +150,7 @@ class Survey extends React.Component {
                   </thead>
                   <tbody>
                   {
-                    survey.data && survey.data instanceof Array && survey.data.map((item, i) => (
+                    this.state.survey.data && this.state.survey.data instanceof Array && this.state.survey.data.map((item, i) => (
                       <tr>
                       <th scope="row">{item.surveyName}</th>
                       <td>{item.totalQuestions}</td>
@@ -170,7 +189,8 @@ class Survey extends React.Component {
 
 function mapState(state) {
   const survey = state.survey;
-  return { survey };
+  const alert = state.alert;
+  return { survey, alert };
 }
 
 const actionCreators = {
