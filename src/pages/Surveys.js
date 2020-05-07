@@ -38,6 +38,7 @@ import { store } from 'react-notifications-component';
 import { connect } from 'react-redux';
 import { history } from '../../_helpers';
 import classnames from "classnames";
+import QRCode from 'qrcode.react';
 import { surveyActions, alertActions } from '../../_actions';
 import Header from "../components/Headers/Header.js";
 
@@ -47,8 +48,10 @@ class Survey extends React.Component {
         super(props);
         this.state = {
           deleteModal: false,
+          qrModal: false,
           surveyCustId: '',
-          survey: {}
+          survey: {},
+          selectSurveyQR: ''
         }
       }
       
@@ -76,6 +79,19 @@ class Survey extends React.Component {
 
       }
 
+      downloadQR = () => {
+        const canvas = document.getElementById("qrcode");
+        const pngUrl = canvas
+          .toDataURL("image/png")
+          .replace("image/png", "image/octet-stream");
+        let downloadLink = document.createElement("a");
+        downloadLink.href = pngUrl;
+        downloadLink.download = "qrcode.png";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      };
+
       editSurvey(data){
         history.push({
           pathname: '/admin/survey/edit',
@@ -100,6 +116,10 @@ class Survey extends React.Component {
         this.setState({ deleteModal: !this.state.deleteModal })
       }
 
+      toggleQRModal(dcode){
+        this.setState({ qrModal: !this.state.qrModal, selectSurveyQR: (dcode) ? dcode: '' })
+      }
+
   render() {
     return (
       <>
@@ -109,15 +129,15 @@ class Survey extends React.Component {
 
         {/* Delete Confirmation Modal */}
         <Modal isOpen={this.state.deleteModal} toggle={() => toggleModal()}>
-        <ModalHeader>Delete Survey</ModalHeader>
-        <ModalBody>
-          Are you Sure to Delete Survey?
-        </ModalBody>
-        <ModalFooter>
-          <Button color="danger" onClick={() => this.deleteSurvey(this.state.surveyCustId)}>Delete</Button>{' '}
-          <Button color="secondary" onClick={() => this.toggleModal()} >Cancel</Button>
-        </ModalFooter>
-      </Modal>
+          <ModalHeader>Delete Survey</ModalHeader>
+          <ModalBody>
+            Are you Sure to Delete Survey?
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" onClick={() => this.deleteSurvey(this.state.surveyCustId)}>Delete</Button>{' '}
+            <Button color="secondary" onClick={() => this.toggleModal()} >Cancel</Button>
+          </ModalFooter>
+        </Modal>
           {/* Dark table */}
             <Card className="bg-default shadow">
                 <CardHeader className="bg-transparent border-1">
@@ -145,7 +165,7 @@ class Survey extends React.Component {
                       <th scope="col">Active</th>
                       <th scope="col">Edit</th>
                       <th scope="col">Delete</th>
-                      <th scope="col">QR Code   </th>
+                      <th scope="col">QR Code</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -170,7 +190,7 @@ class Survey extends React.Component {
                         </Button>
                       </td>
                       <td>
-                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" >
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
                           <i className="fas fa-qrcode text-success"/>
                           <span className="btn-inner--text">QR CODE</span>
                         </Button>
@@ -178,6 +198,30 @@ class Survey extends React.Component {
                     </tr>
                     ))
                   }
+                  <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>
+                    <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
+                    <ModalBody className="d-block text-center">
+                      <QRCode
+                        id="qrcode"
+                        value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                        size={290}
+                        imageSettings= {{
+                          src: "/src/assets/img/icons/smiley/satisfied.png",
+                          x: null,
+                          y: null,
+                          height: 60,
+                          width: 60,
+                          excavate: true,
+                        }}
+                        level={"H"}
+                        includeMargin={true}
+                      />
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
+                      <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button>
+                    </ModalFooter>
+                  </Modal>
                   </tbody>
                 </Table>
               </Card>

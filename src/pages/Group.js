@@ -15,6 +15,8 @@ import {
   PaginationItem,
   PaginationLink,
   Progress,
+  Col,
+  Spinner,
   Table,
   Form,
   FormGroup,
@@ -101,6 +103,21 @@ class Group extends React.Component {
         else{
           this.props.updateQuestions(id, question);
         }
+      }
+
+      renderSpinner(){
+        return(
+          <Col md={{ span: 6, offset: 5 }}>
+              <Spinner type="grow" color="primary" />
+              <Spinner type="grow" color="success" />
+              <Spinner type="grow" colr="danger" />
+              <Spinner type="grow" color="warning" />
+              <Spinner type="grow" color="info" />
+              <Spinner type="grow" color="light" />
+              <Spinner type="grow" color="dark" />
+              <h2 className="ml-5">Loading Survey</h2>
+          </Col>
+        )
       }
 
   render() {

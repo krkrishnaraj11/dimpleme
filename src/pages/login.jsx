@@ -179,18 +179,19 @@ responseGoogle = (response) => {
             <CardHeader className="bg-transparent p-5 d-block d-sm-none">
               <div className="btn-wrapper text-center">
                 <Button
-                  className="btn-neutral btn-icon"
-                  color="default"
-                  href="#pablo"
+                  className="btn-danger btn-icon"
+                  color="primary"
                   onClick={() => this.enableScan()}
                 >
+                  <span className="btn-large--text mr-2">SCAN</span>
                   <span className="btn-large--icon">
                     <img
                       alt="..."
-                      src={"/src/assets/img/icons/common/github.svg"}
+                      height="30"
+                      src={"/src/assets/img/icons/smiley/satisfied.png"}
                     />
                   </span>
-                  <span className="btn-large--text ml-2">Scan QR Code</span>
+                  <span className="btn-large--text ml-2">NOW</span>
                 </Button>
               </div>
             </CardHeader>
