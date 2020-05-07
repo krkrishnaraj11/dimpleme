@@ -51,11 +51,11 @@ function create(questions, surveyName, dcode) {
     return fetch(`${config.apiUrl}/survey/create`, requestOptions).then(handleResponse);
 }
 
-function update(id, questions, surveyName, active) {
+function update(id, questions, surveyName, active, dcode) {
     const requestOptions = {
         method: 'POST',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify({surveyName, questions, active})
+        body: JSON.stringify({surveyName, questions, active, dcode})
     };
 
     console.log(requestOptions)

@@ -134,7 +134,7 @@ class SurveyEdit extends React.Component {
         const questions = this.state.surveyquestions.map(item => {
           return { question : item.question }
         })
-        this.props.updateSurvey(this.state.surveyCustId, questions, this.state.surveyName, this.state.active)
+        this.props.updateSurvey(this.state.surveyCustId, questions, this.state.surveyName, this.state.active, this.state.dcode)
       }
 
       CreateSurvey(){

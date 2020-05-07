@@ -56,11 +56,11 @@ function create(questions, surveyName, dcode) {
     function failure(error) { return { type: surveyConstants.CREATE_FAILURE, error } }
 }
 
-function update(id, question, surveyName, active) {
+function update(id, question, surveyName, active, dcode) {
     return dispatch => {
-        dispatch(request(id, question, surveyName, active))
+        dispatch(request(id, question, surveyName, active, dcode))
 
-        surveyService.update(id, question, surveyName, active)
+        surveyService.update(id, question, surveyName, active, dcode)
             .then(
                 survey => {
                     dispatch(success());
