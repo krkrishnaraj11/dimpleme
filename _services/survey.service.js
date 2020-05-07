@@ -77,7 +77,7 @@ function _delete(id) {
 function verifyDcode(dcode) {
     const requestOptions = {
         method: 'GET',
-        headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtya3Jpc2huYXJhajExQGdtYWlsLmNvbSIsImlkIjoiNWVhOWRiY2Y1NmY5NTEwMDE3YTI1NGQ1IiwibmFtZSI6IktyaXNobmFyYWoiLCJpYXQiOjE1ODg4Nzc3NDh9.adaNDyPMNajLfSkp7Pob2cuunxwlX5T4NhB7s1EFFuE', 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' }
     };
 
     console.log(requestOptions)
