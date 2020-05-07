@@ -187,7 +187,7 @@ responseGoogle = (response) => {
                   <span className="btn-large--icon">
                     <img
                       alt="..."
-                      height="30"
+                      height="44"
                       src={"/src/assets/img/icons/smiley/satisfied.png"}
                     />
                   </span>
