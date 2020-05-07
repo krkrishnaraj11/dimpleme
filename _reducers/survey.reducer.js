@@ -41,6 +41,14 @@ export function survey(state = initialState, action) {
       return { 
         error: action.error
       };
+    case surveyConstants.VERIFY_DCODE_REQUEST:
+      return { loading: true };
+    case surveyConstants.VERIFY_DCODE_SUCCESS:
+      return  action.survey
+    case surveyConstants.VERIFY_DCODE_FAILURE:
+      return { 
+        error: action.error
+      };
     case surveyConstants.DELETE_REQUEST:
       // add 'deleting:true' property to user being deleted
       return {

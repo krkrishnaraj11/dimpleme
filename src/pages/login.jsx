@@ -19,8 +19,9 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { history } from '../../_helpers';
 import classnames from "classnames";
-import { userActions, alertActions } from '../../_actions';
+import { userActions, alertActions, surveyActions } from '../../_actions';
 import QrReader from 'react-qr-reader';
+import { store } from 'react-notifications-component';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import GoogleLogin from 'react-google-login';
 var emailregex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
@@ -91,7 +92,7 @@ handleDcode(e){
   }
 
   else{
-    console.log(dcodeState, dcode );
+    this.props.validDcode(dcode);
   }
 }
 
@@ -159,7 +160,27 @@ handleSubmit(e) {
         mode: 'cors',
         cache: 'default'
     };
-};
+  };
+
+  UNSAFE_componentWillReceiveProps(nextProps){
+    if(nextProps.alert.message){
+      store.addNotification({
+        title: 'Survey',
+        message: nextProps.alert.message,
+        type: nextProps.alert.type,             // 'default', 'success', 'info', 'warning'
+        container: 'top-right',                // where to position the notifications
+        animationIn: ["animated", "fadeIn"],     // animate.css classes that's applied
+        animationOut: ["animated", "fadeOut"],   // animate.css classes that's applied
+        dismiss: {
+          duration: 1000 
+        }
+      })
+    }
+    
+    if(nextProps.survey.exists == true){
+      history.push('/survey/' + this.state.dcode)
+    }
+  }
 
 responseGoogle = (response) => {
   console.log(response);
@@ -420,13 +441,6 @@ responseGoogle = (response) => {
                   </Button>
                 </div>
               </Form>
-              {
-                alert.message ?
-                    <Alert color={alert.type} fade={true}>
-                        {alert.message}
-                    </Alert>
-                    : null
-              }
             </CardBody>
             
 
@@ -525,13 +539,14 @@ responseGoogle = (response) => {
 
 function mapState(state) {
   const { loggingIn } = state.authentication;
-  const { alert, user } = state;
-  return { loggingIn, alert, user };
+  const { alert, user, survey } = state;
+  return { loggingIn, alert, survey };
 }
 
 const actionCreators = {
   login: userActions.login,
   logout: userActions.logout,
+  validDcode: surveyActions.verifyDecode,
   forgot: userActions.forgot,
   clearAlerts: alertActions.clear
 };

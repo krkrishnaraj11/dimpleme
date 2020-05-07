@@ -9,6 +9,7 @@ export const surveyService = {
     update,
     submitAnswer,
     getById,
+    verifyDcode,
     delete: _delete
 };
 
@@ -71,6 +72,16 @@ function _delete(id) {
     };
     
     return fetch(`${config.apiUrl}/survey/delete`, requestOptions).then(handleResponse);
+}
+
+function verifyDcode(dcode) {
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imtya3Jpc2huYXJhajExQGdtYWlsLmNvbSIsImlkIjoiNWVhOWRiY2Y1NmY5NTEwMDE3YTI1NGQ1IiwibmFtZSI6IktyaXNobmFyYWoiLCJpYXQiOjE1ODg4Nzc3NDh9.adaNDyPMNajLfSkp7Pob2cuunxwlX5T4NhB7s1EFFuE', 'Content-Type': 'application/json' }
+    };
+
+    console.log(requestOptions)
+    return fetch(`${config.apiUrl}/survey/exists/${dcode}`, requestOptions).then(handleResponse);;
 }
 
 function handleResponse(response) {

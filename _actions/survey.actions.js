@@ -9,7 +9,8 @@ export const surveyActions = {
     getById,
     submitAnswer,
     update,
-    _delete
+    _delete,
+    verifyDecode
 };
 
 function submitAnswer(surveyCustId, answers){
@@ -142,4 +143,26 @@ function _delete(id) {
     function request(id) { return { type: surveyConstants.DELETE_REQUEST, id } }
     function success(id) { return { type: surveyConstants.DELETE_SUCCESS, id } }
     function failure(id, error) { return { type: surveyConstants.DELETE_FAILURE, id, error } }
+}
+
+function verifyDecode(dcode) {
+    return dispatch => {
+        dispatch(request(dcode));
+
+        surveyService.verifyDcode(dcode)
+            .then(
+                survey => {
+                    dispatch(success(survey))
+                    // dispatch(alertActions.success('Survey List Fetched Successful'));
+                },
+                error => {
+                    dispatch(failure(error.toString()))
+                    dispatch(alertActions.error(error.toString()));
+                }
+            );
+    };
+
+    function request() { return { type: surveyConstants.VERIFY_DCODE_REQUEST } }
+    function success(survey) { return { type: surveyConstants.VERIFY_DCODE_SUCCESS, survey } }
+    function failure(error) { return { type: surveyConstants.VERIFY_DCODE_FAILURE, error } }
 }
