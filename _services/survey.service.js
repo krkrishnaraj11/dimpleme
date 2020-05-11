@@ -2,16 +2,37 @@
 import config from 'config';
 import { authHeader } from '../_helpers';
 import { surveyActions } from '../_actions';
-
+import axios from 'axios';
 export const surveyService = {
     create,
     getAll,
+    getLatest,
     update,
+    updateStatus,
     submitAnswer,
     getById,
+    downloadReport,
     verifyDcode,
     delete: _delete
 };
+
+function downloadReport(id) {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    };
+
+    return fetch(`${config.apiUrl}/survey/report/${id}`, requestOptions).then(downloadResponse);
+}
+
+function getLatest() {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    };
+
+    return fetch(`${config.apiUrl}/user/latestSurveys`, requestOptions).then(handleResponse);
+}
 
 function getAll() {
     const requestOptions = {
@@ -63,6 +84,17 @@ function update(id, questions, surveyName, active, dcode) {
     return fetch(`${config.apiUrl}/survey/update/${id}`, requestOptions).then(handleResponse);;
 }
 
+function updateStatus(id, active) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({ surveyCustId: id, active })
+    };
+
+    console.log(requestOptions)
+    return fetch(`${config.apiUrl}/survey/updateStatus`, requestOptions).then(handleResponse);;
+}
+
 // prefixed function name with underscore because delete is a reserved word in javascript
 function _delete(id) {
     const requestOptions = {
@@ -84,7 +116,17 @@ function verifyDcode(dcode) {
     return fetch(`${config.apiUrl}/survey/exists/${dcode}`, requestOptions).then(handleResponse);;
 }
 
+
+function downloadResponse(response){
+    response.blob().then(blob => {
+        let url = window.URL.createObjectURL(blob);
+        // a.href = url;
+        window.open(url);
+    });
+}
+
 function handleResponse(response) {
+
     return response.text().then(text => {
         const data = text && JSON.parse(text);
         if (!response.ok) {

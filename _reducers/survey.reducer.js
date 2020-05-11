@@ -19,6 +19,12 @@ export function survey(state = initialState, action) {
       return {};
     case surveyConstants.UPDATE_FAILURE:
       return {};
+    case surveyConstants.UPDATE_STATUS_REQUEST:
+      return { loading: true };
+    case surveyConstants.UPDATE_STATUS_SUCCESS:
+      return {};
+    case surveyConstants.UPDATE_STATUS_FAILURE:
+      return {};
     case surveyConstants.SUBMIT_ANSWER_REQUEST:
       return { loading: true };
     case surveyConstants.SUBMIT_ANSWER_SUCCESS:
@@ -30,6 +36,14 @@ export function survey(state = initialState, action) {
     case surveyConstants.GETALL_SUCCESS:
       return  action.surveys
     case surveyConstants.GETALL_FAILURE:
+      return { 
+        error: action.error
+      };
+    case surveyConstants.GETLATEST_REQUEST:
+      return { loading: true };
+    case surveyConstants.GETLATEST_SUCCESS:
+      return  action.latestsurveys
+    case surveyConstants.GETLATEST_FAILURE:
       return { 
         error: action.error
       };
@@ -46,6 +60,14 @@ export function survey(state = initialState, action) {
     case surveyConstants.VERIFY_DCODE_SUCCESS:
       return  action.survey
     case surveyConstants.VERIFY_DCODE_FAILURE:
+      return { 
+        error: action.error
+      };
+    case surveyConstants.DOWNLOAD_REPORT_REQUEST:
+      return { loading: true };
+    case surveyConstants.DOWNLOAD_REPORT_SUCCESS:
+      return  action.reports
+    case surveyConstants.DOWNLOAD_REPORT_FAILURE:
       return { 
         error: action.error
       };

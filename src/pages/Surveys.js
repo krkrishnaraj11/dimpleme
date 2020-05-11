@@ -1,36 +1,21 @@
 import React from "react";
 // reactstrap components
 import {
-  Alert,
-  Badge,
   Card,
   CardHeader,
-  CardFooter,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  Media,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Progress,
   Table,
-  Form,
-  FormGroup,
-  FormText,
+  Label,
   Container,
   Row,
-  UncontrolledTooltip,
+  Col,
+  Popover,
+  PopoverHeader,
+  PopoverBody,
   Button,
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
-
   Input
 } from "reactstrap";
 // core components
@@ -50,9 +35,26 @@ class Survey extends React.Component {
           deleteModal: false,
           qrModal: false,
           surveyCustId: '',
+          popSurvey: [],
           survey: {},
-          selectSurveyQR: ''
+          selectSurveyQR: '',
+          imgSrc : [
+            { icon: '/src/assets/img/icons/smiley/very-satisfied.png' },
+            { icon: '/src/assets/img/icons/smiley/satisfied.png' },
+            { icon: '/src/assets/img/icons/smiley/neutral.png' },
+            { icon: '/src/assets/img/icons/smiley/unsatisfied.png' },
+            { icon: '/src/assets/img/icons/smiley/very-unsatisfied.png' },
+        ]
         }
+      }
+
+      togglePopover(i){
+        var pSurvey = this.state.popSurvey;
+        console.log(i)
+        pSurvey[i] = !pSurvey[i];
+        console.log(pSurvey[i])
+        console.log(pSurvey)
+        this.setState({ popSurvey: pSurvey })
       }
       
       componentDidMount(){
@@ -73,10 +75,14 @@ class Survey extends React.Component {
             }
           })
         }
-        if(nextProps.survey.data){
-          this.setState({ survey: nextProps.survey })
+        if(nextProps.survey.data && nextProps.survey.data instanceof Array){
+          var popAr = []
+          nextProps.survey.data.map((i) => {
+            popAr.push(false);
+          })
+          console.log(nextProps.survey)
+          this.setState({ survey: nextProps.survey, popSurvey: popAr })
         }
-
       }
 
       downloadQR = () => {
@@ -118,6 +124,10 @@ class Survey extends React.Component {
 
       toggleQRModal(dcode){
         this.setState({ qrModal: !this.state.qrModal, selectSurveyQR: (dcode) ? dcode: '' })
+      }
+
+      updateStatus(surveyCustId, status){
+        this.props.updateSurveyStatus(surveyCustId, status)
       }
 
   render() {
@@ -165,19 +175,59 @@ class Survey extends React.Component {
                       <th scope="col">Active</th>
                       <th scope="col">Edit</th>
                       <th scope="col">Delete</th>
+                      <th scope="col">Link</th>
                       <th scope="col">QR Code</th>
+                      <th scope="col">Report</th>
                     </tr>
                   </thead>
                   <tbody>
                   {
                     this.state.survey.data && this.state.survey.data instanceof Array && this.state.survey.data.map((item, i) => (
-                      <tr>
-                      <th scope="row">{item.surveyName}</th>
+                      <tr scope="row">
+                      <th onMouseEnter={() => this.togglePopover(i)} onMouseLeave={() => this.togglePopover(i)} id={"survey" + i}>{item.surveyName}</th>
+                      <Popover className="danger" placement="auto" isOpen={this.state.popSurvey[i]} hideArrow target={"survey"+i} toggle={() => this.togglePopover(i)}>
+                      <PopoverHeader>{item.surveyName}</PopoverHeader>
+                      <PopoverBody className="bg-default shadow">
+                        <Row className="justify-content-between">
+                          <Row className="no-gutters">
+                          <span className="avatar avatar-md rounded-circle mx-3 my-1">
+                            <img src={this.state.imgSrc[0].icon}/>
+                          </span>
+                            <h2 className="text-white mt-3 ml-7">{item.dimpleInfo.verySatisfied}</h2>
+                          </Row>
+                          <Row className="no-gutters">
+                          <span className="avatar avatar-md rounded-circle mx-3 my-1">
+                            <img src={this.state.imgSrc[1].icon}/>
+                          </span>
+                            <h2 className="text-white mt-3 ml-7">{item.dimpleInfo.satisfied}</h2>
+                          </Row>
+                          <Row className="no-gutters">
+                          <span className="avatar avatar-md rounded-circle mx-3 my-1">
+                            <img src={this.state.imgSrc[2].icon}/>
+                          </span>
+                            <h2 className="text-white mt-3 ml-7">{item.dimpleInfo.neutral}</h2>
+                          </Row>
+                          <Row className="no-gutters">
+                          <span className="avatar avatar-md rounded-circle mx-3 my-1">
+                            <img src={this.state.imgSrc[3].icon}/>
+                          </span>
+                            <h2 className="text-white mt-3 ml-7">{item.dimpleInfo.unsatisfied}</h2>
+                          </Row>
+                          <Row className="no-gutters">
+                          <span className="avatar avatar-md rounded-circle mx-3 my-1">
+                            <img src={this.state.imgSrc[4].icon}/>
+                          </span>
+                            <h2 className="text-white mt-3 ml-7">{item.dimpleInfo.veryUnsatisfied}</h2>
+                          </Row>
+                        </Row>
+                      </PopoverBody>
+                    </Popover>
                       <td>{item.totalQuestions}</td>
                       <td>
-                        {(item.active) 
-                          ? <i className="fas fa-check-circle fa-2x text-success"/>
-                          : <i className="fas fa-times-circle fa-2x text-danger"/> }
+                        <Label className="custom-toggle" onClick={() => this.updateStatus(item.surveyCustId, !item.active )}>
+                          <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
+                          <span className="custom-toggle-slider rounded-circle "></span>
+                        </Label>
                       </td>
                       <td>
                         <Button size="sm" className="btn btn-icon btn-3 btn-outline-success" onClick={() => this.editSurvey(item)}>
@@ -190,15 +240,29 @@ class Survey extends React.Component {
                         </Button>
                       </td>
                       <td>
+                      <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => history.push('/survey/' + item.dcode)}>
+                          <i className="fas fa-link text-warning"/>
+                          <span className="btn-inner--text">Link</span>
+                        </Button>
+
+                      </td>
+                      <td>
                         <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
                           <i className="fas fa-qrcode text-success"/>
                           <span className="btn-inner--text">QR CODE</span>
                         </Button>
                       </td>
+
+                      <td>
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
+                          <i className="fas fa-download text-success"/>
+                          <span className="btn-inner--text">DOWNLOAD</span>
+                        </Button>
+                      </td>
                     </tr>
                     ))
                   }
-                  <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>
+                  <Modal isOpen={this.state.qrModal} centered toggle={() => this.toggleModal()}>
                     <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
                     <ModalBody className="d-block text-center">
                       <QRCode
@@ -240,6 +304,8 @@ function mapState(state) {
 const actionCreators = {
   getSurveys: surveyActions.getAll,
   deleteSurveys: surveyActions._delete,
+  reportDownload: surveyActions.downloadReport,
+  updateSurveyStatus: surveyActions.updateStatus,
   clearAlerts: alertActions.clear
 };
 

@@ -1,4 +1,4 @@
-import Index from "./pages/Index.js";
+import {Dashboard} from "./pages/Dashboard";
 import Profile from "./pages/Profile.js";
 import {Group} from "./pages/Group.js";
 import {Login} from "./pages/login";
@@ -7,10 +7,10 @@ import {SurveyEdit} from "./pages/SurveyEdit.jsx";
 
 const routes = [
   {
-    path: "/index",
+    path: "/dashboard",
     name: "Dashboard",
     icon: "ni ni-tv-2 text-primary",
-    component: Index,
+    component: Dashboard,
     layout: "/admin"
   },
   {
