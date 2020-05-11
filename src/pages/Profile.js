@@ -8,9 +8,12 @@ import {
   FormGroup,
   Form,
   Input,
+  InputGroupText,
+  InputGroupAddon,
   Container,
   Row,
-  Col
+  Col,
+  InputGroup
 } from "reactstrap";
 // core components
 import UserHeader from "../components/Headers/UserHeader.js";
@@ -61,6 +64,7 @@ class Profile extends React.Component {
 
   UNSAFE_componentWillReceiveProps(nextProps){
    if(nextProps.users.items){
+     console.log(nextProps.users.items)
      this.setState({
        address: nextProps.users.items.data.address,
        city: nextProps.users.items.data.city,
@@ -94,22 +98,44 @@ class Profile extends React.Component {
     if(e.target.value == "" || e.target.id == "email" && !emailregex.test(e.target.value)) {
       this.setState({ [id + "State"]: "invalid"})
     }
+    else{
+      this.setState({ [id + "State"]: "valid"}) 
+    }
 }
 
-  handleUpdate(){
+  handleUpdate(e){
+    const { email, emailState, password, passwordState, firstName, firstNameState, lastName, lastNameState, address, addressState, city, cityState, country, countryState, postalCode, postalCodeState } = this.state;
     if(this.state.update){
-      const user = {
-        email: this.state.email,
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        address: this.state.address,
-        city: this.state.city,
-        country: this.state.country,
-        password: this.state.password
+      if(email == '' || password == '' || !emailregex.test(email) || firstName == '' || lastName == '' || address == '' || city == '' || country == '' || postalCode == ''){
+        this.setState({ focusedEmail: true , focusedPassword: true, focusedAddress: true, focusedCity: true, focusedCountry: true, focusedLastName: true, focusedFirstName: true, focusedPostalCode: true})
+        this.setState( email == "" || !emailregex.test(email) ? { emailState: "invalid"} : {emailState: "valid"})
+        this.setState( password == "" ? { passwordState: "invalid"} : {passwordState: "valid"})
+        this.setState( firstName == "" ? { firstNameState: "invalid"} : {firstNameState: "valid"})
+        this.setState( lastName == "" ? { lastNameState: "invalid"} : {lastNameState: "valid"})
+        this.setState( address == "" ? { addressState: "invalid"} : {addressState: "valid"})
+        this.setState( city == "" ? { cityState: "invalid"} : {cityState: "valid"})
+        this.setState( country == "" ? { countryState: "invalid"} : {countryState: "valid"})
+        this.setState( postalCode == "" ? { postalCodeState: "invalid"} : {postalCodeState: "valid"})
       }
-      this.props.updateUserDetails(user);
+      else{
+        const user = {
+          email: this.state.email,
+          firstName: this.state.firstName,
+          lastName: this.state.lastName,
+          address: this.state.address,
+          city: this.state.city,
+          country: this.state.country,
+          password: this.state.password
+        }
+        this.props.updateUserDetails(user);
+        this.setState({ update: !this.state.update })
+      }
+
     }
-    this.setState({ update: !this.state.update })
+    else{
+      this.setState({ update: !this.state.update })
+    }
+
   }
 
   render() {
@@ -133,6 +159,18 @@ class Profile extends React.Component {
                       >
                         {this.state.update ? "Save" : "Edit"}
                       </Button>
+                      {
+                        this.state.update ?
+                          <Button
+                            color="danger"
+                            onClick={() => this.setState({ update: !this.state.update })}
+                            size="sm"
+                          >
+                            Cancel
+                          </Button>
+
+                          : null
+                      }
                     </Col>
                   </Row>
                 </CardHeader>
@@ -144,45 +182,74 @@ class Profile extends React.Component {
                     <div className="pl-lg-4">
                       <Row>
                         <Col lg="6">
-                          <FormGroup>
+                          <FormGroup 
+                          className={classnames(
+                            "mb-3",
+                            { focused: this.state.focusedEmail },
+                            { "has-danger": this.state.emailState === "invalid" },
+                            { "has-success": this.state.emailState === "valid" }
+                          )}>
                             <label
                               className="form-control-label"
                               htmlFor="email"
                             >
                               Email address
                             </label>
-                            <Input
-                              className="form-control-alternative"
-                              id="email"
-                              value={this.state.email}
-                              disabled={!this.state.update}
-                              onChange={(e) => this.handleChange(e)}
-                              placeholder="jesse@example.com"
-                              type="email"
-                            />
+                            <InputGroup
+                              className={classnames("input-group-merge input-group-alternative", 
+                              { "is-invalid": this.state.emailState === "invalid"},
+                              { "is-valid": this.state.emailState === "valid"})}>
+                              <Input
+                                className="form-control-alternative"
+                                id="email"
+                                value={this.state.email}
+                                disabled={!this.state.update}
+                                onChange={(e) => this.handleChange(e)}
+                                placeholder="jesse@example.com"
+                                type="email"
+                                className={classnames(
+                                  { "text-danger": this.state.emailState === "invalid" },
+                                  { "text-success": this.state.emailState === "valid" }
+                                )}
+                                onFocus={() => this.setState({ focusedEmail: true })}
+                                onBlur={() => this.setState({ focusedEmail: false })}
+                              />
+                            </InputGroup>
                           </FormGroup>
                         </Col>
                         {
                           this.state.update
                           ?  <Col lg="6">
-                              <FormGroup>
-                                <label
-                                  className="form-control-label"
-                                  htmlFor="password"
-                                >
-                                  Password
-                                </label>
-                                <Input
-                                  className="form-control-alternative"
-                                  id="password"
-                                  value={this.state.password}
-                                  disabled={!this.state.update}
-                                  autoComplete="current-password"
-                                  onChange={(e) => this.handleChange(e)}
-                                  placeholder="Password"
-                                  type="password"
-                                />
-                              </FormGroup>
+                          <FormGroup 
+                          className={classnames(
+                            "mb-3",
+                            { focused: this.state.focusedPassword },
+                            { "has-danger": this.state.passwordState === "invalid" },
+                            { "has-success": this.state.passwordState === "valid" }
+                          )}>
+                            <label
+                              className="form-control-label"
+                              htmlFor="password"
+                            >
+                              Password
+                            </label>
+                            <InputGroup
+                              className={classnames("input-group-merge input-group-alternative",
+                                {"is-invalid": this.state.passwordState === "invalid"},
+                                {"is-valid": this.state.passwordState === "valid"},
+                              )}>
+                              <Input
+                                className="form-control-alternative"
+                                id="password"
+                                value={this.state.password}
+                                disabled={!this.state.update}
+                                autoComplete="current-password"
+                                onChange={(e) => this.handleChange(e)}
+                                placeholder="Password"
+                                type="password"
+                              />
+                            </InputGroup>
+                          </FormGroup>
                             </Col>
 
                             :null
@@ -190,43 +257,64 @@ class Profile extends React.Component {
                       </Row>
                       <Row>
                         <Col lg="6">
-                          <FormGroup>
+                          <FormGroup 
+                            className={classnames(
+                              "mb-3",
+                              { focused: this.state.focusedFirstName },
+                              { "has-danger": this.state.firstNameState === "invalid" },
+                              { "has-success": this.state.firstNameState === "valid" }
+                            )}>
                             <label
                               className="form-control-label"
                               htmlFor="firstName"
                             >
                               First name
                             </label>
-                            <Input
-                              className="form-control-alternative"
-                              defaultValue="Lucky"
-                              disabled={!this.state.update}
-                              value={this.state.firstName}
-                              onChange={(e) => this.handleChange(e)}
-                              id="firstName"
-                              placeholder="First name"
-                              type="text"
-                            />
+                            <InputGroup
+                              className={classnames("input-group-merge input-group-alternative", {
+                                "is-invalid": this.state.firstNameState === "invalid"
+                              })}>
+                              <Input
+                                className="form-control-alternative"
+                                defaultValue="Lucky"
+                                disabled={!this.state.update}
+                                value={this.state.firstName}
+                                onChange={(e) => this.handleChange(e)}
+                                id="firstName"
+                                placeholder="First name"
+                                type="text"
+                              />
+                            </InputGroup>
                           </FormGroup>
                         </Col>
                         <Col lg="6">
-                          <FormGroup>
+                          <FormGroup 
+                              className={classnames(
+                                "mb-3",
+                                { focused: this.state.focusedLastName },
+                                { "has-danger": this.state.lastNameState === "invalid" },
+                                { "has-success": this.state.lastNameState === "valid" }
+                              )}>
                             <label
                               className="form-control-label"
                               htmlFor="lastName"
                             >
                               Last name
                             </label>
-                            <Input
-                              className="form-control-alternative"
-                              defaultValue="Jesse"
-                              id="lastName"
-                              value={this.state.lastName}
-                              onChange={(e) => this.handleChange(e)}
-                              disabled={!this.state.update}
-                              placeholder="Last name"
-                              type="text"
-                            />
+                            <InputGroup
+                              className={classnames("input-group-merge input-group-alternative", {
+                                "is-invalid": this.state.lastNameState === "invalid"
+                              })}>
+                                <Input
+                                  className="form-control-alternative"
+                                  id="lastName"
+                                  value={this.state.lastName}
+                                  onChange={(e) => this.handleChange(e)}
+                                  disabled={!this.state.update}
+                                  placeholder="Last name"
+                                  type="text"
+                                />
+                              </InputGroup>
                           </FormGroup>
                         </Col>
                       </Row>
@@ -239,84 +327,128 @@ class Profile extends React.Component {
                     <div className="pl-lg-4">
                       <Row>
                         <Col md="12">
-                          <FormGroup>
+                          <FormGroup 
+                                className={classnames(
+                                  "mb-3",
+                                  { focused: this.state.focusedAddress },
+                                  { "has-danger": this.state.addressState === "invalid" },
+                                  { "has-success": this.state.addressState === "valid" }
+                                )}>
                             <label
                               className="form-control-label"
                               htmlFor="address"
                             >
                               Address
                             </label>
-                            <Input
-                              className="form-control-alternative"
-                              defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                              id="address"
-                              disabled={!this.state.update}
-                              onChange={(e) => this.handleChange(e)}
-                              value={this.state.address}
-                              placeholder="Home Address"
-                              type="text"
-                            />
+                            <InputGroup
+                              className={classnames("input-group-merge input-group-alternative", {
+                                "is-invalid": this.state.addressState === "invalid"
+                              })}>
+                              <Input
+                                className="form-control-alternative"
+                                id="address"
+                                disabled={!this.state.update}
+                                onChange={(e) => this.handleChange(e)}
+                                value={this.state.address}
+                                placeholder="Home Address"
+                                type="text"
+                              />
+                            </InputGroup>
                           </FormGroup>
                         </Col>
                       </Row>
                       <Row>
                         <Col lg="4">
-                          <FormGroup>
+                          <FormGroup 
+                                className={classnames(
+                                  "mb-3",
+                                  { focused: this.state.focusedCity },
+                                  { "has-danger": this.state.cityState === "invalid" },
+                                  { "has-success": this.state.cityState === "valid" }
+                                )}>
                             <label
                               className="form-control-label"
                               htmlFor="city"
                             >
                               City
                             </label>
-                            <Input
-                              className="form-control-alternative"
-                              defaultValue="New York"
-                              id="city"
-                              disabled={!this.state.update}
-                              value={this.state.city}
-                              onChange={(e) => this.handleChange(e)}
-                              placeholder="City"
-                              type="text"
-                            />
+                            <InputGroup
+                              className={classnames("input-group-merge input-group-alternative", {
+                                "is-invalid": this.state.cityState === "invalid"
+                              })}>
+                              <Input
+                                className="form-control-alternative"
+                                defaultValue="New York"
+                                id="city"
+                                disabled={!this.state.update}
+                                value={this.state.city}
+                                onChange={(e) => this.handleChange(e)}
+                                placeholder="City"
+                                type="text"
+                              />
+                            </InputGroup>
                           </FormGroup>
                         </Col>
                         <Col lg="4">
-                          <FormGroup>
+                          <FormGroup 
+                            className={classnames(
+                              "mb-3",
+                              { focused: this.state.focusedCountry },
+                              { "has-danger": this.state.countryState === "invalid" },
+                              { "has-success": this.state.countryState === "valid" }
+                            )}>
                             <label
                               className="form-control-label"
                               htmlFor="country"
                             >
                               Country
                             </label>
-                            <Input
-                              className="form-control-alternative"
-                              defaultValue="United States"
-                              id="country"
-                              disabled={!this.state.update}
-                              value={this.state.country}
-                              onChange={(e) => this.handleChange(e)}
-                              placeholder="Country"
-                              type="text"
-                            />
+                            <InputGroup
+                              className={classnames("input-group-merge input-group-alternative", {
+                                "is-invalid": this.state.countryState === "invalid"
+                              })}>
+                              <Input
+                                className="form-control-alternative"
+                                defaultValue="United States"
+                                id="country"
+                                disabled={!this.state.update}
+                                value={this.state.country}
+                                onChange={(e) => this.handleChange(e)}
+                                placeholder="Country"
+                                type="text"
+                              />
+                            </InputGroup>
                           </FormGroup>
                         </Col>
                         <Col lg="4">
-                          <FormGroup>
+                          <FormGroup 
+                            className={classnames(
+                              "mb-3",
+                              { focused: this.state.focusedPostalCode },
+                              { "has-danger": this.state.postalCodeState === "invalid" },
+                              { "has-success": this.state.postalCodeState === "valid" }
+                            )}>
                             <label
                               className="form-control-label"
                               htmlFor="postalCode"
                             >
                               Postal code
                             </label>
-                            <Input
-                              className="form-control-alternative"
-                              id="postalCode"
-                              disabled={!this.state.update}
-                              value={this.state.postalCode}
-                              onChange={(e) => this.handleChange(e)}
-                              placeholder="Postal code"
-                              type="number"
-                            />
+                            <InputGroup
+                              className={classnames("input-group-merge input-group-alternative", {
+                                "is-invalid": this.state.postalCode === "invalid"
+                              })}>
+
+                              </InputGroup>
+                                <Input
+                                  className="form-control-alternative"
+                                  id="postalCode"
+                                  disabled={!this.state.update}
+                                  value={this.state.postalCode}
+                                  onChange={(e) => this.handleChange(e)}
+                                  placeholder="Postal code"
+                                  type="number"
+                                />
                           </FormGroup>
                         </Col>
                       </Row>
