@@ -1,5 +1,5 @@
 import {Dashboard} from "./pages/Dashboard";
-import Profile from "./pages/Profile.js";
+import {Profile} from "./pages/Profile.js";
 import {Group} from "./pages/Group.js";
 import {Login} from "./pages/login";
 import {Survey} from "./pages/Surveys";

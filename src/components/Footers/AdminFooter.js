@@ -52,16 +52,6 @@ class Footer extends React.Component {
                   Blog
                 </NavLink>
               </NavItem>
-
-              <NavItem>
-                <NavLink
-                  href="https://www.dimpleme.com"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  MIT License
-                </NavLink>
-              </NavItem>
             </Nav>
           </Col>
         </Row>

@@ -5,13 +5,15 @@ import { registration } from './registration.reducer';
 import { alert } from './alert.reducer';
 import { questionbank } from './questionbank.reducer';
 import { survey } from './survey.reducer';
+import { users } from './users.reducer';
 
 const rootReducer = combineReducers({
   authentication,
   registration,
   alert,
   questionbank,
-  survey
+  survey,
+  users
 });
 
 export default rootReducer;

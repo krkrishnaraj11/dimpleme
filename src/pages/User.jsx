@@ -24,7 +24,7 @@ class User extends React.Component {
                 <div className="image">
                   <img
                     alt="..."
-                    //src={require("../assets/img/damir-bosnjak.jpg")}
+                    src={"/src/assets/img/damir-bosnjak.jpg"}
                   />
                 </div>
                 <CardBody>

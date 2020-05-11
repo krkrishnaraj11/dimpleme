@@ -43,11 +43,13 @@ class Dashboard extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      survey: []
+      survey: [],
+      deleteModal: false,
+      qrModal: false,
+      selectSurveyQR: ''
     };
 
     history.listen((location, action) => {
-      // clear alert on location change
       this.props.clearAlerts();
     });
   }
@@ -82,6 +84,31 @@ class Dashboard extends React.Component {
 
   updateStatus(surveyCustId, status){
     this.props.updateSurveyStatus(surveyCustId, status)
+  }
+
+  downloadQR = () => {
+    const canvas = document.getElementById("qrcode");
+    const pngUrl = canvas
+      .toDataURL("image/png")
+      .replace("image/png", "image/octet-stream");
+    let downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    downloadLink.download = "qrcode.png";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
+
+  toggleDeleteModal(surveyCustId){
+    this.setState({ deleteModal: !this.state.deleteModal, surveyCustId: surveyCustId})
+  }
+
+  toggleModal(){
+    this.setState({ deleteModal: !this.state.deleteModal })
+  }
+
+  toggleQRModal(dcode){
+    this.setState({ qrModal: !this.state.qrModal, selectSurveyQR: (dcode) ? dcode: '' })
   }
 
   
