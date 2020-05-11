@@ -262,7 +262,7 @@ class Survey extends React.Component {
                     </tr>
                     ))
                   }
-                  <Modal isOpen={this.state.qrModal} centered toggle={() => this.toggleModal()}>
+                  <Modal backdrop={"false"} isOpen={this.state.qrModal} centered toggle={() => this.toggleModal()}>
                     <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
                     <ModalBody className="d-block text-center">
                       <QRCode
