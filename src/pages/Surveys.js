@@ -37,6 +37,7 @@ class Survey extends React.Component {
           surveyCustId: '',
           popSurvey: [],
           survey: {},
+          linkModal: false,
           selectSurveyQR: '',
           imgSrc : [
             { icon: '/src/assets/img/icons/smiley/very-satisfied.png' },
@@ -46,6 +47,11 @@ class Survey extends React.Component {
             { icon: '/src/assets/img/icons/smiley/very-unsatisfied.png' },
         ]
         }
+      }
+
+      
+      toggleLinkModal(dcode){
+        this.setState({ linkModal: !this.state.linkModal, selectSurveyQR: (dcode) ? dcode: '' })
       }
 
       togglePopover(i){
@@ -240,7 +246,7 @@ class Survey extends React.Component {
                         </Button>
                       </td>
                       <td>
-                      <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => history.push('/survey/' + item.dcode)}>
+                      <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
                           <i className="fas fa-link text-warning"/>
                           <span className="btn-inner--text">Link</span>
                         </Button>
@@ -262,6 +268,19 @@ class Survey extends React.Component {
                     </tr>
                     ))
                   }
+
+                  <Modal isOpen={this.state.linkModal} centered toggle={() => this.toggleLinkModal()}>
+                    <ModalHeader><h2 color="primary">Link</h2></ModalHeader>
+                    <ModalBody className="d-block text-center">
+                      <Input disabled value={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }/>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="success" onClick={(e) => navigator.clipboard.writeText("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy to Clipboard</Button>{' '}
+                      <Button color="secondary" onClick={() => this.toggleLinkModal()} >Close</Button>
+                    </ModalFooter>
+                  </Modal>
+
+
                   <Modal backdrop={"false"} isOpen={this.state.qrModal} centered toggle={() => this.toggleModal()}>
                     <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
                     <ModalBody className="d-block text-center">

@@ -104,12 +104,11 @@ class Profile extends React.Component {
 }
 
   handleUpdate(e){
-    const { email, emailState, password, passwordState, firstName, firstNameState, lastName, lastNameState, address, addressState, city, cityState, country, countryState, postalCode, postalCodeState } = this.state;
+    const { email, emailState, passwordState, firstName, firstNameState, lastName, lastNameState, address, addressState, city, cityState, country, countryState, postalCode, postalCodeState } = this.state;
     if(this.state.update){
-      if(email == '' || password == '' || !emailregex.test(email) || firstName == '' || lastName == '' || address == '' || city == '' || country == '' || postalCode == ''){
+      if(email == '' || !emailregex.test(email) || firstName == '' || lastName == '' || address == '' || city == '' || country == '' || postalCode == ''){
         this.setState({ focusedEmail: true , focusedPassword: true, focusedAddress: true, focusedCity: true, focusedCountry: true, focusedLastName: true, focusedFirstName: true, focusedPostalCode: true})
         this.setState( email == "" || !emailregex.test(email) ? { emailState: "invalid"} : {emailState: "valid"})
-        this.setState( password == "" ? { passwordState: "invalid"} : {passwordState: "valid"})
         this.setState( firstName == "" ? { firstNameState: "invalid"} : {firstNameState: "valid"})
         this.setState( lastName == "" ? { lastNameState: "invalid"} : {lastNameState: "valid"})
         this.setState( address == "" ? { addressState: "invalid"} : {addressState: "valid"})

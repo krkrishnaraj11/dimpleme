@@ -163,6 +163,7 @@ handleSubmit(e) {
   };
 
   UNSAFE_componentWillReceiveProps(nextProps){
+    console.log("alert")
     if(nextProps.alert.message){
       store.addNotification({
         title: 'Survey',
@@ -191,7 +192,6 @@ responseGoogle = (response) => {
     const { loggingIn } = this.props;
     const alert = this.props.alert;
     const user = this.props.user;
-    console.log("user", user)
     const {email, password, dcode, submitted} = this.state;
     return (
       <>

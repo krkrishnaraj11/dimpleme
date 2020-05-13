@@ -45,6 +45,7 @@ class Dashboard extends React.Component {
     this.state = {
       survey: [],
       deleteModal: false,
+      linkModal: false,
       qrModal: false,
       selectSurveyQR: ''
     };
@@ -61,6 +62,7 @@ class Dashboard extends React.Component {
 
 
     if(nextProps.alert.message){
+      console.log("alert")
       store.addNotification({
         title: 'Survey',
         isMobile: true,
@@ -82,7 +84,8 @@ class Dashboard extends React.Component {
     this.props.getLatestSurveys()
   }
 
-  updateStatus(surveyCustId, status){
+  updateStatus(surveyCustId, status, e){
+    e.preventDefault()
     this.props.updateSurveyStatus(surveyCustId, status)
   }
 
@@ -105,6 +108,10 @@ class Dashboard extends React.Component {
 
   toggleModal(){
     this.setState({ deleteModal: !this.state.deleteModal })
+  }
+
+  toggleLinkModal(dcode){
+    this.setState({ linkModal: !this.state.linkModal, selectSurveyQR: (dcode) ? dcode: '' })
   }
 
   toggleQRModal(dcode){
@@ -155,14 +162,14 @@ class Dashboard extends React.Component {
                       <th scope="row">{item.surveyName}</th>
                       <td>{item.totalQuestions}</td>
                       <td>
-                        <Label className="custom-toggle" onClick={() => this.updateStatus(item.surveyCustId, !item.active )}>
+                        <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
                           <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
                         <span className="custom-toggle-slider rounded-circle "></span>
                         </Label>
 
                       </td>
                       <td>
-                      <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => history.push('/survey/' + item.dcode)}>
+                      <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
                           <i className="fas fa-link text-warning"/>
                           <span className="btn-inner--text">Link</span>
                         </Button>
@@ -177,6 +184,17 @@ class Dashboard extends React.Component {
                     </tr>
                     ))
                   }
+                  <Modal isOpen={this.state.linkModal} centered toggle={() => this.toggleLinkModal()}>
+                    <ModalHeader><h2 color="primary">Link</h2></ModalHeader>
+                    <ModalBody className="d-block text-center">
+                      <Input disabled value={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }/>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="success" onClick={(e) => navigator.clipboard.writeText("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy to Clipboard</Button>{' '}
+                      <Button color="secondary" onClick={() => this.toggleLinkModal()} >Close</Button>
+                    </ModalFooter>
+                  </Modal>
+
                   <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>
                     <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
                     <ModalBody className="d-block text-center">
