@@ -58,8 +58,6 @@ class Survey extends React.Component {
         var pSurvey = this.state.popSurvey;
         console.log(i)
         pSurvey[i] = !pSurvey[i];
-        console.log(pSurvey[i])
-        console.log(pSurvey)
         this.setState({ popSurvey: pSurvey })
       }
       
@@ -80,6 +78,7 @@ class Survey extends React.Component {
               duration: 1000 
             }
           })
+          this.props.clearAlerts()
         }
         if(nextProps.survey.data && nextProps.survey.data instanceof Array){
           var popAr = []
@@ -132,7 +131,8 @@ class Survey extends React.Component {
         this.setState({ qrModal: !this.state.qrModal, selectSurveyQR: (dcode) ? dcode: '' })
       }
 
-      updateStatus(surveyCustId, status){
+      updateStatus(surveyCustId, status, e){
+        e.preventDefault();
         this.props.updateSurveyStatus(surveyCustId, status)
       }
 
@@ -230,7 +230,7 @@ class Survey extends React.Component {
                     </Popover>
                       <td>{item.totalQuestions}</td>
                       <td>
-                        <Label className="custom-toggle" onClick={() => this.updateStatus(item.surveyCustId, !item.active )}>
+                        <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active, e )}>
                           <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
                           <span className="custom-toggle-slider rounded-circle "></span>
                         </Label>
@@ -315,6 +315,7 @@ class Survey extends React.Component {
 }
 
 function mapState(state) {
+  console.log(alert)
   const survey = state.survey;
   const alert = state.alert;
   return { survey, alert };

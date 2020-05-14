@@ -21,7 +21,6 @@ function create(question) {
                     dispatch(alertActions.success('Question Created Successful'));
                 },
                 error => {
-                    dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
             );
@@ -43,7 +42,6 @@ function update(id, question) {
                     dispatch(alertActions.success('Question Updated Successful'));
                 },
                 error => {
-                    dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
             )

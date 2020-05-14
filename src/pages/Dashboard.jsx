@@ -56,13 +56,13 @@ class Dashboard extends React.Component {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps){
+
     if(nextProps.latestsurvey.data){
       this.setState({ survey: nextProps.latestsurvey})
     }
 
 
     if(nextProps.alert.message){
-      console.log("alert")
       store.addNotification({
         title: 'Survey',
         isMobile: true,
@@ -76,6 +76,7 @@ class Dashboard extends React.Component {
           duration: 1000 
         }
       })
+      this.props.clearAlerts()
     }
   }
 
@@ -231,10 +232,9 @@ class Dashboard extends React.Component {
 }
 
 function mapState(state) {
-  console.log(state)
   const latestsurvey = state.survey;
   const alert = state.alert;
-  return { latestsurvey, alert };
+    return { latestsurvey, alert };
 }
 
 const actionCreators = {

@@ -26,7 +26,7 @@ function login(email, password) {
                 },
                 error => {
                     console.log(error)
-                    dispatch(failure(error.toString()));
+                    // dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
             );
@@ -53,7 +53,7 @@ function forgot(user){
                     history.push('/');
                 },
                 error => {
-                    dispatch(failure(error.toString()));
+                    // dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
             )
@@ -98,7 +98,7 @@ function update(user) {
                     dispatch(alertActions.success('Updated successful'));
                 },
                 error => {
-                    dispatch(failure(error.toString()));
+                    // dispatch(failure(error.toString()));
                     dispatch(alertActions.error(error.toString()));
                 }
             );

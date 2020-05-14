@@ -95,6 +95,7 @@ class SurveyEdit extends React.Component {
               duration: 1000 
             }
           })
+          this.props.clearAlerts();
         }
       }
 
@@ -130,14 +131,16 @@ class SurveyEdit extends React.Component {
         this.setState({ surveyquestions: questions})
       }
 
-      updateSurvey(){
+      updateSurvey(e){
+        e.preventDefault();
         const questions = this.state.surveyquestions.map(item => {
           return { question : item.question }
         })
         this.props.updateSurvey(this.state.surveyCustId, questions, this.state.surveyName, this.state.active, this.state.dcode)
       }
 
-      CreateSurvey(){
+      CreateSurvey(e){
+        e.preventDefault();
         this.props.createSurvey(this.state.surveyquestions, this.state.surveyName, this.state.dcode)
       }
 
@@ -263,7 +266,7 @@ class SurveyEdit extends React.Component {
                         className="btn-round"
                         color="success"
                         type="button"
-                        onClick={() => this.updateSurvey()}
+                        onClick={(e) => this.updateSurvey(e)}
                       >
                         Update Survey
                       </Button>
@@ -272,7 +275,7 @@ class SurveyEdit extends React.Component {
                         className="btn-round"
                         color="success"
                         type="button"
-                        onClick={() => this.CreateSurvey()}
+                        onClick={(e) => this.CreateSurvey(e)}
                       >
                         Create Survey
                       </Button>
