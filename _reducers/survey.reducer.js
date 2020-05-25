@@ -57,7 +57,7 @@ export function survey(state = initialState, action) {
     case surveyConstants.SEARCH_REQUEST:
       return { loading: true };
     case surveyConstants.SEARCH_SUCCESS:
-      return  action.survey
+      return  action.searchresult
     case surveyConstants.SEARCH_FAILURE:
       return { error: action.error};
 

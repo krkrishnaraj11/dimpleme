@@ -76,14 +76,14 @@ class Dashboard extends React.Component {
   };
 
   UNSAFE_componentWillReceiveProps(nextProps){
-    console.log(nextProps)
-    if(nextProps.dashboarddata.data){
+    
+    if(this.state.searchText == '' && nextProps.dashboarddata.data){
       this.setState({ 
-          recentCreatedSurveys: nextProps.dashboarddata.data.recentCreatedSurveys,
-          recentSubmittedSurveys: nextProps.dashboarddata.data.recentSubmittedSurveys
-        })
+        recentCreatedSurveys: nextProps.dashboarddata.data.recentCreatedSurveys,
+        recentSubmittedSurveys: nextProps.dashboarddata.data.recentSubmittedSurveys
+      })
     }
-
+    
     if(nextProps.survey.data){
       this.setState({ recentCreatedSurveys: nextProps.survey.data })
     }
@@ -109,13 +109,11 @@ class Dashboard extends React.Component {
 
   componentDidMount(){
     this.props.getDashboardData()
-    this.props.getLatestSurveys()
   }
 
   onChangeSearch(e){
-    console.log(e.target.value)
     this.setState({ searchText: e.target.value})
-    this.props.searchSurvey(e.target.value);
+      this.props.searchSurvey(e.target.value)
   }
 
   updateStatus(surveyCustId, status, e){
@@ -443,7 +441,6 @@ function mapState(state) {
 }
 
 const actionCreators = {
-  getLatestSurveys: surveyActions.latestSurvey,
   getDashboardData: dashboardActions.getData,
   searchSurvey: surveyActions.search,
   updateSurveyStatus: surveyActions.updateStatus,

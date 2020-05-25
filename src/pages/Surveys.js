@@ -39,6 +39,7 @@ class Survey extends React.Component {
           survey: {},
           linkModal: false,
           selectSurveyQR: '',
+          searchText: '',
           imgSrc : [
             { icon: '/src/assets/img/icons/smiley/very-satisfied.png' },
             { icon: '/src/assets/img/icons/smiley/satisfied.png' },
@@ -56,7 +57,6 @@ class Survey extends React.Component {
 
       togglePopover(i){
         var pSurvey = this.state.popSurvey;
-        console.log(i)
         pSurvey[i] = !pSurvey[i];
         this.setState({ popSurvey: pSurvey })
       }
@@ -85,9 +85,13 @@ class Survey extends React.Component {
           nextProps.survey.data.map((i) => {
             popAr.push(false);
           })
-          console.log(nextProps.survey)
-          this.setState({ survey: nextProps.survey, popSurvey: popAr })
+          this.setState({ survey: nextProps.survey.data, popSurvey: popAr })
         }
+      }
+
+      onChangeSearch(e){
+        this.setState({ searchText: e.target.value})
+        this.props.searchSurvey(e.target.value);
       }
 
       downloadQR = () => {
@@ -172,6 +176,16 @@ class Survey extends React.Component {
                       </Button>
                     </div>
                   </Row>
+                  <Row>
+                    <Input                                     
+                      placeholder="Search" 
+                      type="search" 
+                      autoComplete="search-survey"
+                      className="bg-default shadow mt-3"
+                      value={this.state.searchText}
+                      onChange={(e) => this.onChangeSearch(e)}
+                    />
+                  </Row>
                 </CardHeader>
                 <Table className="align-items-center table-flush table-white" responsive>
                   <thead className="thead-dark">
@@ -183,12 +197,13 @@ class Survey extends React.Component {
                       <th scope="col">Delete</th>
                       <th scope="col">Link</th>
                       <th scope="col">QR Code</th>
+                      <th scope="col">Result</th>
                       <th scope="col">Report</th>
                     </tr>
                   </thead>
                   <tbody>
                   {
-                    this.state.survey.data && this.state.survey.data instanceof Array && this.state.survey.data.map((item, i) => (
+                    this.state.survey && this.state.survey instanceof Array && this.state.survey.map((item, i) => (
                       <tr scope="row">
                       <th onMouseEnter={() => this.togglePopover(i)} onMouseLeave={() => this.togglePopover(i)} id={"survey" + i}>{item.surveyName}</th>
                       <Popover className="danger" placement="auto" isOpen={this.state.popSurvey[i]} hideArrow target={"survey"+i} toggle={() => this.togglePopover(i)}>
@@ -265,46 +280,59 @@ class Survey extends React.Component {
                           <span className="btn-inner--text">DOWNLOAD</span>
                         </Button>
                       </td>
+
+                      <td>
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" >
+                          <i className="fas fa-th-list text-warning"/>
+                          <span className="btn-inner--text">RESULT</span>
+                        </Button>
+                      </td>
                     </tr>
                     ))
                   }
 
-                  <Modal isOpen={this.state.linkModal} centered toggle={() => this.toggleLinkModal()}>
-                    <ModalHeader><h2 color="primary">Link</h2></ModalHeader>
-                    <ModalBody className="d-block text-center">
-                      <Input disabled value={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }/>
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="success" onClick={(e) => navigator.clipboard.writeText("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy to Clipboard</Button>{' '}
-                      <Button color="secondary" onClick={() => this.toggleLinkModal()} >Close</Button>
-                    </ModalFooter>
-                  </Modal>
+                    <Modal isOpen={this.state.linkModal} centered toggle={() => this.toggleLinkModal()}>
+                      <ModalHeader className="bg-info" toggle={() => this.toggleLinkModal()}>
+                        <h2 color="primary" className="text-left">Link</h2>
+                      </ModalHeader>
+                      <ModalBody className="d-block text-center">
+                        <Card className="p-2 bg-default">
+                        <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
+                        </Card>
+                      </ModalBody>
+                    </Modal>
 
 
-                  <Modal backdrop={"false"} isOpen={this.state.qrModal} centered toggle={() => this.toggleModal()}>
-                    <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
-                    <ModalBody className="d-block text-center">
-                      <QRCode
-                        id="qrcode"
-                        value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
-                        size={290}
-                        imageSettings= {{
-                          src: "/src/assets/img/icons/smiley/satisfied.png",
-                          x: null,
-                          y: null,
-                          height: 60,
-                          width: 60,
-                          excavate: true,
-                        }}
-                        level={"H"}
-                        includeMargin={true}
-                      />
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
-                      <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button>
-                    </ModalFooter>
-                  </Modal>
+                    <Modal isOpen={this.state.qrModal} centered toggle={() => this.toggleQRModal()}>
+                      <ModalHeader  className="bg-info" toggle={() => this.toggleQRModal()}>
+                      <Row>
+                           <Col>
+                            <h2 color="primary" className="text-left">Survey QRCode</h2>
+                          </Col>
+                      </Row>
+                      </ModalHeader>
+                      <ModalBody className="d-block text-center">
+                        <QRCode
+                          id="qrcode"
+                          value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                          size={290}
+                          imageSettings= {{
+                            src: "/src/assets/img/icons/smiley/satisfied.png",
+                            x: null,
+                            y: null,
+                            height: 60,
+                            width: 60,
+                            excavate: true,
+                          }}
+                          level={"H"}
+                          includeMargin={true}
+                        />
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
+                        {/* <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button> */}
+                      </ModalFooter>
+                    </Modal>
                   </tbody>
                 </Table>
               </Card>
@@ -315,7 +343,6 @@ class Survey extends React.Component {
 }
 
 function mapState(state) {
-  console.log(alert)
   const survey = state.survey;
   const alert = state.alert;
   return { survey, alert };
@@ -324,6 +351,7 @@ function mapState(state) {
 const actionCreators = {
   getSurveys: surveyActions.getAll,
   deleteSurveys: surveyActions._delete,
+  searchSurvey: surveyActions.search,
   reportDownload: surveyActions.downloadReport,
   updateSurveyStatus: surveyActions.updateStatus,
   clearAlerts: alertActions.clear

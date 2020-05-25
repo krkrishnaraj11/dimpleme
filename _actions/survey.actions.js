@@ -150,17 +150,16 @@ function search(text) {
 
         surveyService.search(text)
             .then(
-                surveys => {
-                    dispatch(success(surveys))
-                    // dispatch(alertActions.success('Survey Fetch Successful'));
+                searchresult => {
+                    dispatch(success(searchresult))
                 },
                 error => {
                     dispatch(alertActions.error(error.toString()));
                 }
             )
     }
-    function request(survey) { return { type: surveyConstants.SEARCH_REQUEST, survey } }
-    function success(survey) { return { type: surveyConstants.SEARCH_SUCCESS, survey } }
+    function request(searchresult) { return { type: surveyConstants.SEARCH_REQUEST, searchresult } }
+    function success(searchresult) { return { type: surveyConstants.SEARCH_SUCCESS, searchresult } }
     function failure(error) { return { type: surveyConstants.SEARCH_FAILURE, error } }
 }
 
