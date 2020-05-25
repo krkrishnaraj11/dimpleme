@@ -11,6 +11,7 @@ import {
   Button,
   Card,
   CardHeader,
+  CardTitle,
   CardBody,
   NavItem,
   NavLink,
@@ -23,9 +24,13 @@ import {
   ModalHeader,
   ModalFooter,
   Input,
-  CustomInput,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
   Label,
   Row,
+  TabContent,
+  TabPane,
   Col,
   Form,
   FormGroup,
@@ -35,19 +40,27 @@ import {
 import { connect } from 'react-redux';
 import { history } from '../../_helpers';
 import { store } from 'react-notifications-component';
-import { userActions, alertActions, surveyActions } from '../../_actions';
+import { userActions, alertActions, surveyActions, dashboardActions } from '../../_actions';
 import QrReader from 'react-qr-reader';
-import Header from "../components/Headers/Header.js";
+import {Header} from "../components/Headers/Header.js";
+import { Redirect } from "react-router-dom";
 
 class Dashboard extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      survey: [],
+      recentCreatedSurveys: [],
+      recentSubmittedSurveys: [],
+      sureys:[],
+      tabs: 1,
       deleteModal: false,
       linkModal: false,
       qrModal: false,
-      selectSurveyQR: ''
+      selectSurveyQR: '',
+      surveyCount: 0,
+      activeSurveyCount: 0,
+      inactiveSurveyCount: 0,
+      searchText: ''
     };
 
     history.listen((location, action) => {
@@ -55,12 +68,25 @@ class Dashboard extends React.Component {
     });
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps){
+  toggleNavs = (e, state, index) => {
+    e.preventDefault();
+    this.setState({
+      [state]: index
+    });
+  };
 
-    if(nextProps.latestsurvey.data){
-      this.setState({ survey: nextProps.latestsurvey})
+  UNSAFE_componentWillReceiveProps(nextProps){
+    console.log(nextProps)
+    if(nextProps.dashboarddata.data){
+      this.setState({ 
+          recentCreatedSurveys: nextProps.dashboarddata.data.recentCreatedSurveys,
+          recentSubmittedSurveys: nextProps.dashboarddata.data.recentSubmittedSurveys
+        })
     }
 
+    if(nextProps.survey.data){
+      this.setState({ recentCreatedSurveys: nextProps.survey.data })
+    }
 
     if(nextProps.alert.message){
       store.addNotification({
@@ -82,7 +108,14 @@ class Dashboard extends React.Component {
 
 
   componentDidMount(){
+    this.props.getDashboardData()
     this.props.getLatestSurveys()
+  }
+
+  onChangeSearch(e){
+    console.log(e.target.value)
+    this.setState({ searchText: e.target.value})
+    this.props.searchSurvey(e.target.value);
   }
 
   updateStatus(surveyCustId, status, e){
@@ -125,106 +158,277 @@ class Dashboard extends React.Component {
       <>
         <Header />
         {/* Page content */}
-        <Container className="mt--7" fluid>
-          <Row className="mt-5">
-            <Col className="mb-5 mb-xl-0" xl="12">
-            <Card className="bg-default shadow">
-                <CardHeader className="bg-transparent border-1">
-                  <Row className="align-items-center">
-                    <div className="col">
-                      <h3 className="mb-0 text-white">Latest Surveys</h3>
-                    </div>
-                    <div className="col text-right">
-                      <Button
-                        color="primary"
-                        href="#pablo"
-                        onClick={() => history.push('/admin/surveys')}
-                        size="sm"
-                      >
-                        SEE ALL
-                      </Button>
-                    </div>
-                  </Row>
-                </CardHeader>
-                <Table className="align-items-center table-flush table-white" responsive>
-                  <thead className="thead-dark">
-                    <tr>
-                      <th scope="col">Survey name</th>
-                      <th scope="col">Questions</th>
-                      <th scope="col">Active</th>
-                      <th scope="col">Link</th>
-                      <th scope="col">QR Code</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  {
-                    this.state.survey.data && this.state.survey.data instanceof Array && this.state.survey.data.map((item, i) => (
-                      <tr>
-                      <th scope="row">{item.surveyName}</th>
-                      <td>{item.totalQuestions}</td>
-                      <td>
-                        <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
-                          <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
-                        <span className="custom-toggle-slider rounded-circle "></span>
-                        </Label>
+        <Container className="mb-7" fluid>
+        <div className="nav-wrapper">
+          <Nav
+            className="nav-fill flex-column flex-sm-row"
+            id="tabs-icons-text"
+            pills
+            role="tablist"
+          >
+            <NavItem>
+              <NavLink
+                aria-selected={this.state.tabs === 1}
+                className={classnames("mb-sm-3 mb-md-0", {
+                  active: this.state.tabs === 1
+                })}
+                onClick={e => this.toggleNavs(e, "tabs", 1)}
+                href=""
+                role="tab"
+              >
+                <i className="ni ni-cloud-upload-96 mr-2" />
+                Recently Created Surveys
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                aria-selected={this.state.tabs === 2}
+                className={classnames("mb-sm-3 mb-md-0", {
+                  active: this.state.tabs === 2
+                })}
+                onClick={e => this.toggleNavs(e, "tabs", 2)}
+                href="#pablo"
+                role="tab"
+              >
+                <i className="ni ni-bell-55 mr-2" />
+                Recently Submitted Surveys
+              </NavLink>
+            </NavItem>
+          </Nav>
+        </div>
+        <Card className="shadow">
+          <CardBody>
+            <TabContent activeTab={"tabs" + this.state.tabs}>
+              <TabPane tabId="tabs1">
+                <Row className="">
+                  <Col className="mb-5 mb-xl-0" xl="12">
+                  <Card className="bg-default shadow">
+                      <CardHeader className="bg-transparent border-1">
+                        <Row className="align-items-center">
+                          <div className="col">
+                            <h3 className="mb-0 text-white">Recently Created Surveys</h3>
+                          </div>
+                          <div className="col text-right">
+                            <Button
+                              color="primary"
+                              href="#pablo"
+                              onClick={() => history.push('/admin/surveys')}
+                              size="sm"
+                            >
+                              SEE ALL
+                            </Button>
+                          </div>
+                        </Row>
+                        <Row>
+                          <Input                                     
+                            placeholder="Search" 
+                            type="search" 
+                            autoComplete="search-survey"
+                            className="bg-default shadow mt-3"
+                            value={this.state.searchText}
+                            onChange={(e) => this.onChangeSearch(e)}
+                          />
+                        </Row>
+                      </CardHeader>
+                      <Table className="align-items-center table-flush table-white" responsive>
+                        <thead className="thead-dark">
+                          <tr>
+                            <th scope="col">Survey name</th>
+                            <th scope="col">Questions</th>
+                            <th scope="col">Active</th>
+                            <th scope="col">Link</th>
+                            <th scope="col">QR Code</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {
+                          this.state.recentCreatedSurveys && this.state.recentCreatedSurveys instanceof Array && this.state.recentCreatedSurveys.map((item, i) => (
+                            <tr>
+                            <th scope="row">{item.surveyName}</th>
+                            <td>{item.totalQuestions}</td>
+                            <td>
+                              <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
+                                <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
+                              <span className="custom-toggle-slider rounded-circle "></span>
+                              </Label>
 
-                      </td>
-                      <td>
-                      <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
-                          <i className="fas fa-link text-warning"/>
-                          <span className="btn-inner--text">Link</span>
-                        </Button>
+                            </td>
+                            <td>
+                            <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
+                                <i className="fas fa-link text-warning"/>
+                                <span className="btn-inner--text">Link</span>
+                              </Button>
 
-                      </td>
-                      <td>
-                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
-                          <i className="fas fa-qrcode text-success"/>
-                          <span className="btn-inner--text">QR CODE</span>
-                        </Button>
-                      </td>
-                    </tr>
-                    ))
-                  }
-                  <Modal isOpen={this.state.linkModal} centered toggle={() => this.toggleLinkModal()}>
-                    <ModalHeader><h2 color="primary">Link</h2></ModalHeader>
-                    <ModalBody className="d-block text-center">
-                      <Input disabled value={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }/>
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="success" onClick={(e) => navigator.clipboard.writeText("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy to Clipboard</Button>{' '}
-                      <Button color="secondary" onClick={() => this.toggleLinkModal()} >Close</Button>
-                    </ModalFooter>
-                  </Modal>
+                            </td>
+                            <td>
+                              <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
+                                <i className="fas fa-qrcode text-success"/>
+                                <span className="btn-inner--text">QR CODE</span>
+                              </Button>
+                            </td>
+                          </tr>
+                          ))
+                        }
 
-                  <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>
-                    <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
-                    <ModalBody className="d-block text-center">
-                      <QRCode
-                        id="qrcode"
-                        value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
-                        size={290}
-                        imageSettings= {{
-                          src: "/src/assets/img/icons/smiley/satisfied.png",
-                          x: null,
-                          y: null,
-                          height: 60,
-                          width: 60,
-                          excavate: true,
-                        }}
-                        level={"H"}
-                        includeMargin={true}
-                      />
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
-                      <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button>
-                    </ModalFooter>
-                  </Modal>
-                  </tbody>
-                </Table>
-              </Card>
-            </Col>
-          </Row>
+                        <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>
+                          <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
+                          <ModalBody className="d-block text-center">
+                            <QRCode
+                              id="qrcode"
+                              value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                              size={290}
+                              imageSettings= {{
+                                src: "/src/assets/img/icons/smiley/satisfied.png",
+                                x: null,
+                                y: null,
+                                height: 60,
+                                width: 60,
+                                excavate: true,
+                              }}
+                              level={"H"}
+                              includeMargin={true}
+                            />
+                          </ModalBody>
+                          <ModalFooter>
+                            <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
+                            <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button>
+                          </ModalFooter>
+                        </Modal>
+                        </tbody>
+                      </Table>
+                    </Card>
+                  </Col>
+                </Row>
+              </TabPane>
+              <TabPane tabId="tabs2">
+                <Row className="">
+                  <Col className="mb-5 mb-xl-0" xl="12">
+                  <Card className="bg-default shadow">
+                      <CardHeader className="bg-transparent border-1">
+                        {
+                          this.state.recentSubmittedSurveys.length > 1
+                          ?
+                            <Row className="align-items-center">
+                              <div className="col">
+                                <h3 className="mb-0 text-white">Recently Submitted Surveys</h3>
+                              </div>
+                              <div className="col text-right">
+                                <Button
+                                  color="primary"
+                                  href="#pablo"
+                                  onClick={() => history.push('/admin/surveys')}
+                                  size="sm"
+                                >
+                                  SEE ALL
+                                </Button>
+                              </div>
+                            </Row>
+                            :
+                            <Row className="align-items-center">
+                              {/* <div className="col">
+                                <h3 className="mb-0 text-white">No Surveys Submitted</h3>
+                              </div> */}
+                            </Row>
+                        }
+                      </CardHeader>
+                      {
+                        this.state.recentSubmittedSurveys.length < 1
+                          ?
+                            <div className="text-center vertical-center">
+                            <h3 className="m-2 text-white">No Surveys Submitted</h3>
+                          </div>
+                          
+                          :
+                          <Table className="align-items-center table-flush table-white" responsive>
+                            <thead className="thead-dark">
+                              <tr>
+                                <th scope="col">Survey name</th>
+                                <th scope="col">Questions</th>
+                                <th scope="col">Active</th>
+                                <th scope="col">Link</th>
+                                <th scope="col">QR Code</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                            {
+                              this.state.recentSubmittedSurveys && this.state.recentSubmittedSurveys instanceof Array && this.state.recentSubmittedSurveys.map((item, i) => (
+                                <tr>
+                                <th scope="row">{item.surveyName}</th>
+                                <td>{item.totalQuestions}</td>
+                                <td>
+                                  <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
+                                    <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
+                                  <span className="custom-toggle-slider rounded-circle "></span>
+                                  </Label>
+
+                                </td>
+                                <td>
+                                <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
+                                    <i className="fas fa-link text-warning"/>
+                                    <span className="btn-inner--text">Link</span>
+                                  </Button>
+
+                                </td>
+                                <td>
+                                  <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
+                                    <i className="fas fa-qrcode text-success"/>
+                                    <span className="btn-inner--text">QR CODE</span>
+                                  </Button>
+                                </td>
+                              </tr>
+                              ))
+                            }
+                            </tbody>
+                          </Table>
+                      }
+                    </Card>
+                    <Modal isOpen={this.state.linkModal} centered toggle={() => this.toggleLinkModal()}>
+                      <ModalHeader className="bg-info" toggle={() => this.toggleLinkModal()}>
+                        <h2 color="primary" className="text-left">Link</h2>
+                      </ModalHeader>
+                      <ModalBody className="d-block text-center">
+                        <Card className="p-2 bg-default">
+                        <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
+                        </Card>
+                      </ModalBody>
+                    </Modal>
+
+                    <Modal isOpen={this.state.qrModal} centered toggle={() => this.toggleQRModal()}>
+                      <ModalHeader  className="bg-info" toggle={() => this.toggleQRModal()}>
+                      <Row>
+                           <Col>
+                            <h2 color="primary" className="text-left">Survey QRCode</h2>
+                          </Col>
+                      </Row>
+                      </ModalHeader>
+                      <ModalBody className="d-block text-center">
+                        <QRCode
+                          id="qrcode"
+                          value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                          size={290}
+                          imageSettings= {{
+                            src: "/src/assets/img/icons/smiley/satisfied.png",
+                            x: null,
+                            y: null,
+                            height: 60,
+                            width: 60,
+                            excavate: true,
+                          }}
+                          level={"H"}
+                          includeMargin={true}
+                        />
+                      </ModalBody>
+                      <ModalFooter>
+                        <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
+                        {/* <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button> */}
+                      </ModalFooter>
+                    </Modal>
+                  </Col>
+                </Row> 
+              </TabPane>
+            </TabContent>
+          </CardBody>
+        </Card>
         </Container>
       </>
     );
@@ -232,13 +436,16 @@ class Dashboard extends React.Component {
 }
 
 function mapState(state) {
-  const latestsurvey = state.survey;
+  const survey = state.survey;
+  const dashboarddata = state.dashboard;
   const alert = state.alert;
-    return { latestsurvey, alert };
+    return { survey, dashboarddata, alert };
 }
 
 const actionCreators = {
   getLatestSurveys: surveyActions.latestSurvey,
+  getDashboardData: dashboardActions.getData,
+  searchSurvey: surveyActions.search,
   updateSurveyStatus: surveyActions.updateStatus,
   clearAlerts: alertActions.clear
 };

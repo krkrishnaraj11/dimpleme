@@ -25,7 +25,7 @@ import { history } from '../../_helpers';
 import classnames from "classnames";
 import QRCode from 'qrcode.react';
 import { surveyActions, alertActions } from '../../_actions';
-import Header from "../components/Headers/Header.js";
+import {Header} from "../components/Headers/Header.js";
 
 
 class Survey extends React.Component {

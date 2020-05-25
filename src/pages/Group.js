@@ -36,7 +36,7 @@ import { connect } from 'react-redux';
 import { history } from '../../_helpers';
 import classnames from "classnames";
 import { questionbankActions, alertActions } from '../../_actions';
-import Header from "../components/Headers/Header.js";
+import {Header} from "../components/Headers/Header.js";
 
 const  cool = [
     {   name: 'Efficiency of admission process' },

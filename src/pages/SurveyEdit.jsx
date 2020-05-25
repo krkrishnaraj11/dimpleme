@@ -39,7 +39,7 @@ import { history } from '../../_helpers';
 import classnames from "classnames";
 import { store } from 'react-notifications-component';
 import { surveyActions, alertActions, questionbankActions } from '../../_actions';
-import Header from "../components/Headers/Header.js";
+import {Header} from "../components/Headers/Header.js";
 
 
 class SurveyEdit extends React.Component {

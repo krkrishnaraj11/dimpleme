@@ -11,6 +11,7 @@ export const surveyActions = {
     submitAnswer,
     update,
     _delete,
+    search,
     updateStatus,
     downloadReport,
     verifyDecode
@@ -141,6 +142,26 @@ function getById(dcode) {
     function request(survey) { return { type: surveyConstants.GETBYID_REQUEST, survey } }
     function success(survey) { return { type: surveyConstants.GETBYID_SUCCESS, survey } }
     function failure(error) { return { type: surveyConstants.GETBYID_FAILURE, error } }
+}
+
+function search(text) {
+    return dispatch => {
+        dispatch(request(text))
+
+        surveyService.search(text)
+            .then(
+                surveys => {
+                    dispatch(success(surveys))
+                    // dispatch(alertActions.success('Survey Fetch Successful'));
+                },
+                error => {
+                    dispatch(alertActions.error(error.toString()));
+                }
+            )
+    }
+    function request(survey) { return { type: surveyConstants.SEARCH_REQUEST, survey } }
+    function success(survey) { return { type: surveyConstants.SEARCH_SUCCESS, survey } }
+    function failure(error) { return { type: surveyConstants.SEARCH_FAILURE, error } }
 }
 
 function getAll() {

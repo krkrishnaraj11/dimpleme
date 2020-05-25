@@ -5,6 +5,7 @@ import { registration } from './registration.reducer';
 import { alert } from './alert.reducer';
 import { questionbank } from './questionbank.reducer';
 import { survey } from './survey.reducer';
+import { dashboard } from './dashboard.reducer';
 import { users } from './users.reducer';
 
 const rootReducer = combineReducers({
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   registration,
   alert,
   questionbank,
+  dashboard,
   survey,
   users
 });

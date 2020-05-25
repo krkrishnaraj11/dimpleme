@@ -52,9 +52,15 @@ export function survey(state = initialState, action) {
     case surveyConstants.GETBYID_SUCCESS:
       return  action.survey
     case surveyConstants.GETBYID_FAILURE:
-      return { 
-        error: action.error
-      };
+      return { error: action.error};
+
+    case surveyConstants.SEARCH_REQUEST:
+      return { loading: true };
+    case surveyConstants.SEARCH_SUCCESS:
+      return  action.survey
+    case surveyConstants.SEARCH_FAILURE:
+      return { error: action.error};
+
     case surveyConstants.VERIFY_DCODE_REQUEST:
       return { loading: true };
     case surveyConstants.VERIFY_DCODE_SUCCESS:

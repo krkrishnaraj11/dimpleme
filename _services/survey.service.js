@@ -7,6 +7,7 @@ export const surveyService = {
     create,
     getAll,
     getLatest,
+    search,
     update,
     updateStatus,
     submitAnswer,
@@ -51,6 +52,15 @@ function getById(dcode) {
     };
 
     return fetch(`${config.apiUrl}/survey/read_dcode`, requestOptions).then(handleResponse);
+}
+
+function search(text) {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    };
+
+    return fetch(`${config.apiUrl}/survey/search/${text}`, requestOptions).then(handleResponse);
 }
 
 function submitAnswer(surveyCustId, answers) {

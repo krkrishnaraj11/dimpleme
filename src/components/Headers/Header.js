@@ -1,8 +1,35 @@
 import React from "react";
 // reactstrap components
 import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
+import { connect } from 'react-redux';
+import { dashboardActions } from "../../../_actions";
 
 class Header extends React.Component {
+  
+  constructor(props){
+    super(props);
+    this.state = {
+      surveyCount: 0,
+      activeSurveyCount: 0,
+      inactiveSurveyCount: 0
+    }
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps){
+    if(nextProps.surveyCount){
+      this.setState({
+        surveyCount: nextProps.surveyCount.totalSurveys,
+        activeSurveyCount: nextProps.surveyCount.activeSurveys,
+        inactiveSurveyCount: nextProps.surveyCount.inactiveSurveys
+      })
+    }
+  }
+
+  componentDidMount(){
+    this.props.getDashboardData()
+  }
+
+
   render() {
     return (
       <>
@@ -11,10 +38,10 @@ class Header extends React.Component {
             <div className="header-body">
               {/* Card stats */}
               {
-                (this.props.location)
+                (!this.props.location)
                 ?
                 <Row>
-                <Col lg="6" xl="3">
+                <Col lg="6" xl="4">
                   <Card className="card-stats mb-4 mb-xl-0">
                     <CardBody>
                       <Row>
@@ -26,19 +53,19 @@ class Header extends React.Component {
                             surveys
                           </CardTitle>
                           <span className="h2 font-weight-bold mb-0">
-                            2
+                            {this.state.surveyCount}
                           </span>
                         </div>
                         <Col className="col-auto">
-                          <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
-                            <i className="fas fa-chart-bar" />
+                          <div className="icon icon-shape bg-info text-white rounded-circle shadow">
+                            <i className="fas fa-poll" />
                           </div>
                         </Col>
                       </Row>
                     </CardBody>
                   </Card>
                 </Col>
-                <Col lg="6" xl="3">
+                <Col lg="6" xl="4">
                   <Card className="card-stats mb-4 mb-xl-0">
                     <CardBody>
                       <Row>
@@ -47,15 +74,15 @@ class Header extends React.Component {
                             tag="h5"
                             className="text-uppercase text-muted mb-0"
                           >
-                            Question Bank
+                            ACTIVE SURVEYS
                           </CardTitle>
                           <span className="h2 font-weight-bold mb-0">
-                            2,356
+                            {this.state.activeSurveyCount}
                           </span>
                         </div>
                         <Col className="col-auto">
-                          <div className="icon icon-shape bg-warning text-white rounded-circle shadow">
-                            <i className="fas fa-chart-pie" />
+                          <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
+                            <i className="fas fa-poll" />
                           </div>
                         </Col>
                       </Row>
@@ -63,7 +90,7 @@ class Header extends React.Component {
                     </CardBody>
                   </Card>
                 </Col>
-                <Col lg="6" xl="3">
+                <Col lg="6" xl="4">
                   <Card className="card-stats mb-4 mb-xl-0">
                     <CardBody>
                       <Row>
@@ -72,13 +99,15 @@ class Header extends React.Component {
                             tag="h5"
                             className="text-uppercase text-muted mb-0"
                           >
-                            Customers
+                            INACTIVE SURVEYS
                           </CardTitle>
-                          <span className="h2 font-weight-bold mb-0">924</span>
+                          <span className="h2 font-weight-bold mb-0">
+                            {this.state.inactiveSurveyCount}
+                          </span>
                         </div>
                         <Col className="col-auto">
-                          <div className="icon icon-shape bg-yellow text-white rounded-circle shadow">
-                            <i className="fas fa-users" />
+                          <div className="icon icon-shape bg-green text-white rounded-circle shadow">
+                            <i className="fa fa-poll " />
                           </div>
                         </Col>
                       </Row>
@@ -97,4 +126,13 @@ class Header extends React.Component {
   }
 }
 
-export default Header;
+function mapState(state) {
+  const surveyCount = state.dashboard.data;
+  return {surveyCount};
+}
+
+const actionCreators = {
+  getDashboardData: dashboardActions.getData
+};
+const connectedHeaderPage = connect(mapState, actionCreators)(Header);
+export { connectedHeaderPage as Header };
