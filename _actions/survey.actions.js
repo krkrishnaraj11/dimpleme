@@ -154,7 +154,7 @@ function search(text) {
                     dispatch(success(searchresult))
                 },
                 error => {
-                    dispatch(alertActions.error(error.toString()));
+                    dispatch(failure(error.toString()));
                 }
             )
     }

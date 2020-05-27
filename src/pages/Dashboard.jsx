@@ -85,7 +85,7 @@ class Dashboard extends React.Component {
     }
     
     if(nextProps.survey.data){
-      this.setState({ recentCreatedSurveys: nextProps.survey.data })
+        this.setState({ recentCreatedSurveys: nextProps.survey.data })
     }
 
     if(nextProps.alert.message){
@@ -113,6 +113,9 @@ class Dashboard extends React.Component {
 
   onChangeSearch(e){
     this.setState({ searchText: e.target.value})
+    if(e.target.value == '')
+      this.props.getDashboardData()
+    else
       this.props.searchSurvey(e.target.value)
   }
 
@@ -239,33 +242,42 @@ class Dashboard extends React.Component {
                           </tr>
                         </thead>
                         <tbody>
+                        
                         {
-                          this.state.recentCreatedSurveys && this.state.recentCreatedSurveys instanceof Array && this.state.recentCreatedSurveys.map((item, i) => (
-                            <tr>
-                            <th scope="row">{item.surveyName}</th>
-                            <td>{item.totalQuestions}</td>
-                            <td>
-                              <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
-                                <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
-                              <span className="custom-toggle-slider rounded-circle "></span>
-                              </Label>
+                            (this.props.survey.error == "No matched surveys") && this.state.searchText != ""
+                            ?
+                            <td colSpan={10} className="align-items-center bg-white">
+                              <div className="col">
+                                <h3 className="m-3 text-center text-dark">No matched surveys</h3>
+                              </div>
+                            </td>
+                            : 
+                            this.state.recentCreatedSurveys && this.state.recentCreatedSurveys instanceof Array && this.state.recentCreatedSurveys.map((item, i) => (
+                              <tr>
+                              <th scope="row">{item.surveyName}</th>
+                              <td>{item.totalQuestions}</td>
+                              <td>
+                                <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
+                                  <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
+                                <span className="custom-toggle-slider rounded-circle "></span>
+                                </Label>
 
-                            </td>
-                            <td>
-                            <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
-                                <i className="fas fa-link text-warning"/>
-                                <span className="btn-inner--text">Link</span>
-                              </Button>
+                              </td>
+                              <td>
+                              <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
+                                  <i className="fas fa-link text-warning"/>
+                                  <span className="btn-inner--text">Link</span>
+                                </Button>
 
-                            </td>
-                            <td>
-                              <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
-                                <i className="fas fa-qrcode text-success"/>
-                                <span className="btn-inner--text">QR CODE</span>
-                              </Button>
-                            </td>
-                          </tr>
-                          ))
+                              </td>
+                              <td>
+                                <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
+                                  <i className="fas fa-qrcode text-success"/>
+                                  <span className="btn-inner--text">QR CODE</span>
+                                </Button>
+                              </td>
+                            </tr>
+                            ))
                         }
 
                         <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>

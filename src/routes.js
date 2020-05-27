@@ -4,6 +4,7 @@ import {Group} from "./pages/Group.js";
 import {Login} from "./pages/login";
 import {Survey} from "./pages/Surveys";
 import {SurveyEdit} from "./pages/SurveyEdit.jsx";
+import { SurveyResult } from "./pages/SurveyResult";
 
 const routes = [
   {
@@ -39,6 +40,13 @@ const routes = [
     name: "Add Survey",
     icon: "ni ni-bullet-list-67 text-black",
     component: SurveyEdit,
+    layout: "/admin"
+  },
+  {
+    path: "/survey/result",
+    name: "Survey Result",
+    icon: "ni ni-bullet-list-67 text-black",
+    component: SurveyResult,
     layout: "/admin"
   },
   {

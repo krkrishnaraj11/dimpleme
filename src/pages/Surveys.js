@@ -91,7 +91,10 @@ class Survey extends React.Component {
 
       onChangeSearch(e){
         this.setState({ searchText: e.target.value})
-        this.props.searchSurvey(e.target.value);
+        if(e.target.value == '')
+          this.props.getSurveys()
+        else
+        this.props.searchSurvey(e.target.value)
       }
 
       downloadQR = () => {
@@ -197,12 +200,20 @@ class Survey extends React.Component {
                       <th scope="col">Delete</th>
                       <th scope="col">Link</th>
                       <th scope="col">QR Code</th>
-                      <th scope="col">Result</th>
                       <th scope="col">Report</th>
+                      <th scope="col">Result</th>
                     </tr>
                   </thead>
                   <tbody>
                   {
+                    (this.props.survey.error == "No matched surveys") && this.state.searchText != ""
+                    ?
+                    <td colSpan={10} className="align-items-center bg-white">
+                      <div className="col">
+                        <h3 className="m-3 text-center text-dark">No matched surveys</h3>
+                      </div>
+                    </td>
+                    : 
                     this.state.survey && this.state.survey instanceof Array && this.state.survey.map((item, i) => (
                       <tr scope="row">
                       <th onMouseEnter={() => this.togglePopover(i)} onMouseLeave={() => this.togglePopover(i)} id={"survey" + i}>{item.surveyName}</th>
@@ -343,6 +354,7 @@ class Survey extends React.Component {
 }
 
 function mapState(state) {
+  console.log("State", state)
   const survey = state.survey;
   const alert = state.alert;
   return { survey, alert };
