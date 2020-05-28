@@ -16,7 +16,9 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Input
+  Input,
+  CardBody,
+  CardTitle
 } from "reactstrap";
 // core components
 import { store } from 'react-notifications-component';
@@ -32,7 +34,9 @@ class SurveyResult extends React.Component{
         this.state = {
           surveyCustId : '',
           result: '',
+          surveyName: '',
           avgNoOfQuestionsAttempted: 0,
+          totalQuestions: 0,
           visitorsCount: 0,
           imgSrc : [
             { icon: '/src/assets/img/icons/smiley/very-satisfied.png' },
@@ -61,6 +65,8 @@ class SurveyResult extends React.Component{
         this.setState({ 
           avgNoOfQuestionsAttempted: nextProps.result.data.avgNoOfQuestionsAttempted,
           visitorsCount: nextProps.result.data.visitorsCount,
+          surveyName: nextProps.result.data.surveyName,
+          totalQuestions: nextProps.result.data.totalQuestions,
           result: nextProps.result.data.questionsInfo })
       }
     }
@@ -71,14 +77,88 @@ class SurveyResult extends React.Component{
           <Header />
           {/* Page content */}
           <Container className="mt--7" fluid>
-  
+          <Row className="mb-3">
+                <Col lg="6" xl="4">
+                  <Card className="card-stats mb-4 mb-xl-0">
+                    <CardBody>
+                      <Row>
+                        <div className="col">
+                          <CardTitle
+                            tag="h5"
+                            className="text-uppercase text-muted mb-0"
+                          >
+                            USER ATTEMPTS
+                          </CardTitle>
+                          <span className="h2 font-weight-bold mb-0">
+                            {this.state.visitorsCount}
+                          </span>
+                        </div>
+                        <Col className="col-auto">
+                          <div className="icon icon-shape bg-info text-white rounded-circle shadow">
+                            <i className="fas fa-users" />
+                          </div>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col lg="6" xl="4">
+                  <Card className="card-stats mb-4 mb-xl-0">
+                    <CardBody>
+                      <Row>
+                        <div className="col">
+                          <CardTitle
+                            tag="h5"
+                            className="text-uppercase text-muted mb-0"
+                          >
+                            QUESTIONS
+                          </CardTitle>
+                          <span className="h2 font-weight-bold mb-0">
+                            {this.state.totalQuestions}
+                          </span>
+                        </div>
+                        <Col className="col-auto">
+                          <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
+                            <i className="fas fa-poll" />
+                          </div>
+                        </Col>
+                      </Row>
+
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col lg="6" xl="4">
+                  <Card className="card-stats mb-4 mb-xl-0">
+                    <CardBody>
+                      <Row>
+                        <div className="col">
+                          <CardTitle
+                            tag="h5"
+                            className="text-uppercase text-muted mb-0"
+                          >
+                            AVG QUESTION ATTEMPTS
+                          </CardTitle>
+                          <span className="h2 font-weight-bold mb-0">
+                            {this.state.avgNoOfQuestionsAttempted}
+                          </span>
+                        </div>
+                        <Col className="col-auto">
+                          <div className="icon icon-shape bg-green text-white rounded-circle shadow">
+                            <i className="fas fa-poll" />
+                          </div>
+                        </Col>
+                      </Row>
+                    </CardBody>
+                  </Card>
+                </Col>
+              </Row>
           {/* Delete Confirmation Modal */}
             {/* Dark table */}
               <Card className="bg-default shadow">
                   <CardHeader className="bg-transparent border-1">
                     <Row className="align-items-center">
                       <div className="col">
-                        <h3 className="mb-0 text-white">Survey Result</h3>
+                        <h3 className="mb-0 text-white">{this.state.surveyName} Result</h3>
                       </div>
                       {/* <div className="col text-right">
                         <Button
@@ -127,7 +207,7 @@ class SurveyResult extends React.Component{
                       {
                         this.state.result && this.state.result instanceof Array && this.state.result.map((item, i) => (
                           <tr scope="row">
-                            <td><h3 className="text-center">{item._id}</h3></td>
+                            <td><h3 className="text-center">{item.question}</h3></td>
                             <td><h3 className="text-center">{item.verySatisfied}</h3></td>
                             <td><h3 className="text-center">{item.satisfied}</h3></td>
                             <td><h3 className="text-center">{item.neutral}</h3></td>
