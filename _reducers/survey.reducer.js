@@ -36,9 +36,13 @@ export function survey(state = initialState, action) {
     case surveyConstants.GETALL_SUCCESS:
       return  action.surveys
     case surveyConstants.GETALL_FAILURE:
-      return { 
-        error: action.error
-      };
+      return { error: action.error };
+    case surveyConstants.GET_RESULT_REQUEST:
+      return { loading: true };
+    case surveyConstants.GET_RESULT_SUCCESS:
+      return  action.result
+    case surveyConstants.GET_RESULT_FAILURE:
+      return { error: action.error };
     case surveyConstants.GETLATEST_REQUEST:
       return { loading: true };
     case surveyConstants.GETLATEST_SUCCESS:

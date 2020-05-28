@@ -12,6 +12,7 @@ export const surveyService = {
     updateStatus,
     submitAnswer,
     getById,
+    getResult,
     downloadReport,
     verifyDcode,
     delete: _delete
@@ -33,6 +34,15 @@ function getLatest() {
     };
 
     return fetch(`${config.apiUrl}/user/latestSurveys`, requestOptions).then(handleResponse);
+}
+
+function getResult(surveyCustId) {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    };
+
+    return fetch(`${config.apiUrl}/survey/detail/${surveyCustId}`, requestOptions).then(handleResponse);
 }
 
 function getAll() {
@@ -90,7 +100,6 @@ function update(id, questions, surveyName, active, dcode) {
         body: JSON.stringify({surveyName, questions, active, dcode})
     };
 
-    console.log(requestOptions)
     return fetch(`${config.apiUrl}/survey/update/${id}`, requestOptions).then(handleResponse);;
 }
 
@@ -101,7 +110,6 @@ function updateStatus(id, active) {
         body: JSON.stringify({ surveyCustId: id, active })
     };
 
-    console.log(requestOptions)
     return fetch(`${config.apiUrl}/survey/updateStatus`, requestOptions).then(handleResponse);;
 }
 
@@ -122,16 +130,16 @@ function verifyDcode(dcode) {
         headers: { 'Content-Type': 'application/json' }
     };
 
-    console.log(requestOptions)
     return fetch(`${config.apiUrl}/survey/exists/${dcode}`, requestOptions).then(handleResponse);;
 }
 
 
 function downloadResponse(response){
     response.blob().then(blob => {
-        let url = window.URL.createObjectURL(blob);
-        // a.href = url;
-        window.open(url);
+        let link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = 'Report.pdf';
+        link.click();
     });
 }
 
@@ -149,7 +157,6 @@ function handleResponse(response) {
             const error = (data && data.message) || response.statusText;
             return Promise.reject(error);
         }
-
         return data;
     });
 }

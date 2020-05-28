@@ -106,6 +106,13 @@ class Dashboard extends React.Component {
     }
   }
 
+  surveyResult(data){
+    history.push({
+      pathname: '/admin/survey/result',
+      data: data
+    })
+  }
+
 
   componentDidMount(){
     this.props.getDashboardData()
@@ -239,6 +246,8 @@ class Dashboard extends React.Component {
                             <th scope="col">Active</th>
                             <th scope="col">Link</th>
                             <th scope="col">QR Code</th>
+                            <th scope="col">Report</th>
+                            <th scope="col">Result</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -276,6 +285,19 @@ class Dashboard extends React.Component {
                                   <span className="btn-inner--text">QR CODE</span>
                                 </Button>
                               </td>
+                              <td>
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
+                          <i className="fas fa-download text-success"/>
+                          <span className="btn-inner--text">REPORT</span>
+                        </Button>
+                      </td>
+
+                      <td>
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => history.push('/admin/survey/result')}>
+                          <i className="fas fa-th-list text-warning"/>
+                          <span className="btn-inner--text">RESULT</span>
+                        </Button>
+                      </td>
                             </tr>
                             ))
                         }
@@ -385,6 +407,20 @@ class Dashboard extends React.Component {
                                     <span className="btn-inner--text">QR CODE</span>
                                   </Button>
                                 </td>
+
+                                <td>
+                                  <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
+                                    <i className="fas fa-download text-success"/>
+                                    <span className="btn-inner--text">REPORT</span>
+                                  </Button>
+                                </td>
+
+                                <td>
+                                  <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.surveyResult(item)}>
+                                    <i className="fas fa-th-list text-warning"/>
+                                    <span className="btn-inner--text">RESULT</span>
+                                  </Button>
+                                </td>
                               </tr>
                               ))
                             }
@@ -456,6 +492,7 @@ const actionCreators = {
   getDashboardData: dashboardActions.getData,
   searchSurvey: surveyActions.search,
   updateSurveyStatus: surveyActions.updateStatus,
+  reportDownload: surveyActions.downloadReport,
   clearAlerts: alertActions.clear
 };
 const connectedDashboardPage = connect(mapState, actionCreators)(Dashboard);

@@ -117,6 +117,13 @@ class Survey extends React.Component {
         })
       }
 
+      surveyResult(data){
+        history.push({
+          pathname: '/admin/survey/result',
+          data: data
+        })
+      }
+
       deleteSurvey(surveyCustId){
         this.toggleModal();
         this.props.deleteSurveys(surveyCustId);
@@ -288,12 +295,12 @@ class Survey extends React.Component {
                       <td>
                         <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
                           <i className="fas fa-download text-success"/>
-                          <span className="btn-inner--text">DOWNLOAD</span>
+                          <span className="btn-inner--text">REPORT</span>
                         </Button>
                       </td>
 
                       <td>
-                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" >
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary"  onClick={() => this.surveyResult(item)}>
                           <i className="fas fa-th-list text-warning"/>
                           <span className="btn-inner--text">RESULT</span>
                         </Button>

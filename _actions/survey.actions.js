@@ -8,6 +8,7 @@ export const surveyActions = {
     getAll,
     latestSurvey,
     getById,
+    getResult,
     submitAnswer,
     update,
     _delete,
@@ -142,6 +143,25 @@ function getById(dcode) {
     function request(survey) { return { type: surveyConstants.GETBYID_REQUEST, survey } }
     function success(survey) { return { type: surveyConstants.GETBYID_SUCCESS, survey } }
     function failure(error) { return { type: surveyConstants.GETBYID_FAILURE, error } }
+}
+
+function getResult(surveyCustId) { 
+    return dispatch => {
+        dispatch(request(surveyCustId))
+
+        surveyService.getResult(surveyCustId)
+            .then(
+                result => {
+                    dispatch(success(result))
+                },
+                error => {
+                    dispatch(alertActions.error(error.toString()));
+                }
+            )
+    }
+    function request(result) { return { type: surveyConstants.GET_RESULT_REQUEST, result } }
+    function success(result) { return { type: surveyConstants.GET_RESULT_SUCCESS, result } }
+    function failure(error) { return { type: surveyConstants.GET_RESULT_FAILURE, error } }
 }
 
 function search(text) {
