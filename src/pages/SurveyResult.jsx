@@ -133,7 +133,12 @@ class SurveyResult extends React.Component{
                             <td><h3 className="text-center">{item.neutral}</h3></td>
                             <td><h3 className="text-center">{item.unsatisfied}</h3></td>
                             <td><h3 className="text-center">{item.veryUnsatisfied}</h3></td>
-                            <td><h3></h3></td>
+                            <td>
+                            <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary">
+                              <i className="fas fa-th-list text-warning"/>
+                              <span className="btn-inner--text">Comments</span>
+                            </Button>
+                            </td>
                           </tr>
                         ))
                       }
