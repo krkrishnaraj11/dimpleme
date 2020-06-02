@@ -379,6 +379,8 @@ class Dashboard extends React.Component {
                                 <th scope="col">Active</th>
                                 <th scope="col">Link</th>
                                 <th scope="col">QR Code</th>
+                                <th scope="col">Report</th>
+                                <th scope="col">Result</th>
                               </tr>
                             </thead>
                             <tbody>

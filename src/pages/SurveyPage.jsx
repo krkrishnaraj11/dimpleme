@@ -37,7 +37,10 @@ import {
   InputGroup,
   InputGroupAddon,
   InputGroupText,
-  Input
+  Input,
+  CardImg,
+  CardSubtitle,
+  CardText
 } from "reactstrap";
 // core components
 import { connect } from 'react-redux';
@@ -61,6 +64,7 @@ class SurveyPage extends React.Component{
             surveyCustId: '',
             report: [ { rating: 0, comment: '' }],
             loading: true,
+            listCount: 0,
             smileyCheck: [
               []
             ],
@@ -151,51 +155,66 @@ class SurveyPage extends React.Component{
           <div className="pl-lg-4">
             <Row className="mb-2 mx-0">
               <Col md="12">
-                <FormGroup>
-                  {
-                    this.props.survey.data && this.state.questions.map((qParam, key) => (
-                      <div>
-                      <h2 className="mb-4 col-sm-12 col-md-6 offset-md-3 text-center">
-                        {qParam.question}
-                      </h2>
-                      <Row className="px-0 mb-3 align-center col-sm-12 col-md-6 offset-md-3">
-                          {
-                              this.props.survey.data && this.state.smileyCheck[key].map((scheck, i) => (
-                                  <Col className="px-0 mb-3 d-flex justify-content-center">
-                                      <Button color={scheck} onClick={() => this.smileyClick(i, key)}>
-                                          <span className="avatar avatar-lg rounded-circle">
-                                              <img
-                                                  src={this.state.imgSrc[i].icon}
-                                              />
-                                          </span>
-                                      </Button>
-                                  </Col>
-                              ))
-                          }
-    
-                      </Row>
-                      <Input
-                        className="form-control-alternative"
-                        id="comment"
-                        value={this.state.answers[key].comment || ''}
-                        onChange={(e) => this.changeComment(e, key)}
-                        placeholder="Comment"
-                        type="text"
-                      />
-                      <hr className="my-4" />
-                      </div>
-                    ))
-                  }
-                  <Row>
-                    <div className="update ml-auto mr-auto">
-                      <Button
-                        className="btn-round"
-                        color="danger"
-                        type="button"
-                        onClick={() => history.push('/')}
-                      >
-                        Cancel
-                      </Button>
+                <Card className="bg-default">
+                  <CardBody>
+                    <h2 className="mb-4 col-sm-12 col-md-6 offset-md-3 text-center text-white">
+                      {this.state.questions[this.state.listCount].question}
+                    </h2>
+                    <Row className="px-0 mb-3 align-center col-sm-12 col-md-6 offset-md-3"> 
+                      {
+                          this.state.smileyCheck[this.state.listCount].map((scheck, i) => (
+                              <Col className="px-0 mb-3 d-flex justify-content-center">
+                                  <Button color={scheck} onClick={() => this.smileyClick(i, this.state.listCount)}>
+                                      <span className="avatar avatar-lg rounded-circle">
+                                          <img
+                                              src={this.state.imgSrc[i].icon}
+                                          />
+                                      </span>
+                                  </Button>
+                              </Col>
+                          ))
+                      }
+                    </Row> 
+                    <Input
+                      className="form-control-alternative"
+                      id="comment"
+                      value={this.state.answers[this.state.listCount].comment || ''}
+                      onChange={(e) => this.changeComment(e, this.state.listCount)}
+                      placeholder="Comment"
+                      type="text"
+                    />
+                    <hr className="my-4" />         
+                    <Row>
+                      <div className="update ml-auto mr-auto">
+                        {
+                          this.state.questions.length - this.state.listCount != 1
+                          ?
+                            <Button
+                              className="btn-round"
+                              color="warning"
+                              type="button"
+                              onClick={() => this.setState({ listCount: this.state.listCount + 1 })}
+                            >
+                              Skip
+                            </Button>
+                          
+                          : null
+                        }
+
+                        {
+                          this.state.questions.length - this.state.listCount != 1
+                          ?
+                            <Button
+                              className="btn-round"
+                              color="danger"
+                              type="button"
+                              onClick={() => this.setState({ listCount: this.state.listCount + 1 })}
+                            >
+                              Next
+                            </Button>
+
+                          : null
+                        }
 
                         <Button
                           className="btn-round"
@@ -205,9 +224,10 @@ class SurveyPage extends React.Component{
                         >
                           Submit
                         </Button>
-                    </div>
-                  </Row>
-                </FormGroup>
+                      </div>
+                    </Row>
+                  </CardBody>
+                </Card>
               </Col>
             </Row>
           </div>
@@ -240,7 +260,7 @@ class SurveyPage extends React.Component{
         <UserHeader name={this.state.surveyTitle}/>
         {/* Page content */}
         <Container className="mt--9" fluid>
-        <Modal centered={true} isOpen={this.state.thankyouModal} toggle={() => toggleModal()}>
+        <Modal centered={true} isOpen={this.state.thankyouModal} toggle={() => this.toggleModal()}>
           <ModalHeader><h1>ThankYou!</h1></ModalHeader>
           <ModalBody >
             <span className="avatar avatar-lg rounded-circle">

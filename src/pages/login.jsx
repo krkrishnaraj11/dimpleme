@@ -66,20 +66,20 @@ class Login extends React.Component {
       this.setState({ [type]: value });
     }
 
-    if(e.target.value == "" || e.target.type == "email" && !emailregex.test(e.target.value)) {
-      if(e.target.placeholder == "dcode" ){
-        this.setState({ dcodeState: "invalid"})
-      }
-      else
-        this.setState({ [type + "State"]: "invalid"})
-    }
-    else{
-      if(e.target.placeholder == "dcode" ){
-        this.setState({ dcodeState: "valid"})
-      }
-      else
-        this.setState({ [type + "State"]: "valid"})
-    }
+    // if(e.target.value == "" || e.target.type == "email" && !emailregex.test(e.target.value)) {
+    //   if(e.target.placeholder == "dcode" ){
+    //     this.setState({ dcodeState: "invalid"})
+    //   }
+    //   else
+    //     this.setState({ [type + "State"]: "invalid"})
+    // }
+    // else{
+    //   if(e.target.placeholder == "dcode" ){
+    //     this.setState({ dcodeState: "valid"})
+    //   }
+    //   else
+    //     this.setState({ [type + "State"]: "valid"})
+    // }
 }
 
 handleDcode(e){
