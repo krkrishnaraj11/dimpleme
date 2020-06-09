@@ -35,9 +35,12 @@ class SurveyResult extends React.Component{
           surveyCustId : '',
           result: '',
           surveyName: '',
+          comments: [],
           avgNoOfQuestionsAttempted: 0,
           totalQuestions: 0,
           visitorsCount: 0,
+          surveyCustId: '',
+          commentModal: false,
           imgSrc : [
             { icon: '/src/assets/img/icons/smiley/very-satisfied.png' },
             { icon: '/src/assets/img/icons/smiley/satisfied.png' },
@@ -66,9 +69,20 @@ class SurveyResult extends React.Component{
           avgNoOfQuestionsAttempted: nextProps.result.data.avgNoOfQuestionsAttempted,
           visitorsCount: nextProps.result.data.visitorsCount,
           surveyName: nextProps.result.data.surveyName,
+          surveyCustId: nextProps.result.data.surveyCustId,
           totalQuestions: nextProps.result.data.totalQuestions,
           result: nextProps.result.data.questionsInfo })
       }
+      if(nextProps.result){
+        this.setState({ comments: nextProps.result.comments })
+      }
+    }
+
+    toggleCommentModal(surveyCustId, answerId){
+      if(surveyCustId){
+        this.props.getComments(surveyCustId, answerId);
+      }
+      this.setState({ commentModal: !this.state.commentModal })
     }
 
     render(){
@@ -214,7 +228,7 @@ class SurveyResult extends React.Component{
                             <td><h3 className="text-center">{item.unsatisfied}</h3></td>
                             <td><h3 className="text-center">{item.veryUnsatisfied}</h3></td>
                             <td>
-                            <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary">
+                            <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item._id)}>
                               <i className="fas fa-th-list text-warning"/>
                               <span className="btn-inner--text">Comments</span>
                             </Button>
@@ -224,6 +238,41 @@ class SurveyResult extends React.Component{
                       }
                     </tbody>
                   </Table>
+                  <Modal isOpen={this.state.commentModal} centered toggle={() => this.toggleCommentModal()}> 
+                    <ModalHeader className="bg-info">
+                      <h2 color="primary" className="text-left">Comments</h2>
+                    </ModalHeader>
+                      <ModalBody className="d-block text-center">
+                        <Card className="p-2 bg-default">
+                        <Table className="align-items-center table-flush table-white" responsive>
+                          <thead className="thead-dark">
+                            <tr>
+                            <th scope="col">Sl No</th>
+                            <th scope="col">Comments</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {
+                              (Array.isArray(this.state.comments) && this.state.comments.length > 0)
+                              ?
+                                this.state.comments && this.state.comments instanceof Array && this.state.comments.map((comment, i) => (
+                                    <tr scope="row">
+                                      <td><h3 className="text-center">{i+1}</h3></td>
+                                      <td><h3 className="text-center">{comment}</h3></td>
+                                    </tr>
+                                  ))
+                              :
+                                <td colSpan={10} className="align-items-center bg-white">
+                                <div className="col">
+                                  <h3 className="m-3 text-center text-dark">No Comments</h3>
+                                </div>
+                              </td>
+                            }
+                          </tbody>
+                        </Table>
+                        </Card>
+                      </ModalBody>
+                  </Modal>
                 </Card>
           </Container>
         </>
@@ -234,12 +283,14 @@ class SurveyResult extends React.Component{
 function mapState(state) {
     const result = state.survey;
     const alert = state.alert;
-    return { result, alert };
+    const comments = state.comments;
+    return { result, alert, comments };
   }
   
   const actionCreators = {
     reportDownload: surveyActions.downloadReport,
     surveyDetails: surveyActions.getResult,
+    getComments: surveyActions.getComments,
     clearAlerts: alertActions.clear
   };
   

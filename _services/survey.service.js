@@ -13,6 +13,7 @@ export const surveyService = {
     submitAnswer,
     getById,
     getResult,
+    getComment,
     downloadReport,
     verifyDcode,
     delete: _delete
@@ -43,6 +44,16 @@ function getResult(surveyCustId) {
     };
 
     return fetch(`${config.apiUrl}/survey/detail/${surveyCustId}`, requestOptions).then(handleResponse);
+}
+
+function getComment(surveyCustId, answerId) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+        body: JSON.stringify({surveyCustId, answerId})
+    };
+
+    return fetch(`${config.apiUrl}/answer/comments`, requestOptions).then(handleResponse);
 }
 
 function getAll() {

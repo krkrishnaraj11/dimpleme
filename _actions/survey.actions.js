@@ -9,6 +9,7 @@ export const surveyActions = {
     latestSurvey,
     getById,
     getResult,
+    getComments,
     submitAnswer,
     update,
     _delete,
@@ -162,6 +163,25 @@ function getResult(surveyCustId) {
     function request(result) { return { type: surveyConstants.GET_RESULT_REQUEST, result } }
     function success(result) { return { type: surveyConstants.GET_RESULT_SUCCESS, result } }
     function failure(error) { return { type: surveyConstants.GET_RESULT_FAILURE, error } }
+}
+
+function getComments(surveyCustId, answerId) { 
+    return dispatch => {
+        dispatch(request(surveyCustId, answerId))
+
+        surveyService.getComment(surveyCustId, answerId)
+            .then(
+                result => {
+                    dispatch(success(result))
+                },
+                error => {
+                    dispatch(alertActions.error(error.toString()));
+                }
+            )
+    }
+    function request(comments) { return { type: surveyConstants.GET_COMMENT_REQUEST, comments } }
+    function success(comments) { return { type: surveyConstants.GET_COMMENT_SUCCESS, comments } }
+    function failure(error) { return { type: surveyConstants.GET_COMMENT_FAILURE, error } }
 }
 
 function search(text) {
