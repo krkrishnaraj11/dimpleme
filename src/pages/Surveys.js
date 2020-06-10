@@ -11,6 +11,7 @@ import {
   Popover,
   PopoverHeader,
   PopoverBody,
+  Progress,
   Button,
   Modal,
   ModalHeader,
@@ -154,6 +155,7 @@ class Survey extends React.Component {
     return (
       <>
         <Header />
+        
         {/* Page content */}
         <Container className="mt--7" fluid>
 
@@ -197,6 +199,7 @@ class Survey extends React.Component {
                     />
                   </Row>
                 </CardHeader>
+
                 <Table className="align-items-center table-flush table-white" responsive>
                   <thead className="thead-dark">
                     <tr>
@@ -228,37 +231,71 @@ class Survey extends React.Component {
                       <PopoverHeader>{item.surveyName}</PopoverHeader>
                       <PopoverBody className="bg-default shadow">
                         <Row className="justify-content-between">
-                          <Row className="no-gutters">
-                          <span className="avatar avatar-md rounded-circle mx-3 my-1">
-                            <img src={this.state.imgSrc[0].icon}/>
+                          <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                              <img src={this.state.imgSrc[0].icon}/>
                           </span>
-                            <h2 className="text-white mt-3 ml-7">{item.dimpleInfo.verySatisfied}</h2>
-                          </Row>
-                          <Row className="no-gutters">
-                          <span className="avatar avatar-md rounded-circle mx-3 my-1">
-                            <img src={this.state.imgSrc[1].icon}/>
+                          <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                              <img src={this.state.imgSrc[1].icon}/>
                           </span>
-                            <h2 className="text-white mt-3 ml-7">{item.dimpleInfo.satisfied}</h2>
-                          </Row>
-                          <Row className="no-gutters">
-                          <span className="avatar avatar-md rounded-circle mx-3 my-1">
-                            <img src={this.state.imgSrc[2].icon}/>
+                          <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                              <img src={this.state.imgSrc[2].icon}/>
                           </span>
-                            <h2 className="text-white mt-3 ml-7">{item.dimpleInfo.neutral}</h2>
-                          </Row>
-                          <Row className="no-gutters">
-                          <span className="avatar avatar-md rounded-circle mx-3 my-1">
-                            <img src={this.state.imgSrc[3].icon}/>
+                          <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                              <img src={this.state.imgSrc[3].icon}/>
                           </span>
-                            <h2 className="text-white mt-3 ml-7">{item.dimpleInfo.unsatisfied}</h2>
-                          </Row>
-                          <Row className="no-gutters">
-                          <span className="avatar avatar-md rounded-circle mx-3 my-1">
-                            <img src={this.state.imgSrc[4].icon}/>
+                          <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                              <img src={this.state.imgSrc[4].icon}/>
                           </span>
-                            <h2 className="text-white mt-3 ml-7">{item.dimpleInfo.veryUnsatisfied}</h2>
-                          </Row>
+                          <h3 className="text-info text-center">3 out of 5</h3>
                         </Row>
+                        <h3 className="text-info">35 Customer Ratings</h3>
+                          <Row className="justify-content-between">
+                            <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                              <img src={this.state.imgSrc[0].icon}/>
+                            </span>
+                            <div style={{width: 100}} className="mt-3">
+                              
+                            <Progress value={item.dimpleInfo.verySatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
+                            </div>
+                            <h2 className="text-white mt-1 mx-2">{item.dimpleInfo.verySatisfied}</h2>
+                          </Row>
+                          <Row className="justify-content-between">
+                            <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                              <img src={this.state.imgSrc[1].icon}/>
+                            </span>
+                            <div style={{width: 100}} className="mt-3">
+                            <Progress value={item.dimpleInfo.satisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
+                            </div>
+                            <h2 className="text-white mt-1 mx-2">{item.dimpleInfo.satisfied}</h2>
+                          </Row>
+                          <Row className="justify-content-between">
+                            <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                              <img src={this.state.imgSrc[2].icon}/>
+                            </span>
+                            <div style={{width: 100}} className="mt-3">
+                            <Progress value={item.dimpleInfo.neutral/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
+                            </div>
+                            <h2 className="text-white mt-1 mx-2">{item.dimpleInfo.neutral}</h2>
+                          </Row>
+                          <Row className="justify-content-between">
+                            <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                              <img src={this.state.imgSrc[3].icon}/>
+                            </span>
+                            <div style={{width: 100}} className="mt-3">
+                            <Progress value={item.dimpleInfo.unsatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
+                            </div>
+                            <h2 className="text-white mt-1 mx-2">{item.dimpleInfo.unsatisfied}</h2>
+                          </Row>
+                          <Row className="justify-content-between">
+                            <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                              <img src={this.state.imgSrc[4].icon}/>
+                            </span>
+                            <div style={{width: 100}} className="mt-3">
+                            <Progress value={item.dimpleInfo.veryUnsatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
+                            </div>
+                            <h2 className="text-white mt-1 mx-2">{item.dimpleInfo.veryUnsatisfied}</h2>
+                          </Row>
+
                       </PopoverBody>
                     </Popover>
                       <td>{item.totalQuestions}</td>
