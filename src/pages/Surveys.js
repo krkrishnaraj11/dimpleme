@@ -19,7 +19,10 @@ import {
   ModalBody,
   ModalFooter,
   Input,
-  CardFooter
+  CardFooter,
+  Pagination,
+  PaginationItem,
+  PaginationLink
 } from "reactstrap";
 import Select from 'react-select';
 // core components
@@ -176,7 +179,16 @@ class Survey extends React.Component {
         this.setState({ rowsperpage: item.value + this.state.initialrow })
       }
 
+      prevPagination(){
+        if(this.state.initialrow != 0)
+          this.setState({ initialrow: this.state.initialrow - this.state.rowsperpage })
+      }
+
+      nextPagination(){
+          this.setState({ initialrow: this.state.initialrow + this.state.rowsperpage })
+      }
   render() {
+    console.log("render123",this.state.initialrow, this.state.rowsperpage)
     return (
       <>
         <Header />
@@ -249,7 +261,7 @@ class Survey extends React.Component {
                       </div>
                     </td>
                     : 
-                    this.state.survey && this.state.survey instanceof Array && this.state.survey.slice(this.state.initialrow,this.state.rowsperpage).map((item, i) => (
+                    this.state.survey && this.state.survey instanceof Array && this.state.survey.slice(this.state.initialrow,this.state.rowsperpage + this.state.initialrow).map((item, i) => (
                       <tr scope="row">
                       <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
                       <Modal isOpen={this.state.popSurvey[i]} centered toggle={() => this.togglePopover(item,i)}>
@@ -457,7 +469,15 @@ class Survey extends React.Component {
                   <CardFooter>
                     <Row className="float-right">
                       <h3 className="mt-1 mx-1 font-weight-normal">Rows per table</h3>
-                      <Select options={selectOption} defaultValue={{ value: 5, label: 5}} onChange={(value) => this.onRowsChange(value)}/>
+                      <Select options={selectOption} autosize={true} defaultValue={{ value: 5, label: 5}} onChange={(value) => this.onRowsChange(value)}/>
+                      <Pagination className="mx-1">
+                        <PaginationItem disabled={this.state.initialrow == 0}>
+                          <PaginationLink previous onClick={() => this.prevPagination()}/>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink next onClick={() => this.nextPagination()}/>
+                        </PaginationItem>
+                      </Pagination>
                     </Row>
                   </CardFooter>
               </Card>
