@@ -18,8 +18,10 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Input
+  Input,
+  CardFooter
 } from "reactstrap";
+import Select from 'react-select';
 // core components
 import { store } from 'react-notifications-component';
 import { connect } from 'react-redux';
@@ -28,7 +30,12 @@ import classnames from "classnames";
 import QRCode from 'qrcode.react';
 import { surveyActions, alertActions } from '../../_actions';
 import {Header} from "../components/Headers/Header.js";
-
+const selectOption = [
+  { value: 5, label: 5},
+  { value: 10, label: 10},
+  { value: 20, label: 20},
+  { value: 30, label: 30}
+]
 
 class Survey extends React.Component {
     constructor(props){
@@ -45,7 +52,7 @@ class Survey extends React.Component {
           searchText: '',
           comments: [],
           initialrow:0,
-          rowsperpage: 2,
+          rowsperpage: 5,
           commentModal: false,
           imgSrc : [
             { icon: '/src/assets/img/icons/smiley/very-satisfied.png' },
@@ -163,6 +170,10 @@ class Survey extends React.Component {
       updateStatus(surveyCustId, status, e){
         e.preventDefault();
         this.props.updateSurveyStatus(surveyCustId, status)
+      }
+
+      onRowsChange(item){
+        this.setState({ rowsperpage: item.value + this.state.initialrow })
       }
 
   render() {
@@ -404,7 +415,6 @@ class Survey extends React.Component {
                       </ModalBody>
                       <ModalFooter>
                         <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
-                        {/* <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button> */}
                       </ModalFooter>
                     </Modal>
                   </tbody>
@@ -444,6 +454,12 @@ class Survey extends React.Component {
                         </Card>
                       </ModalBody>
                   </Modal>
+                  <CardFooter>
+                    <Row className="float-right">
+                      <h3 className="mt-1 mx-1 font-weight-normal">Rows per table</h3>
+                      <Select options={selectOption} defaultValue={{ value: 5, label: 5}} onChange={(value) => this.onRowsChange(value)}/>
+                    </Row>
+                  </CardFooter>
               </Card>
         </Container>
       </>

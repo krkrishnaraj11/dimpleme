@@ -445,7 +445,7 @@ class Profile extends React.Component {
                                   disabled={!this.state.update}
                                   value={this.state.postalCode}
                                   onChange={(e) => this.handleChange(e)}
-                                  placeholder="Postal code"
+                                  placeholder="Zip Code"
                                   type="number"
                                 />
                           </FormGroup>
