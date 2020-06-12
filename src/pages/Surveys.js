@@ -8,6 +8,7 @@ import {
   Container,
   Row,
   Col,
+  Dropdown,
   Popover,
   PopoverHeader,
   PopoverBody,
@@ -40,7 +41,12 @@ class Survey extends React.Component {
           survey: {},
           linkModal: false,
           selectSurveyQR: '',
+          surveyCustId: '',
           searchText: '',
+          comments: [],
+          initialrow:0,
+          rowsperpage: 2,
+          commentModal: false,
           imgSrc : [
             { icon: '/src/assets/img/icons/smiley/very-satisfied.png' },
             { icon: '/src/assets/img/icons/smiley/satisfied.png' },
@@ -51,15 +57,23 @@ class Survey extends React.Component {
         }
       }
 
+      toggleCommentModal(surveyCustId, answerId){
+        if(surveyCustId){
+          this.props.getComments(surveyCustId, answerId);
+        }
+        this.setState({ commentModal: !this.state.commentModal })
+      }
+
       
       toggleLinkModal(dcode){
         this.setState({ linkModal: !this.state.linkModal, selectSurveyQR: (dcode) ? dcode: '' })
       }
 
-      togglePopover(i){
+      togglePopover(item, i){
         var pSurvey = this.state.popSurvey;
         pSurvey[i] = !pSurvey[i];
-        this.setState({ popSurvey: pSurvey })
+        console.log("popover",item)
+        this.setState({ popSurvey: pSurvey, surveyCustId: item.surveyCustId })
       }
       
       componentDidMount(){
@@ -200,7 +214,7 @@ class Survey extends React.Component {
                   </Row>
                 </CardHeader>
 
-                <Table className="align-items-center table-flush table-white" responsive>
+                <Table  className="align-items-center table-flush table-white" responsive>
                   <thead className="thead-dark">
                     <tr>
                       <th scope="col">Survey name</th>
@@ -214,7 +228,7 @@ class Survey extends React.Component {
                       <th scope="col">Result</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody style={{ height: 100 }}>
                   {
                     (this.props.survey.error == "No matched surveys") && this.state.searchText != ""
                     ?
@@ -224,12 +238,12 @@ class Survey extends React.Component {
                       </div>
                     </td>
                     : 
-                    this.state.survey && this.state.survey instanceof Array && this.state.survey.map((item, i) => (
+                    this.state.survey && this.state.survey instanceof Array && this.state.survey.slice(this.state.initialrow,this.state.rowsperpage).map((item, i) => (
                       <tr scope="row">
-                      <th onMouseEnter={() => this.togglePopover(i)} onMouseLeave={() => this.togglePopover(i)} id={"survey" + i}>{item.surveyName}</th>
-                      <Popover className="danger" placement="auto" isOpen={this.state.popSurvey[i]} hideArrow target={"survey"+i} toggle={() => this.togglePopover(i)}>
-                      <PopoverHeader>{item.surveyName}</PopoverHeader>
-                      <PopoverBody className="bg-default shadow">
+                      <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
+                      <Modal isOpen={this.state.popSurvey[i]} centered toggle={() => this.togglePopover(item,i)}>
+                      <ModalHeader>{item.surveyName}</ModalHeader>
+                      <ModalBody className="bg-default shadow">
                         <Row className="justify-content-between">
                           <span className="avatar avatar-sm rounded-circle mx-1 my-1">
                               <img src={this.state.imgSrc[0].icon}/>
@@ -246,58 +260,63 @@ class Survey extends React.Component {
                           <span className="avatar avatar-sm rounded-circle mx-1 my-1">
                               <img src={this.state.imgSrc[4].icon}/>
                           </span>
-                          <h3 className="text-info text-center">3 out of 5</h3>
+                          <h3 className="text-info mt-1">3 out of 5</h3>
                         </Row>
-                        <h3 className="text-info">35 Customer Ratings</h3>
+                        <h3 className="text-info text-center my-1">35 Customer Ratings</h3>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[0].icon}/>
                             </span>
-                            <div style={{width: 100}} className="mt-3">
+                            <div style={{width: 200}} className="mt-3">
                               
                             <Progress value={item.dimpleInfo.verySatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{item.dimpleInfo.verySatisfied}</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.dimpleInfo.verySatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[1].icon}/>
                             </span>
-                            <div style={{width: 100}} className="mt-3">
+                            <div style={{width: 200}} className="mt-3">
                             <Progress value={item.dimpleInfo.satisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{item.dimpleInfo.satisfied}</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.dimpleInfo.satisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[2].icon}/>
                             </span>
-                            <div style={{width: 100}} className="mt-3">
+                            <div style={{width: 200}} className="mt-3">
                             <Progress value={item.dimpleInfo.neutral/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{item.dimpleInfo.neutral}</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.dimpleInfo.neutral/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[3].icon}/>
                             </span>
-                            <div style={{width: 100}} className="mt-3">
+                            <div style={{width: 200}} className="mt-3">
                             <Progress value={item.dimpleInfo.unsatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{item.dimpleInfo.unsatisfied}</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.dimpleInfo.unsatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[4].icon}/>
                             </span>
-                            <div style={{width: 100}} className="mt-3">
+                            <div style={{width: 200}} className="mt-3">
                             <Progress value={item.dimpleInfo.veryUnsatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{item.dimpleInfo.veryUnsatisfied}</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.dimpleInfo.veryUnsatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100)}%</h2>
                           </Row>
-
-                      </PopoverBody>
-                    </Popover>
+                          <Row className="justify-content-center">
+                            <Button size="lg" className="btn btn-icon btn-3 btn-outline-primary align-center" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item.questionId)}>
+                              <i className="fas fa-th-list text-warning"/>
+                              <span className="btn-inner--text">Comments</span>
+                            </Button>
+                          </Row>
+                        </ModalBody>
+                      </Modal>
                       <td>{item.totalQuestions}</td>
                       <td>
                         <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active, e )}>
@@ -390,6 +409,41 @@ class Survey extends React.Component {
                     </Modal>
                   </tbody>
                 </Table>
+                <Modal isOpen={this.state.commentModal} centered toggle={() => this.toggleCommentModal()}> 
+                    <ModalHeader className="bg-info">
+                      <h2 color="primary" className="text-left">Comments</h2>
+                    </ModalHeader>
+                      <ModalBody className="d-block text-center">
+                        <Card className="p-2 bg-default">
+                        <Table className="align-items-center table-flush table-white" responsive>
+                          <thead className="thead-dark">
+                            <tr>
+                            <th scope="col">Sl No</th>
+                            <th scope="col">Comments</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {
+                              (Array.isArray(this.state.comments) && this.state.comments.length > 0)
+                              ?
+                                this.state.comments && this.state.comments instanceof Array && this.state.comments.map((comment, i) => (
+                                    <tr scope="row">
+                                      <td><h3 className="text-center">{i+1}</h3></td>
+                                      <td><h3 className="text-center">{comment}</h3></td>
+                                    </tr>
+                                  ))
+                              :
+                                <td colSpan={10} className="align-items-center bg-white">
+                                <div className="col">
+                                  <h3 className="m-3 text-center text-dark">No Comments</h3>
+                                </div>
+                              </td>
+                            }
+                          </tbody>
+                        </Table>
+                        </Card>
+                      </ModalBody>
+                  </Modal>
               </Card>
         </Container>
       </>
@@ -408,6 +462,7 @@ const actionCreators = {
   getSurveys: surveyActions.getAll,
   deleteSurveys: surveyActions._delete,
   searchSurvey: surveyActions.search,
+  getComments: surveyActions.getComments,
   reportDownload: surveyActions.downloadReport,
   updateSurveyStatus: surveyActions.updateStatus,
   clearAlerts: alertActions.clear
