@@ -123,6 +123,7 @@ class Profile extends React.Component {
           lastName: this.state.lastName,
           address: this.state.address,
           city: this.state.city,
+          postalCode: this.state.postalCode,
           country: this.state.country,
           password: this.state.password
         }

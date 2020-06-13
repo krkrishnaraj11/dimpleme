@@ -60,7 +60,18 @@ class Dashboard extends React.Component {
       surveyCount: 0,
       activeSurveyCount: 0,
       inactiveSurveyCount: 0,
-      searchText: ''
+      searchText: '',
+      comments: [],
+      commentModal: false,
+      surveyCustId: '',
+      popSurvey: [],
+      imgSrc : [
+        { icon: '/src/assets/img/icons/smiley/very-satisfied.png' },
+        { icon: '/src/assets/img/icons/smiley/satisfied.png' },
+        { icon: '/src/assets/img/icons/smiley/neutral.png' },
+        { icon: '/src/assets/img/icons/smiley/unsatisfied.png' },
+        { icon: '/src/assets/img/icons/smiley/very-unsatisfied.png' },
+      ]
     };
 
     history.listen((location, action) => {
@@ -75,6 +86,12 @@ class Dashboard extends React.Component {
     });
   };
 
+    togglePopover(item, i){
+      var pSurvey = this.state.popSurvey;
+      pSurvey[i] = !pSurvey[i];
+      this.setState({ popSurvey: pSurvey, surveyCustId: item.surveyCustId })
+    }
+
   UNSAFE_componentWillReceiveProps(nextProps){
     
     if(this.state.searchText == '' && nextProps.dashboarddata.data){
@@ -86,6 +103,10 @@ class Dashboard extends React.Component {
     
     if(nextProps.survey.data){
         this.setState({ recentCreatedSurveys: nextProps.survey.data })
+    }
+
+    if(nextProps.survey.comments){
+      this.setState({ comments: nextProps.survey.comments })
     }
 
     if(nextProps.alert.message){
@@ -112,7 +133,6 @@ class Dashboard extends React.Component {
       data: data
     })
   }
-
 
   componentDidMount(){
     this.props.getDashboardData()
@@ -158,6 +178,13 @@ class Dashboard extends React.Component {
 
   toggleQRModal(dcode){
     this.setState({ qrModal: !this.state.qrModal, selectSurveyQR: (dcode) ? dcode: '' })
+  }
+
+  toggleCommentModal(surveyCustId, answerId){
+    if(surveyCustId){
+      this.props.getComments(surveyCustId, answerId);
+    }
+    this.setState({ commentModal: !this.state.commentModal })
   }
 
   
@@ -245,6 +272,7 @@ class Dashboard extends React.Component {
                             <th scope="col">Questions</th>
                             <th scope="col">Active</th>
                             <th scope="col">Link</th>
+                            <th scope="col">Survey Code</th>
                             <th scope="col">QR Code</th>
                             <th scope="col">Report</th>
                             <th scope="col">Result</th>
@@ -263,7 +291,83 @@ class Dashboard extends React.Component {
                             : 
                             this.state.recentCreatedSurveys && this.state.recentCreatedSurveys instanceof Array && this.state.recentCreatedSurveys.map((item, i) => (
                               <tr>
-                              <th scope="row">{item.surveyName}</th>
+                              <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
+                              <Modal isOpen={this.state.popSurvey[i]} centered toggle={() => this.togglePopover(item,i)}>
+                                <ModalHeader>{item.surveyName}</ModalHeader>
+                                <ModalBody className="bg-default shadow">
+                                  <Row className="justify-content-between">
+                                    <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                        <img src={this.state.imgSrc[0].icon}/>
+                                    </span>
+                                    <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                        <img src={this.state.imgSrc[1].icon}/>
+                                    </span>
+                                    <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                        <img src={this.state.imgSrc[2].icon}/>
+                                    </span>
+                                    <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                        <img src={this.state.imgSrc[3].icon}/>
+                                    </span>
+                                    <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                        <img src={this.state.imgSrc[4].icon}/>
+                                    </span>
+                                    <h3 className="text-info mt-1">{item.totalRatings} out of 5</h3>
+                                  </Row>
+                                  <h3 className="text-info text-center my-1">{item.visitorsCount} Customer Ratings</h3>
+                                    <Row className="justify-content-between">
+                                      <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                        <img src={this.state.imgSrc[0].icon}/>
+                                      </span>
+                                      <div style={{width: 200}} className="mt-3">
+                                        
+                                      <Progress value={item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                                      </div>
+                                      <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100) || 0}%</h2>
+                                    </Row>
+                                    <Row className="justify-content-between">
+                                      <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                        <img src={this.state.imgSrc[1].icon}/>
+                                      </span>
+                                      <div style={{width: 200}} className="mt-3">
+                                      <Progress value={item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                                      </div>
+                                      <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                                    </Row>
+                                    <Row className="justify-content-between">
+                                      <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                        <img src={this.state.imgSrc[2].icon}/>
+                                      </span>
+                                      <div style={{width: 200}} className="mt-3">
+                                      <Progress value={item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                                      </div>
+                                      <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                                    </Row>
+                                    <Row className="justify-content-between">
+                                      <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                        <img src={this.state.imgSrc[3].icon}/>
+                                      </span>
+                                      <div style={{width: 200}} className="mt-3">
+                                      <Progress value={item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                                      </div>
+                                      <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                                    </Row>
+                                    <Row className="justify-content-between">
+                                      <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                        <img src={this.state.imgSrc[4].icon}/>
+                                      </span>
+                                      <div style={{width: 200}} className="mt-3">
+                                      <Progress value={item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                                      </div>
+                                      <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                                    </Row>
+                                    <Row className="justify-content-center">
+                                      <Button size="lg" className="btn btn-icon btn-3 btn-outline-primary align-center" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item.firstQuestionId)}>
+                                        <i className="fas fa-th-list text-warning"/>
+                                        <span className="btn-inner--text">Comments</span>
+                                      </Button>
+                                    </Row>
+                                  </ModalBody>
+                                </Modal>
                               <td>{item.totalQuestions}</td>
                               <td>
                                 <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
@@ -277,8 +381,10 @@ class Dashboard extends React.Component {
                                   <i className="fas fa-link text-warning"/>
                                   <span className="btn-inner--text">Link</span>
                                 </Button>
-
                               </td>
+
+                              <th className="text-center">{item.dcode}</th>
+
                               <td>
                                 <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
                                   <i className="fas fa-qrcode text-success"/>
@@ -293,7 +399,7 @@ class Dashboard extends React.Component {
                       </td>
 
                       <td>
-                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => history.push('/admin/survey/result')}>
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.surveyResult(item)}>
                           <i className="fas fa-th-list text-warning"/>
                           <span className="btn-inner--text">RESULT</span>
                         </Button>
@@ -387,7 +493,7 @@ class Dashboard extends React.Component {
                             {
                               this.state.recentSubmittedSurveys && this.state.recentSubmittedSurveys instanceof Array && this.state.recentSubmittedSurveys.map((item, i) => (
                                 <tr>
-                                <th scope="row">{item.surveyName}</th>
+                                <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
                                 <td>{item.totalQuestions}</td>
                                 <td>
                                   <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
@@ -476,6 +582,41 @@ class Dashboard extends React.Component {
               </TabPane>
             </TabContent>
           </CardBody>
+          <Modal isOpen={this.state.commentModal} centered toggle={() => this.toggleCommentModal()}>
+                    <ModalHeader className="bg-info">
+                      <h2 color="primary" className="text-left">Comments</h2>
+                    </ModalHeader>
+                      <ModalBody className="d-block text-center">
+                        <Card className="p-2 bg-default">
+                        <Table className="align-items-center table-flush table-white" responsive>
+                          <thead className="thead-dark">
+                            <tr>
+                            <th scope="col">Sl No</th>
+                            <th scope="col">Comments</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {
+                              (Array.isArray(this.state.comments) && this.state.comments.length > 0)
+                              ?
+                                this.state.comments && this.state.comments instanceof Array && this.state.comments.map((comment, i) => (
+                                    <tr scope="row">
+                                      <td><h3 className="text-center">{i+1}</h3></td>
+                                      <td><h3 className="text-center">{comment}</h3></td>
+                                    </tr>
+                                  ))
+                              :
+                                <td colSpan={10} className="align-items-center bg-white">
+                                <div className="col">
+                                  <h3 className="m-3 text-center text-dark">No Comments</h3>
+                                </div>
+                              </td>
+                            }
+                          </tbody>
+                        </Table>
+                        </Card>
+                      </ModalBody>
+                  </Modal>
         </Card>
         </Container>
       </>
@@ -494,6 +635,7 @@ const actionCreators = {
   getDashboardData: dashboardActions.getData,
   searchSurvey: surveyActions.search,
   updateSurveyStatus: surveyActions.updateStatus,
+  getComments: surveyActions.getComments,
   reportDownload: surveyActions.downloadReport,
   clearAlerts: alertActions.clear
 };

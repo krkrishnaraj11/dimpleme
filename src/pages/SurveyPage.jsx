@@ -75,8 +75,16 @@ class SurveyPage extends React.Component{
                 { icon: '/src/assets/img/icons/smiley/unsatisfied.png' },
                 { icon: '/src/assets/img/icons/smiley/very-unsatisfied.png' },
             ],
-            comments: []
+            comments: [],
+            commentModal: false
         }
+    }
+
+    toggleCommentModal(surveyCustId, answerId){
+      if(surveyCustId){
+        this.props.getComments(surveyCustId, answerId);
+      }
+      this.setState({ commentModal: !this.state.commentModal })
     }
 
     UNSAFE_componentWillReceiveProps(nextProps){
@@ -132,7 +140,7 @@ class SurveyPage extends React.Component{
       var ResultAr = this.state.answers;   
       var smiley = [ 'secondary', 'secondary', 'secondary', 'secondary', 'secondary' ]
       smiley[iKey] = 'primary';
-      ResultAr[qKey].rating = iKey + 1;
+      ResultAr[qKey].rating = 5 - iKey;
       scheckAr[qKey]  = smiley;
       this.setState({ smileyCheck: scheckAr, answers: ResultAr });
     }
@@ -307,7 +315,8 @@ function mapState(state) {
   const actionCreators = {
     getByIdSurvey: surveyActions.getById,
     clearAlerts: alertActions.clear,
-    submitSurvey: surveyActions.submitAnswer
+    submitSurvey: surveyActions.submitAnswer,
+    getComments: surveyActions.getComments,
   };
   
   const connectedSurveyPage = connect(mapState, actionCreators)(SurveyPage);

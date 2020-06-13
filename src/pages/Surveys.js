@@ -51,7 +51,6 @@ class Survey extends React.Component {
           survey: {},
           linkModal: false,
           selectSurveyQR: '',
-          surveyCustId: '',
           searchText: '',
           comments: [],
           initialrow:0,
@@ -68,6 +67,7 @@ class Survey extends React.Component {
       }
 
       toggleCommentModal(surveyCustId, answerId){
+        console.log(surveyCustId, answerId)
         if(surveyCustId){
           this.props.getComments(surveyCustId, answerId);
         }
@@ -82,7 +82,6 @@ class Survey extends React.Component {
       togglePopover(item, i){
         var pSurvey = this.state.popSurvey;
         pSurvey[i] = !pSurvey[i];
-        console.log("popover",item)
         this.setState({ popSurvey: pSurvey, surveyCustId: item.surveyCustId })
       }
       
@@ -111,6 +110,9 @@ class Survey extends React.Component {
             popAr.push(false);
           })
           this.setState({ survey: nextProps.survey.data, popSurvey: popAr })
+        }
+        if(nextProps.survey.comments){
+          this.setState({ comments: nextProps.survey.comments })
         }
       }
 
@@ -217,7 +219,7 @@ class Survey extends React.Component {
                     <div className="col text-right">
                       <Button
                         color="primary"
-                        href="#pablo"
+                        href="#add"
                         onClick={() => this.addSurvey()}
                         size="sm"
                       >
@@ -246,6 +248,7 @@ class Survey extends React.Component {
                       <th scope="col">Edit</th>
                       <th scope="col">Delete</th>
                       <th scope="col">Link</th>
+                      <th scope="col">Survey Code</th>
                       <th scope="col">QR Code</th>
                       <th scope="col">Report</th>
                       <th scope="col">Result</th>
@@ -285,55 +288,55 @@ class Survey extends React.Component {
                           </span>
                           <h3 className="text-info mt-1">3 out of 5</h3>
                         </Row>
-                        <h3 className="text-info text-center my-1">35 Customer Ratings</h3>
+                        <h3 className="text-info text-center my-1">{item.visitorsCount} Customer Ratings</h3>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[0].icon}/>
                             </span>
                             <div style={{width: 200}} className="mt-3">
                               
-                            <Progress value={item.dimpleInfo.verySatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
+                            <Progress value={item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{Math.round(item.dimpleInfo.verySatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100)}%</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[1].icon}/>
                             </span>
                             <div style={{width: 200}} className="mt-3">
-                            <Progress value={item.dimpleInfo.satisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
+                            <Progress value={item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{Math.round(item.dimpleInfo.satisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100)}%</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[2].icon}/>
                             </span>
                             <div style={{width: 200}} className="mt-3">
-                            <Progress value={item.dimpleInfo.neutral/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
+                            <Progress value={item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{Math.round(item.dimpleInfo.neutral/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100)}%</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[3].icon}/>
                             </span>
                             <div style={{width: 200}} className="mt-3">
-                            <Progress value={item.dimpleInfo.unsatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
+                            <Progress value={item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{Math.round(item.dimpleInfo.unsatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100)}%</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[4].icon}/>
                             </span>
                             <div style={{width: 200}} className="mt-3">
-                            <Progress value={item.dimpleInfo.veryUnsatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100}/>
+                            <Progress value={item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{Math.round(item.dimpleInfo.veryUnsatisfied/ (item.dimpleInfo.verySatisfied + item.dimpleInfo.satisfied + item.dimpleInfo.neutral + item.dimpleInfo.unsatisfied + item.dimpleInfo.veryUnsatisfied) * 100)}%</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100)}%</h2>
                           </Row>
                           <Row className="justify-content-center">
-                            <Button size="lg" className="btn btn-icon btn-3 btn-outline-primary align-center" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item.questionId)}>
+                            <Button size="lg" className="btn btn-icon btn-3 btn-outline-primary align-center" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item.firstQuestionId)}>
                               <i className="fas fa-th-list text-warning"/>
                               <span className="btn-inner--text">Comments</span>
                             </Button>
@@ -364,6 +367,7 @@ class Survey extends React.Component {
                         </Button>
 
                       </td>
+                      <th className="text-center">{item.dcode}</th>
                       <td>
                         <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
                           <i className="fas fa-qrcode text-success"/>
@@ -431,7 +435,7 @@ class Survey extends React.Component {
                     </Modal>
                   </tbody>
                 </Table>
-                <Modal isOpen={this.state.commentModal} centered toggle={() => this.toggleCommentModal()}> 
+                <Modal isOpen={this.state.commentModal} centered toggle={() => this.toggleCommentModal()}>
                     <ModalHeader className="bg-info">
                       <h2 color="primary" className="text-left">Comments</h2>
                     </ModalHeader>
