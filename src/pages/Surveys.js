@@ -286,7 +286,7 @@ class Survey extends React.Component {
                           <span className="avatar avatar-sm rounded-circle mx-1 my-1">
                               <img src={this.state.imgSrc[4].icon}/>
                           </span>
-                          <h3 className="text-info mt-1">3 out of 5</h3>
+                          <h3 className="text-info mt-1">{item.firstQuestionDetail.totalRatings} out of 5</h3>
                         </Row>
                         <h3 className="text-info text-center my-1">{item.visitorsCount} Customer Ratings</h3>
                           <Row className="justify-content-between">
@@ -295,45 +295,45 @@ class Survey extends React.Component {
                             </span>
                             <div style={{width: 200}} className="mt-3">
                               
-                            <Progress value={item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100}/>
+                            <Progress value={item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100)}%</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[1].icon}/>
                             </span>
                             <div style={{width: 200}} className="mt-3">
-                            <Progress value={item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100}/>
+                            <Progress value={item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100)}%</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[2].icon}/>
                             </span>
                             <div style={{width: 200}} className="mt-3">
-                            <Progress value={item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100}/>
+                            <Progress value={item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100)}%</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[3].icon}/>
                             </span>
                             <div style={{width: 200}} className="mt-3">
-                            <Progress value={item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100}/>
+                            <Progress value={item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100)}%</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
                           </Row>
                           <Row className="justify-content-between">
                             <span className="avatar avatar-sm rounded-circle mx-3 my-1">
                               <img src={this.state.imgSrc[4].icon}/>
                             </span>
                             <div style={{width: 200}} className="mt-3">
-                            <Progress value={item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100}/>
+                            <Progress value={item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
                             </div>
-                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100)}%</h2>
+                            <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
                           </Row>
                           <Row className="justify-content-center">
                             <Button size="lg" className="btn btn-icon btn-3 btn-outline-primary align-center" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item.firstQuestionId)}>

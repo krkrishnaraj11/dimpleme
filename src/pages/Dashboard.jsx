@@ -311,7 +311,7 @@ class Dashboard extends React.Component {
                                     <span className="avatar avatar-sm rounded-circle mx-1 my-1">
                                         <img src={this.state.imgSrc[4].icon}/>
                                     </span>
-                                    <h3 className="text-info mt-1">{item.totalRatings} out of 5</h3>
+                                    <h3 className="text-info mt-1">{item.firstQuestionDetail.totalRatings} out of 5</h3>
                                   </Row>
                                   <h3 className="text-info text-center my-1">{item.visitorsCount} Customer Ratings</h3>
                                     <Row className="justify-content-between">
