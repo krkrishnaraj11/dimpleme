@@ -36,6 +36,9 @@ class Profile extends React.Component {
       addressState: '',
       city: '',
       cityState: '',
+      state:'',
+      stateState: '',
+      focusedState: false,
       focusedCity: false,
       country: '',
       countryState: '',
@@ -104,15 +107,16 @@ class Profile extends React.Component {
 }
 
   handleUpdate(e){
-    const { email, emailState, passwordState, firstName, firstNameState, lastName, lastNameState, address, addressState, city, cityState, country, countryState, postalCode, postalCodeState } = this.state;
+    const { email, emailState, passwordState, firstName, firstNameState, lastName, lastNameState, address, addressState, city, cityState, country, countryState, postalCode, postalCodeState, state, stateState } = this.state;
     if(this.state.update){
-      if(email == '' || !emailregex.test(email) || firstName == '' || lastName == '' || address == '' || city == '' || country == '' || postalCode == ''){
+      if(email == '' || !emailregex.test(email) || firstName == '' || lastName == '' || address == '' || city == '' || country == '' || postalCode == '' || state == ''){
         this.setState({ focusedEmail: true , focusedPassword: true, focusedAddress: true, focusedCity: true, focusedCountry: true, focusedLastName: true, focusedFirstName: true, focusedPostalCode: true})
         this.setState( email == "" || !emailregex.test(email) ? { emailState: "invalid"} : {emailState: "valid"})
         this.setState( firstName == "" ? { firstNameState: "invalid"} : {firstNameState: "valid"})
         this.setState( lastName == "" ? { lastNameState: "invalid"} : {lastNameState: "valid"})
         this.setState( address == "" ? { addressState: "invalid"} : {addressState: "valid"})
         this.setState( city == "" ? { cityState: "invalid"} : {cityState: "valid"})
+        // this.setState( state == "" ? { stateState: "invalid"} : {stateState: "valid"})
         this.setState( country == "" ? { countryState: "invalid"} : {countryState: "valid"})
         this.setState( postalCode == "" ? { postalCodeState: "invalid"} : {postalCodeState: "valid"})
       }
@@ -326,7 +330,7 @@ class Profile extends React.Component {
                     </h6>
                     <div className="pl-lg-4">
                       <Row>
-                        <Col md="12">
+                        <Col md="8">
                           <FormGroup 
                                 className={classnames(
                                   "mb-3",
@@ -351,6 +355,36 @@ class Profile extends React.Component {
                                 onChange={(e) => this.handleChange(e)}
                                 value={this.state.address}
                                 placeholder="Home Address"
+                                type="text"
+                              />
+                            </InputGroup>
+                          </FormGroup>
+                        </Col>
+                        <Col lg="4">
+                          <FormGroup 
+                                className={classnames(
+                                  "mb-3",
+                                  { focused: this.state.focusedState },
+                                  { "has-danger": this.state.stateState === "invalid" },
+                                  { "has-success": this.state.stateState === "valid" }
+                                )}>
+                            <label
+                              className="form-control-label"
+                              htmlFor="state"
+                            >
+                              State
+                            </label>
+                            <InputGroup
+                              className={classnames("input-group-merge input-group-alternative", {
+                                "is-invalid": this.state.cityState === "invalid"
+                              })}>
+                              <Input
+                                className="form-control-alternative"
+                                id="state"
+                                disabled={!this.state.update}
+                                value={this.state.state}
+                                onChange={(e) => this.handleChange(e)}
+                                placeholder="State"
                                 type="text"
                               />
                             </InputGroup>
@@ -432,7 +466,7 @@ class Profile extends React.Component {
                               className="form-control-label"
                               htmlFor="postalCode"
                             >
-                              Postal code
+                              Zip code
                             </label>
                             <InputGroup
                               className={classnames("input-group-merge input-group-alternative", {
