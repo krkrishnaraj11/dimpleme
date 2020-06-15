@@ -100,10 +100,6 @@ class Dashboard extends React.Component {
         recentSubmittedSurveys: nextProps.dashboarddata.data.recentSubmittedSurveys
       })
     }
-    
-    if(nextProps.survey.data){
-        this.setState({ recentCreatedSurveys: nextProps.survey.data })
-    }
 
     if(nextProps.survey.comments){
       this.setState({ comments: nextProps.survey.comments })
