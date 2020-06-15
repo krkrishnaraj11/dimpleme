@@ -160,6 +160,10 @@ class Dashboard extends React.Component {
     document.body.removeChild(downloadLink);
   };
 
+  copyLink(text){
+    navigator.clipboard.writeText(text);
+  }
+  
   toggleDeleteModal(surveyCustId){
     this.setState({ deleteModal: !this.state.deleteModal, surveyCustId: surveyCustId})
   }
@@ -541,6 +545,9 @@ class Dashboard extends React.Component {
                         <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
                         </Card>
                       </ModalBody>
+                      <ModalFooter>
+                        <Button color="success" onClick={() => this.copyLink("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy</Button>{' '}
+                      </ModalFooter>
                     </Modal>
 
                     <Modal isOpen={this.state.qrModal} centered toggle={() => this.toggleQRModal()}>

@@ -137,6 +137,10 @@ class Survey extends React.Component {
         document.body.removeChild(downloadLink);
       };
 
+      copyLink(text){
+        navigator.clipboard.writeText(text);
+      }
+      
       editSurvey(data){
         history.push({
           pathname: '/admin/survey/edit',
@@ -401,6 +405,9 @@ class Survey extends React.Component {
                         <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
                         </Card>
                       </ModalBody>
+                      <ModalFooter>
+                        <Button color="success" onClick={() => this.copyLink("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy</Button>{' '}
+                      </ModalFooter>
                     </Modal>
 
 
