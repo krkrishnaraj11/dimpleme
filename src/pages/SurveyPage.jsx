@@ -80,6 +80,25 @@ class SurveyPage extends React.Component{
         }
     }
 
+    nextQuestion(){
+      if(this.state.answers[0].comment == '' || this.state.answers[0].rating == 0){
+        store.addNotification({
+          title: 'Survey',
+          message: 'Add Ratings & Comments',
+          type: 'danger',             // 'default', 'success', 'info', 'warning'
+          container: 'top-right',                // where to position the notifications
+          animationIn: ["animated", "fadeIn"],     // animate.css classes that's applied
+          animationOut: ["animated", "fadeOut"],   // animate.css classes that's applied
+          dismiss: {
+            duration: 1000 
+          }
+        })
+      }
+      else{
+        this.setState({ listCount: this.state.listCount + 1 })
+      }
+    }
+
     toggleCommentModal(surveyCustId, answerId){
       if(surveyCustId){
         this.props.getComments(surveyCustId, answerId);
@@ -195,7 +214,7 @@ class SurveyPage extends React.Component{
                     <Row>
                       <div className="update ml-auto mr-auto">
                         {
-                          this.state.questions.length - this.state.listCount != 1
+                          this.state.listCount != 0 && this.state.questions.length - this.state.listCount >= 2
                           ?
                             <Button
                               className="btn-round"
@@ -210,18 +229,19 @@ class SurveyPage extends React.Component{
                         }
 
                         {
-                          this.state.questions.length - this.state.listCount != 1
+                          this.state.questions.length - this.state.listCount >= 2
                           ?
                             <Button
-                              className="btn-round"
-                              color="danger"
-                              type="button"
-                              onClick={() => this.setState({ listCount: this.state.listCount + 1 })}
-                            >
-                              Next
-                            </Button>
+                            className="btn-round"
+                            color="danger"
+                            type="button"
+                            onClick={() => this.nextQuestion()}
+                          >
+                            Next
+                          </Button>
 
-                          : null
+                          : 
+                            null
                         }
 
                         <Button
