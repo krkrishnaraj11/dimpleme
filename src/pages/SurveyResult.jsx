@@ -27,6 +27,24 @@ import { history } from '../../_helpers';
 import classnames from "classnames";
 import { surveyActions, alertActions } from '../../_actions';
 import {Header} from "../components/Headers/Header.js";
+import Select from "react-select";
+
+const options = [
+  { value: 'chocolate', label: 'Chocolate' },
+  { value: 'strawberry', label: 'Strawberry' },
+  { value: 'vanilla', label: 'Vanilla' }
+]
+let searchOption = []
+
+
+const searchStyle = {
+  container: base => ({
+    ...base,
+    marginTop: 10,
+    flex: 1
+  })
+};
+
 
 class SurveyResult extends React.Component{
     constructor(props){
@@ -40,6 +58,7 @@ class SurveyResult extends React.Component{
           totalQuestions: 0,
           visitorsCount: 0,
           surveyCustId: '',
+          searchText: '',
           commentModal: false,
           imgSrc : [
             { icon: '/src/assets/img/icons/smiley/very-satisfied.png' },
@@ -53,17 +72,17 @@ class SurveyResult extends React.Component{
     }
 
     componentDidMount(){
+      this.props.getSurveys();
       if(this.props.location.data){
         this.setState({ surveyCustId: this.props.location.data.surveyCustId })
         this.props.surveyDetails(this.props.location.data.surveyCustId);
       }
       else{
-        history.push('/admin/surveys')
+        // history.push('/admin/surveys')
       }
     }
 
     UNSAFE_componentWillReceiveProps(nextProps){
-      console.log(nextProps.location)
       if(nextProps.result.data){
         this.setState({ 
           avgNoOfQuestionsAttempted: nextProps.result.data.avgNoOfQuestionsAttempted,
@@ -74,7 +93,16 @@ class SurveyResult extends React.Component{
           result: nextProps.result.data.questionsInfo })
       }
       if(nextProps.result){
-        this.setState({ comments: nextProps.result.comments })
+        if(nextProps.result.comments){
+          this.setState({ comments: nextProps.result.comments })
+        }
+        else{
+          Array.isArray(nextProps.result.data) && nextProps.result.data.map( a => {
+            console.log(a)
+            let surveyData = {value: a.surveyName, label: a.surveyName, surveyCustId: a.surveyCustId}
+            searchOption.push(surveyData)
+          })
+        }
       }
     }
 
@@ -83,6 +111,10 @@ class SurveyResult extends React.Component{
         this.props.getComments(surveyCustId, answerId);
       }
       this.setState({ commentModal: !this.state.commentModal })
+    }
+
+    onSearchClick(e){
+      this.props.surveyDetails(e.surveyCustId);
     }
 
     render(){
@@ -172,7 +204,7 @@ class SurveyResult extends React.Component{
                   <CardHeader className="bg-transparent border-1">
                     <Row className="align-items-center">
                       <div className="col">
-                        <h3 className="mb-0 text-white">{this.state.surveyName} Result</h3>
+                        <h3 className="mb-0 text-white">Survey Result</h3>
                       </div>
                       {/* <div className="col text-right">
                         <Button
@@ -184,6 +216,16 @@ class SurveyResult extends React.Component{
                         </Button>
                       </div> */}
                     </Row>
+                    <Row>
+                    <Select
+                    styles={searchStyle}
+                    className="basic-single"
+                    classNamePrefix="select"
+                    isSearchable={true}
+                    name="color"
+                    onChange={(e) => this.onSearchClick(e)}
+                    options={searchOption}/>
+                  </Row>
                   </CardHeader>
                   <Table className="align-items-center table-flush table-white" responsive>
                     <thead className="thead-dark">
@@ -291,6 +333,7 @@ function mapState(state) {
     reportDownload: surveyActions.downloadReport,
     surveyDetails: surveyActions.getResult,
     getComments: surveyActions.getComments,
+    getSurveys: surveyActions.getAll,
     clearAlerts: alertActions.clear
   };
   
