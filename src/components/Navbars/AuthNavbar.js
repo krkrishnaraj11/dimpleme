@@ -49,7 +49,7 @@ class AdminNavbar extends React.Component {
                 </Row>
               </div>
               <Nav className="ml-auto" navbar>
-                <NavItem>
+                {/* <NavItem>
                   <NavLink
                     className="nav-link-icon"
                     to="/auth/register"
@@ -58,7 +58,7 @@ class AdminNavbar extends React.Component {
                     <i className="ni ni-circle-08" />
                     <span className="nav-link-inner--text">Register</span>
                   </NavLink>
-                </NavItem>
+                </NavItem> */}
                 <NavItem>
                   <NavLink
                     className="nav-link-icon"
