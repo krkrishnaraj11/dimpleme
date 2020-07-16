@@ -26,7 +26,7 @@ import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props
 import GoogleLogin from 'react-google-login';
 var emailregex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
 
-class Login extends React.Component {
+class Register extends React.Component {
   constructor(props){
     super(props);
 
@@ -41,6 +41,12 @@ class Login extends React.Component {
       scan: false,
       result: 'No Result',
       forgot: false,
+      firstName: '',
+      firstNameState: '',
+      focusedFirstName: false,
+      lastName: '',
+      lastNameState: '',
+      focusedLastName: false,
       email: '',
       emailState: '',
       focusedEmail: false,
@@ -60,13 +66,26 @@ class Login extends React.Component {
   }
 
   handleChange(e) {
+    console.log(e.target)
     const { type, value } = e.target;
-    if(e.target.placeholder == "dcode" ){
-      this.setState({ dcode: e.target.value })
+    const { firstName, lastName, email, password}  = this.state;
+    this.setState({ [type]: value });
+    if(e.target.placeholder == "First Name"){
+      this.setState({ firstName: e.target.value })
     }
-    else{
-      this.setState({ [type]: value });
+    // this.setState(firstName == "" ? { focusedFirstName: true } : { focusedFirstName: false })
+    // this.setState(firstName == "" ? { firstNameState: "invalid"} : {firstNameState: "valid"})
+    if(e.target.placeholder == "Last Name"){
+      this.setState({ lastName: e.target.value })
     }
+    // this.setState(lastName == "" ? { focusedLastName: true } : { focusedLastName: false })
+    // this.setState(lastName == "" ? { lastNameState: "invalid"} : {lastNameState: "valid"})
+    
+    // this.setState(email != "" && !emailregex.test(email) ? { focusedEmail: true } : { focusedEmail: false })
+    // this.setState(email != "" && !emailregex.test(email) ? { emailState: "invalid"} : {emailState: "valid"})
+
+    // this.setState(password == "" ? { focusedPassword: true } : { focusedPassword: false })
+    // this.setState(password == "" ? { passwordState: "invalid"} : {passwordState: "valid"})
 }
 
 handleDcode(e){
@@ -102,18 +121,19 @@ handleForgot(e) {
 
 handleSubmit(e) {
   e.preventDefault();
-  const { email, password, emailState, passwordState } = this.state;
+  const { email, password, emailState, passwordState, firstName, lastName } = this.state;
 
-  if(email == '' || password == '' || !emailregex.test(email)){
-    this.setState({ focusedEmail: true , focusedPassword: true })
+  if(firstName == '' || lastName == '' || email == '' || password == '' || !emailregex.test(email)){
+    this.setState({ focusedEmail: true , focusedPassword: true, focusedFirstName: true, focusedLastName: true })
     this.setState( email == "" ? { emailState: "invalid"} : {passwordState: "invalid"})
     this.setState( password == "" ? { passwordState: "invalid"} : {emailState: "invalid"})
+    this.setState( firstName == "" ? { firstNameState: "invalid"} : {lastNameState: "invalid"})
+    this.setState( lastName == "" ? { lastNameState: "invalid"} : {firstNameState: "invalid"})
   }
   else{
     this.setState({ submitted: true });
-    const { email, password } = this.state;
-    if (email && password) {
-        this.props.login(email, password)
+    if (email && password && firstName && lastName) {
+        this.props.register(firstName, lastName, email, password)
     }
   }
 }
@@ -179,7 +199,7 @@ responseGoogle = (response) => {
     const { loggingIn } = this.props;
     const alert = this.props.alert;
     const user = this.props.user;
-    const {email, password, dcode, submitted} = this.state;
+    const {email, password, dcode, submitted, firstName, lastName} = this.state;
     return (
       <>
         <Col lg="5" md="7" xs="0">
@@ -245,9 +265,93 @@ responseGoogle = (response) => {
             
             <CardBody className="px-lg-5 py-lg-5">
               <div className="text-center text-muted mb-4">
-            <small>Log in with credentials</small>
+            <small>Create New Account</small>
               </div>
               <Form role="form" onSubmit={e => this.handleSubmit(e)}>
+                <Row>
+                <FormGroup 
+                  className={classnames(
+                    "mb-3 col-sm",
+                    { focused: this.state.focusedFirstName },
+                    { "has-danger": this.state.firstNameState === "invalid" },
+                    { "has-success": this.state.firstNameState === "valid" }
+                  )}
+                >
+                  <InputGroup
+                    className={classnames("input-group-merge input-group-alternative", {
+                      "is-invalid": this.state.firstNameState === "invalid"
+                    })}
+                  >
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i
+                          className={classnames(
+                            "ni ni-circle-08",
+                            { "text-danger": this.state.firstNameState === "invalid" },
+                            { "text-success": this.state.firstNameState === "valid" }
+                          )} 
+                         />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input 
+                      placeholder="First Name" 
+                      type="text" 
+                      className={classnames(
+                        { "text-danger": this.state.firstNameState === "invalid" },
+                        { "text-success": this.state.firstNameState === "valid" }
+                      )}
+                      autoComplete="first-name" 
+                      value={firstName}
+                      onChange={(e) => this.handleChange(e)}
+                      onFocus={() => this.setState({ focusedFirstName: true })}
+                      onBlur={() => this.setState({ focusedFirstName: false })}
+                    />
+                  </InputGroup>
+                  <div className="invalid-feedback">Enter First Name</div>
+                </FormGroup>
+
+                <FormGroup 
+                  className={classnames(
+                    "mb-3 col-sm",
+                    { focused: this.state.focusedLastName },
+                    { "has-danger": this.state.lastNameState === "invalid" },
+                    { "has-success": this.state.lastNameState === "valid" }
+                  )}
+                >
+                  <InputGroup
+                    className={classnames("input-group-merge input-group-alternative", {
+                      "is-invalid": this.state.lastNameState === "invalid"
+                    })}
+                  >
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i
+                          className={classnames(
+                            "ni ni-email-83",
+                            { "text-danger": this.state.lastNameState === "invalid" },
+                            { "text-success": this.state.lastNameState === "valid" }
+                          )} 
+                         />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input 
+                      placeholder="Last Name" 
+                      type="text" 
+                      className={classnames(
+                        { "text-danger": this.state.lastNameState === "invalid" },
+                        { "text-success": this.state.lastNameState === "valid" }
+                      )}
+                      autoComplete="last-name" 
+                      value={lastName} 
+                      onChange={(e) => this.handleChange(e)}
+                      onFocus={() => this.setState({ focusedLastName: true })}
+                      onBlur={() => this.setState({ focusedLastName: false })}
+                    />
+                  </InputGroup>
+                  <div className="invalid-feedback">Enter Last Name</div>
+                </FormGroup>
+
+                </Row>
 
                 <FormGroup 
                   className={classnames(
@@ -332,7 +436,7 @@ responseGoogle = (response) => {
                 </FormGroup>
                 <div className="text-center">
                   <Button className="my-4" color="primary" type="submit" size="lg">
-                    Sign in   
+                    Create Account   
                   </Button>
                 </div>
               </Form>
@@ -406,26 +510,6 @@ responseGoogle = (response) => {
 
 
           </Card>
-          <Row className="mt-3">
-            <Col xs="6">
-              <a
-                className="text-light"
-                // href={ this.state.forgot ? "#forgot" : "" }
-                onClick={() => this.Forgot()}
-              >
-                <small>{ this.state.forgot ? "Admin Login" : "Forgot password ?" }</small>
-              </a>
-            </Col>
-            <Col className="text-right" xs="6">
-              <a
-                className="text-light"
-                target={Link}
-                href="/auth/register"
-              >
-                <small>Create new account</small>
-              </a>
-            </Col>
-          </Row>
         </Col>
       </>
     );
@@ -440,11 +524,12 @@ function mapState(state) {
 
 const actionCreators = {
   login: userActions.login,
+  register: userActions.register,
   logout: userActions.logout,
   validDcode: surveyActions.verifyDecode,
   forgot: userActions.forgot,
   clearAlerts: alertActions.clear
 };
 
-const connectedLoginPage = connect(mapState, actionCreators)(Login);
-export { connectedLoginPage as Login };
+const connectedRegisterPage = connect(mapState, actionCreators)(Register);
+export { connectedRegisterPage as Register };

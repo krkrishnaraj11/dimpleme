@@ -11,8 +11,25 @@ import {
   Row,
   Col
 } from "reactstrap";
+import { history } from '../../../_helpers';
 
-class AdminNavbar extends React.Component {
+
+class AuthNavbar extends React.Component {
+  constructor(props){
+    super(props);
+
+    // reset login status
+    this.state = {
+      login: false,
+      register: false
+    }
+  }
+
+  loginLink(){
+    this.setState({ login: !this.state.login })
+  }
+
+  
   render() {
     return (
       <>
@@ -49,26 +66,52 @@ class AdminNavbar extends React.Component {
                 </Row>
               </div>
               <Nav className="ml-auto" navbar>
-                {/* <NavItem>
-                  <NavLink
-                    className="nav-link-icon"
-                    to="/auth/register"
-                    tag={Link}
-                  >
-                    <i className="ni ni-circle-08" />
-                    <span className="nav-link-inner--text">Register</span>
-                  </NavLink>
-                </NavItem> */}
-                <NavItem>
-                  <NavLink
-                    className="nav-link-icon"
-                    to="/auth/login"
-                    tag={Link}
-                  >
-                    <i className="ni ni-key-25" />
-                    <span className="nav-link-inner--text">Login</span>
-                  </NavLink>
-                </NavItem>
+                {
+                  history.location.pathname != '/auth/scan'
+                  ?
+                  <NavItem>
+                    <NavLink
+                      className="nav-scan-icon"
+                      to="/auth/scan"
+                      tag={Link}
+                    >
+                      <i className="fa fa-qrcode" />
+                      <span className="nav-link-inner--text"> Scan</span>
+                    </NavLink>
+                  </NavItem>
+                  : null
+                }
+                {
+                  history.location.pathname != '/auth/register'
+                  ?
+                  <NavItem>
+                    <NavLink
+                      className="nav-link-icon"
+                      to="/auth/register"
+                      tag={Link}
+                    >
+                      <i className="ni ni-circle-08" />
+                      <span className="nav-link-inner--text">Register</span>
+                    </NavLink>
+                  </NavItem>
+                  : null
+                }
+                {
+                  history.location.pathname != '/auth/login'
+                  ?
+                  <NavItem>
+                    <NavLink
+                      className="nav-link-icon"
+                      to="/auth/login"
+                      onClick={() => this.loginLink()}
+                      tag={Link}
+                    >
+                      <i className="ni ni-key-25" />
+                      <span className="nav-link-inner--text">Login</span>
+                    </NavLink>
+                  </NavItem>
+                  : null
+                }
               </Nav>
             </UncontrolledCollapse>
           </Container>
@@ -78,4 +121,4 @@ class AdminNavbar extends React.Component {
   }
 }
 
-export default AdminNavbar;
+export default AuthNavbar;

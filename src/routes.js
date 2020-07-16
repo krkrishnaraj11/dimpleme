@@ -5,6 +5,8 @@ import {Login} from "./pages/login";
 import {Survey} from "./pages/Surveys";
 import {SurveyEdit} from "./pages/SurveyEdit.jsx";
 import { SurveyResult } from "./pages/SurveyResult";
+import { Scan } from "./pages/scan";
+import { Register } from "./pages/Register";
 
 const routes = [
   {
@@ -67,7 +69,14 @@ const routes = [
     path: "/register",
     name: "Register",
     icon: "ni ni-key-25 text-info",
-    component: Login,
+    component: Register,
+    layout: "/auth" 
+  },
+  {
+    path: "/scan",
+    name: "Scan",
+    icon: "ni ni-key-25 text-info",
+    component: Scan,
     layout: "/auth" 
   }
 ];

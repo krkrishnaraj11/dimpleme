@@ -73,7 +73,7 @@ class Auth extends React.Component {
             <Row className="justify-content-center">
               <Switch>
                 {this.getRoutes(routes)}
-                <Redirect from="*" to="/auth/login" />
+                <Redirect from="*" to="/auth/scan" />
               </Switch>
             </Row>
           </Container>
