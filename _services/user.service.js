@@ -62,13 +62,14 @@ function getById() {
 }
 
 function register(user) {
+    console.log(user)
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(user)
     };
 
-    return fetch(`${config.apiUrl}/users/signUp`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/user/signUp`, requestOptions).then(handleResponse);
 }
 
 function update(user) {

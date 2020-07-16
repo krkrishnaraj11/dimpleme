@@ -59,14 +59,17 @@ class Login extends React.Component {
     }
   }
 
-  handleChange(e) {
-    const { type, value } = e.target;
-    if(e.target.placeholder == "dcode" ){
-      this.setState({ dcode: e.target.value })
-    }
-    else{
-      this.setState({ [type]: value });
-    }
+
+handleChange(e) {
+  const { id, value } = e.target;
+    this.setState({ [id]: value });
+
+  if(e.target.value == "" || e.target.id == "email" && !emailregex.test(e.target.value)) {
+    this.setState({ [id + "State"]: "invalid"})
+  }
+  else{
+    this.setState({ [id + "State"]: "valid"}) 
+  }
 }
 
 handleDcode(e){
@@ -276,6 +279,7 @@ responseGoogle = (response) => {
                     <Input 
                       placeholder="Email" 
                       type="email" 
+                      id="email"
                       className={classnames(
                         { "text-danger": this.state.emailState === "invalid" },
                         { "text-success": this.state.emailState === "valid" }
@@ -317,6 +321,7 @@ responseGoogle = (response) => {
                     <Input 
                       placeholder="Password" 
                       type="password" 
+                      id="password"
                       autoComplete="new-password" 
                       className={classnames(
                         { "text-danger": this.state.passwordState === "invalid" },
@@ -373,6 +378,7 @@ responseGoogle = (response) => {
                     <Input 
                       placeholder="Email" 
                       type="email" 
+                      id="email"
                       autoComplete="new-email" 
                       className={classnames(
                         { "text-danger": this.state.emailState === "invalid" },

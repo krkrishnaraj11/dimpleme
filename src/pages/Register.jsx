@@ -66,27 +66,16 @@ class Register extends React.Component {
   }
 
   handleChange(e) {
-    console.log(e.target)
-    const { type, value } = e.target;
-    const { firstName, lastName, email, password}  = this.state;
-    this.setState({ [type]: value });
-    if(e.target.placeholder == "First Name"){
-      this.setState({ firstName: e.target.value })
-    }
-    // this.setState(firstName == "" ? { focusedFirstName: true } : { focusedFirstName: false })
-    // this.setState(firstName == "" ? { firstNameState: "invalid"} : {firstNameState: "valid"})
-    if(e.target.placeholder == "Last Name"){
-      this.setState({ lastName: e.target.value })
-    }
-    // this.setState(lastName == "" ? { focusedLastName: true } : { focusedLastName: false })
-    // this.setState(lastName == "" ? { lastNameState: "invalid"} : {lastNameState: "valid"})
-    
-    // this.setState(email != "" && !emailregex.test(email) ? { focusedEmail: true } : { focusedEmail: false })
-    // this.setState(email != "" && !emailregex.test(email) ? { emailState: "invalid"} : {emailState: "valid"})
+    const { id, value } = e.target;
+      this.setState({ [id]: value });
 
-    // this.setState(password == "" ? { focusedPassword: true } : { focusedPassword: false })
-    // this.setState(password == "" ? { passwordState: "invalid"} : {passwordState: "valid"})
-}
+    if(e.target.value == "" || e.target.id == "email" && !emailregex.test(e.target.value)) {
+      this.setState({ [id + "State"]: "invalid"})
+    }
+    else{
+      this.setState({ [id + "State"]: "valid"}) 
+    }
+  }
 
 handleDcode(e){
   e.preventDefault();
@@ -296,6 +285,7 @@ responseGoogle = (response) => {
                     <Input 
                       placeholder="First Name" 
                       type="text" 
+                      id="firstName"
                       className={classnames(
                         { "text-danger": this.state.firstNameState === "invalid" },
                         { "text-success": this.state.firstNameState === "valid" }
@@ -337,6 +327,7 @@ responseGoogle = (response) => {
                     <Input 
                       placeholder="Last Name" 
                       type="text" 
+                      id="lastName"
                       className={classnames(
                         { "text-danger": this.state.lastNameState === "invalid" },
                         { "text-success": this.state.lastNameState === "valid" }
@@ -380,6 +371,7 @@ responseGoogle = (response) => {
                     <Input 
                       placeholder="Email" 
                       type="email" 
+                      id="email"
                       className={classnames(
                         { "text-danger": this.state.emailState === "invalid" },
                         { "text-success": this.state.emailState === "valid" }
@@ -420,7 +412,8 @@ responseGoogle = (response) => {
                     </InputGroupAddon>
                     <Input 
                       placeholder="Password" 
-                      type="password" 
+                      type="password"
+                      id="password" 
                       autoComplete="new-password" 
                       className={classnames(
                         { "text-danger": this.state.passwordState === "invalid" },
@@ -474,9 +467,10 @@ responseGoogle = (response) => {
                         />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input 
+                    <Isnput 
                       placeholder="Email" 
                       type="email" 
+                      id="email"
                       autoComplete="new-email" 
                       className={classnames(
                         { "text-danger": this.state.emailState === "invalid" },

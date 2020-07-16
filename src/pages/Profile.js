@@ -75,7 +75,8 @@ class Profile extends React.Component {
        postalCode: nextProps.users.items.data.postalCode,
        firstName: nextProps.users.items.data.firstName,
        lastName: nextProps.users.items.data.lastName,
-       email: nextProps.users.items.data.email
+       email: nextProps.users.items.data.email,
+       state: nextProps.users.items.data.state
      })
    }
 
@@ -104,7 +105,31 @@ class Profile extends React.Component {
     else{
       this.setState({ [id + "State"]: "valid"}) 
     }
-}
+  }
+
+  handleCancel(){
+    this.props.getUserDetails();
+    this.setState({ update: !this.state.update })
+    this.setState({ 
+      focusedAddress: false,
+      cityState: '',
+      stateState: '',
+      focusedState: false,
+      focusedCity: false,
+      countryState: '',
+      focusedCountry: false,
+      postalCodeState: '',
+      focusedPostalCode: false,
+      firstNameState: '',
+      focusedFirstName: false,
+      lastNameState: '',
+      focusedLastName: false,
+      emailState: '',
+      focusedEmail: false,
+      passwordState: '',
+      focusedPassword: false
+    })
+  }
 
   handleUpdate(e){
     const { email, emailState, passwordState, firstName, firstNameState, lastName, lastNameState, address, addressState, city, cityState, country, countryState, postalCode, postalCodeState, state, stateState } = this.state;
@@ -116,7 +141,7 @@ class Profile extends React.Component {
         this.setState( lastName == "" ? { lastNameState: "invalid"} : {lastNameState: "valid"})
         this.setState( address == "" ? { addressState: "invalid"} : {addressState: "valid"})
         this.setState( city == "" ? { cityState: "invalid"} : {cityState: "valid"})
-        // this.setState( state == "" ? { stateState: "invalid"} : {stateState: "valid"})
+        this.setState( state == "" ? { stateState: "invalid"} : {stateState: "valid"})
         this.setState( country == "" ? { countryState: "invalid"} : {countryState: "valid"})
         this.setState( postalCode == "" ? { postalCodeState: "invalid"} : {postalCodeState: "valid"})
       }
@@ -128,6 +153,7 @@ class Profile extends React.Component {
           address: this.state.address,
           city: this.state.city,
           postalCode: this.state.postalCode,
+          state: this.state.state,
           country: this.state.country,
           password: this.state.password
         }
@@ -167,7 +193,7 @@ class Profile extends React.Component {
                         this.state.update ?
                           <Button
                             color="danger"
-                            onClick={() => this.setState({ update: !this.state.update })}
+                            onClick={() => this.handleCancel()}
                             size="sm"
                           >
                             Cancel

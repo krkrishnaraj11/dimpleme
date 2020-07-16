@@ -68,7 +68,7 @@ function register(firstName, lastName, email, password) {
     return dispatch => {
         dispatch(request({email}));
 
-        userService.register(firstName, lastName, email, password)
+        userService.register({firstName, lastName, email, password})
             .then(
                 user => { 
                     dispatch(success());
