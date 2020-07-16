@@ -5,7 +5,7 @@ import {Login} from "./pages/login";
 import {Survey} from "./pages/Surveys";
 import {SurveyEdit} from "./pages/SurveyEdit.jsx";
 import { SurveyResult } from "./pages/SurveyResult";
-import { Scan } from "./pages/scan";
+import { Scan } from "./pages/Scan";
 import { Register } from "./pages/Register";
 
 const routes = [
