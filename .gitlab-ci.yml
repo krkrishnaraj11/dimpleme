@@ -1,0 +1,17 @@
+image: node:latest
+
+stages:
+  - production
+  
+production:
+  type: deploy
+  stage: production
+  image: ruby:latest
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - npm install && npm run start
+    - dpl --provider=heroku --app=dimpleme --api-key=$HEROKU_API_KEY
+  only:
+    - production
