@@ -61,7 +61,7 @@ class Scan extends React.Component {
 
   handleChange(e) {
     const { type, value } = e.target;
-    if(e.target.placeholder == "dcode" ){
+    if(e.target.placeholder == "Enter Code" ){
       this.setState({ dcode: e.target.value })
     }
     else{
@@ -263,7 +263,7 @@ responseGoogle = (response) => {
                     </InputGroupAddon>
                     <Input 
                       placeholder="Enter Code" 
-                      type="dcode" 
+                      type="text" 
                       autoComplete="new-dcode"
                       className={classnames(
                         { "text-danger": this.state.dcodeState === "invalid" },
