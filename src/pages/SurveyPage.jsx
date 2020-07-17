@@ -81,10 +81,10 @@ class SurveyPage extends React.Component{
     }
 
     nextQuestion(){
-      if(this.state.answers[0].comment == '' || this.state.answers[0].rating == 0){
+      if(this.state.answers[0].rating == 0){
         store.addNotification({
           title: 'Survey',
-          message: 'Add Ratings & Comments',
+          message: 'Add Ratings',
           type: 'danger',             // 'default', 'success', 'info', 'warning'
           container: 'top-right',                // where to position the notifications
           animationIn: ["animated", "fadeIn"],     // animate.css classes that's applied
@@ -174,6 +174,7 @@ class SurveyPage extends React.Component{
 
     submitSurvey(){
       this.props.submitSurvey(this.state.surveyCustId, this.state.answers);
+      setTimeout(() => { history.push('/')},3000);
     }
 
     renderForm(){
@@ -233,7 +234,7 @@ class SurveyPage extends React.Component{
                           ?
                             <Button
                             className="btn-round"
-                            color="danger"
+                            color="success"
                             type="button"
                             onClick={() => this.nextQuestion()}
                           >
@@ -246,7 +247,7 @@ class SurveyPage extends React.Component{
 
                         <Button
                           className="btn-round"
-                          color="success"
+                          color="primary"
                           type="button"
                           onClick={() => this.submitSurvey()}
                         >
@@ -306,9 +307,15 @@ class SurveyPage extends React.Component{
             <Col className="order-xl-1">
               <Card className="bg-secondary shadow">
                 <CardHeader className="bg-white border-0">
-                  <Row className="align-items-center">
+                  <Row className="justify-content-between">
                     <Col xs="8">
                       <h3 className="mb-0">Survey</h3>
+                    </Col>
+                    <Col xs="2">
+                      <Progress value={((this.state.listCount + 1 )/this.state.questions.length) * 100} className="mt-3"/>
+                    </Col>
+                    <Col xs="2">
+                      <h2>{this.state.listCount + 1}/{this.state.questions.length}</h2>
                     </Col>
                   </Row>
                 </CardHeader>
