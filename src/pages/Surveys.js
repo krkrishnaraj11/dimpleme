@@ -90,7 +90,7 @@ class Survey extends React.Component {
       }
 
       componentWillReceiveProps(nextProps){
-        if(nextProps.alert.message){
+        if(nextProps.alert.message && nextProps.alert.message != 'Invalid dcode'){
           store.addNotification({
             title: 'Survey',
             message: nextProps.alert.message,

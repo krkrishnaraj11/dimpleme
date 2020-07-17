@@ -72,13 +72,12 @@ class SurveyResult extends React.Component{
     }
 
     componentDidMount(){
-      this.props.getSurveys();
       if(this.props.location.data){
         this.setState({ surveyCustId: this.props.location.data.surveyCustId })
         this.props.surveyDetails(this.props.location.data.surveyCustId);
       }
       else{
-        // history.push('/admin/surveys')
+        this.props.getSurveys();
       }
     }
 
@@ -217,14 +216,19 @@ class SurveyResult extends React.Component{
                       </div> */}
                     </Row>
                     <Row>
-                    <Select
-                    styles={searchStyle}
-                    className="basic-single"
-                    classNamePrefix="select"
-                    isSearchable={true}
-                    name="color"
-                    onChange={(e) => this.onSearchClick(e)}
-                    options={searchOption}/>
+                      {
+                        (this.props.location.data)
+                          ? null
+                          :
+                            <Select
+                            styles={searchStyle}
+                            className="basic-single"
+                            classNamePrefix="select"
+                            isSearchable={true}
+                            name="color"
+                            onChange={(e) => this.onSearchClick(e)}
+                            options={searchOption}/>
+                      }
                   </Row>
                   </CardHeader>
                   <Table className="align-items-center table-flush table-white" responsive>

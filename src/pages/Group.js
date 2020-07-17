@@ -38,13 +38,6 @@ import classnames from "classnames";
 import { questionbankActions, alertActions } from '../../_actions';
 import {Header} from "../components/Headers/Header.js";
 
-const  cool = [
-    {   name: 'Efficiency of admission process' },
-    {   name: 'Cooperation and responsiveness of hospital administration' },
-    {   name: 'Nursing staff: Please rate the nursing staff at this hospital ' },
-    {   name: 'Pathology services: Promptness and accuracy in processing and reporting pathology test results' }
-]
-
 
 class Group extends React.Component {
     constructor(props){
@@ -247,7 +240,7 @@ class Group extends React.Component {
                                 <Form role="form">
                                 <FormGroup                   
                                   className={classnames(
-                                    "mb-3",
+                                    "mb-3","ml-3",
                                     { focused: this.state.question },
                                     { "has-danger": this.state.questionState === "invalid" },
                                     { "has-success": this.state.questionState === "valid" }
