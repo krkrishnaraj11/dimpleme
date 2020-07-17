@@ -39,15 +39,15 @@ const routes = [
   },
   {
     path: "/survey/add",
-    name: "Add Survey",
-    icon: "ni ni-bullet-list-67 text-black",
+    name: "Create Survey",
+    icon: "ni ni-bullet-list-67 text-green",
     component: SurveyEdit,
     layout: "/admin"
   },
   {
     path: "/survey/result",
     name: "Survey Result",
-    icon: "ni ni-bullet-list-67 text-black",
+    icon: "ni ni-bullet-list-67 text-blue",
     component: SurveyResult,
     layout: "/admin"
   },
