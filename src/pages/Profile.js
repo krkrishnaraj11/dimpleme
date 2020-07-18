@@ -16,6 +16,7 @@ import {
   InputGroup
 } from "reactstrap";
 // core components
+import config from 'config';
 import UserHeader from "../components/Headers/UserHeader.js";
 import { store } from 'react-notifications-component';
 import { connect } from 'react-redux';
@@ -57,8 +58,12 @@ class Profile extends React.Component {
       focusedEmail: false,
       password: '',
       passwordState: '',
-      focusedPassword: false
+      focusedPassword: false,
+      fileUploadState: '',
+      profilePic: '',
+      imagePath: ''
     }
+    this.inputReference = React.createRef();
   }
 
   componentDidMount(){
@@ -76,24 +81,31 @@ class Profile extends React.Component {
        firstName: nextProps.users.items.data.firstName,
        lastName: nextProps.users.items.data.lastName,
        email: nextProps.users.items.data.email,
-       state: nextProps.users.items.data.state
+       state: nextProps.users.items.data.state,
+       profilePic: config.apiUrl+'/' + nextProps.users.items.data.img.path
      })
    }
 
    if(nextProps.alert.message){
-    store.addNotification({
-      title: 'Survey',
-      message: nextProps.alert.message,
-      type: nextProps.alert.type,             // 'default', 'success', 'info', 'warning'
-      container: 'top-right',                // where to position the notifications
-      animationIn: ["animated", "fadeIn"],     // animate.css classes that's applied
-      animationOut: ["animated", "fadeOut"],   // animate.css classes that's applied
-      dismiss: {
-        duration: 1000 
-      }
-    })
+      store.addNotification({
+        title: 'Survey',
+        message: nextProps.alert.message,
+        type: nextProps.alert.type,             // 'default', 'success', 'info', 'warning'
+        container: 'top-right',                // where to position the notifications
+        animationIn: ["animated", "fadeIn"],     // animate.css classes that's applied
+        animationOut: ["animated", "fadeOut"],   // animate.css classes that's applied
+        dismiss: {
+          duration: 1000 
+        }
+      })
+    }
+
   }
-  }
+
+  fileUploadAction = () =>this.inputReference.current.click();
+  fileUploadInputChange = (e) =>{
+    this.setState({ imagePath: e.target.files[0]})
+  };
 
   handleChange(e) {
     const { id, value } = e.target;
@@ -146,18 +158,21 @@ class Profile extends React.Component {
         this.setState( postalCode == "" ? { postalCodeState: "invalid"} : {postalCodeState: "valid"})
       }
       else{
-        const user = {
-          email: this.state.email,
-          firstName: this.state.firstName,
-          lastName: this.state.lastName,
-          address: this.state.address,
-          city: this.state.city,
-          postalCode: this.state.postalCode,
-          state: this.state.state,
-          country: this.state.country,
-          password: this.state.password
+        var formData= new FormData();
+        formData.append("email", this.state.email);
+        formData.append("firstName", this.state.firstName);
+        formData.append("lastName", this.state.lastName);
+        formData.append("address", this.state.address);
+        formData.append("city", this.state.city);
+        formData.append("postalCode", this.state.postalCode);
+        formData.append("state", this.state.state);
+        formData.append("country", this.state.country);
+        if(this.state.password != ''){
+          formData.append("password", this.state.password);
         }
-        this.props.updateUserDetails(user);
+        formData.append("image", this.state.imagePath);
+
+        this.props.updateUserDetails(formData);
         this.setState({ update: !this.state.update })
       }
 
@@ -206,9 +221,49 @@ class Profile extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <Form>
-                    <h6 className="heading-small text-muted mb-4">
+                    <h6 className="heading-small text-muted mb-6">
                       User information
                     </h6>
+                    <Row className="justify-content-center p-3">
+                  <Col className="order-lg-2" lg="3">
+                    <div className="card-profile-image">
+                      <a href="#pablo" onClick={e => e.preventDefault()}>
+                        {
+                          (this.state.profilePic != '')
+                          ?
+                          <img
+                            alt=""
+                            style={{ height: 190, width: 190}}
+                            className="rounded-circle"
+                            src={this.state.profilePic}
+                          />
+                          : 
+                            <img alt="" style={{ height: 190, width: 190}} class="rounded-circle text-primary fa fa-user fa-10x pl-3"/>
+                        }
+                      </a>
+                    </div>
+                  </Col>
+                </Row>
+                <CardHeader className="text-center border-0 pt-8 pt-md-7 pb-0 pb-md-4 mb-4 p-3">
+                  <div className="d-flex justify-content-center">
+                    <Button
+                      className="mx-5 p-2"
+                      color="default"
+                      innerRef={this.inputReference}
+                      onClick={e => this.fileUploadAction(e)}
+                      size="sm"
+                    >
+                      Upload
+                    </Button>
+                    <Input
+                      type="file"
+                      innerRef={this.inputReference}
+                      onChange={(e) => this.fileUploadInputChange(e)}
+                      style={{display: 'none'}}
+                    />
+                  </div>
+                  <h3 className="mt-1">{ this.state.firstName } { this.state.lastName}</h3>
+                </CardHeader>
                     <div className="pl-lg-4">
                       <Row>
                         <Col lg="6">

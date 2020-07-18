@@ -75,8 +75,8 @@ function register(user) {
 function update(user) {
     const requestOptions = {
         method: 'POST',
-        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(user)
+        headers: { ...authHeader()},
+        body: user
     };
 
     return fetch(`${config.apiUrl}/user/update`, requestOptions).then(handleResponse);;
