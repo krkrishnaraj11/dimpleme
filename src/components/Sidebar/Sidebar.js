@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink as NavLinkRRD, Link } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
-
+import config from 'config';
 // reactstrap components
 import {
   Button,
@@ -40,12 +40,31 @@ var ps;
 
 class Sidebar extends React.Component {
   state = {
-    collapseOpen: false
+    collapseOpen: false,
+    firstName: '',
+    lastName: '',
+    profilePic: ''
   };
   constructor(props) {
     super(props);
     this.activeRoute.bind(this);
   }
+
+  componentDidMount(){
+    this.props.getUserDetails()
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps){
+    if(nextProps.users.items){
+      console.log(nextProps.users.items)
+      this.setState({
+        firstName: nextProps.users.items.data.firstName,
+        lastName: nextProps.users.items.data.lastName,
+        profilePic: config.apiUrl+'/' + nextProps.users.items.data.img.path
+      })
+    }
+  }
+
   // verifies if routeName is the one active (in browser input)
   activeRoute(routeName) {
     return this.props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
@@ -145,7 +164,7 @@ class Sidebar extends React.Component {
                   <span className="avatar avatar-sm rounded-circle">
                     <img
                       alt="..."
-                      src={"/src/assets/img/theme/team-4-800x800.jpg"}
+                      src={this.state.profilePic}
                     />
                   </span>
                 </Media>
@@ -247,13 +266,15 @@ Sidebar.propTypes = {
 };
 
 function mapState(state) {
-  const { alert } = state;
-  return { alert };
+  const users = state.users;
+  const alert = state.alert;
+  return { alert, users};
 }
 
 const actionCreators = {
   logout: userActions.logout,
-  clearAlerts: alertActions.clear
+  clearAlerts: alertActions.clear,
+  getUserDetails: userActions.getById
 };
 
 

@@ -238,7 +238,7 @@ class Profile extends React.Component {
                             src={this.state.profilePic}
                           />
                           : 
-                            <img alt="" style={{ height: 190, width: 190}} class="rounded-circle text-primary fa fa-user fa-10x pl-3"/>
+                            <img alt="" style={{ height: 190, width: 190}} className="rounded-circle text-primary fa fa-user fa-10x pl-3"/>
                         }
                       </a>
                     </div>

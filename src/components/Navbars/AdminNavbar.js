@@ -20,8 +20,32 @@ import {
 import { connect } from 'react-redux';
 import { history } from '../../../_helpers';
 import { userActions, alertActions } from '../../../_actions';
+import config from 'config';
 
 class AdminNavbar extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      firstName: '',
+      lastName: '',
+      profilePic: ''
+    }
+  }
+
+  componentDidMount(){
+    this.props.getUserDetails()
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps){
+    if(nextProps.users.items){
+      console.log(nextProps.users.items)
+      this.setState({
+        firstName: nextProps.users.items.data.firstName,
+        lastName: nextProps.users.items.data.lastName,
+        profilePic: config.apiUrl+'/' + nextProps.users.items.data.img.path
+      })
+    }
+  }
   render() {
     return (
       <>
@@ -51,13 +75,14 @@ class AdminNavbar extends React.Component {
                   <Media className="align-items-center">
                     <span className="avatar avatar-sm rounded-circle">
                       <img
+                        style={{ width: 40, height: 40 }}
                         alt="..."
-                        src={"/src/assets/img/theme/team-4-800x800.jpg"}
+                        src={this.state.profilePic}
                       />
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
                       <span className="mb-0 text-sm font-weight-bold">
-                        Admin
+                        {this.state.firstName}
                       </span>
                     </Media>
                   </Media>
@@ -86,13 +111,15 @@ class AdminNavbar extends React.Component {
 }
 
 function mapState(state) {
-  const { alert } = state;
-  return { alert };
+  const users = state.users;
+  const alert = state.alert;
+  return { alert, users};
 }
 
 const actionCreators = {
   logout: userActions.logout,
-  clearAlerts: alertActions.clear
+  clearAlerts: alertActions.clear,
+  getUserDetails: userActions.getById
 };
 
 
