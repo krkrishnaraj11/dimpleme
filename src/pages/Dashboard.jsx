@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
   CardBody,
+  CardFooter,
   NavItem,
   NavLink,
   Nav,
@@ -35,9 +36,13 @@ import {
   Form,
   FormGroup,
   ButtonToggle,
-  NavbarToggler
+  NavbarToggler,
+  Pagination,
+  PaginationItem,
+  PaginationLink
 } from "reactstrap";
 import { connect } from 'react-redux';
+import Select from 'react-select';
 import { history } from '../../_helpers';
 import { store } from 'react-notifications-component';
 import { userActions, alertActions, surveyActions, dashboardActions } from '../../_actions';
@@ -45,6 +50,12 @@ import QrReader from 'react-qr-reader';
 import {Header} from "../components/Headers/Header.js";
 import { Redirect } from "react-router-dom";
 import { survey } from "../../_reducers/survey.reducer";
+const selectOption = [
+  { value: 5, label: 5},
+  { value: 10, label: 10},
+  { value: 20, label: 20},
+  { value: 30, label: 30}
+]
 
 class Dashboard extends React.Component {
   constructor(props){
@@ -70,6 +81,8 @@ class Dashboard extends React.Component {
       comments: [],
       commentModal: false,
       surveyCustId: '',
+      initialrow:0,
+      rowsperpage: 5,
       popSurvey: [],
       imgSrc : [
         { icon: '/src/assets/img/icons/smiley/very-satisfied.png' },
@@ -83,6 +96,19 @@ class Dashboard extends React.Component {
     history.listen((location, action) => {
       this.props.clearAlerts();
     });
+  }
+
+  onRowsChange(item){
+    this.setState({ rowsperpage: item.value + this.state.initialrow })
+  }
+
+  prevPagination(){
+    if(this.state.initialrow != 0)
+      this.setState({ initialrow: this.state.initialrow - this.state.rowsperpage })
+  }
+
+  nextPagination(){
+      this.setState({ initialrow: this.state.initialrow + this.state.rowsperpage })
   }
 
   toggleNavs = (e, state, index) => {
@@ -262,6 +288,19 @@ class Dashboard extends React.Component {
           </Nav>
         </div>
         : null}
+        <Modal isOpen={this.state.linkModal} centered toggle={() => this.toggleLinkModal()}>
+                        <ModalHeader className="bg-info" toggle={() => this.toggleLinkModal()}>
+                          <h2 color="primary" className="text-left">Link</h2>
+                        </ModalHeader>
+                        <ModalBody className="d-block text-center">
+                          <Card className="p-2 bg-default">
+                          <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
+                          </Card>
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button color="success" onClick={() => this.copyLink("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy</Button>{' '}
+                        </ModalFooter>
+                      </Modal>
         {
           this.state.survey
           ?
@@ -319,7 +358,7 @@ class Dashboard extends React.Component {
                       </div>
                     </td>
                     : 
-                    this.state.sureys && this.state.sureys instanceof Array && this.state.sureys.map((item, i) => (
+                    this.state.sureys && this.state.sureys instanceof Array && this.state.sureys.slice(this.state.initialrow,this.state.rowsperpage + this.state.initialrow).map((item, i) => (
                       <tr>
                       <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
                       <Modal isOpen={this.state.popSurvey[i]} centered toggle={() => this.togglePopover(item,i)}>
@@ -464,6 +503,20 @@ class Dashboard extends React.Component {
                 </Modal>
                 </tbody>
               </Table>
+              <CardFooter>
+                    <Row className="float-right">
+                      <h3 className="mt-1 mx-1 font-weight-normal">Rows per table</h3>
+                      <Select options={selectOption} autosize={true} defaultValue={{ value: 5, label: 5}} onChange={(value) => this.onRowsChange(value)}/>
+                      <Pagination className="mx-1">
+                        <PaginationItem disabled={this.state.initialrow == 0}>
+                          <PaginationLink previous onClick={() => this.prevPagination()}/>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink next onClick={() => this.nextPagination()}/>
+                        </PaginationItem>
+                      </Pagination>
+                    </Row>
+                  </CardFooter>
             </Card>
           </Col>
         </Row>
@@ -1192,19 +1245,7 @@ class Dashboard extends React.Component {
                             </Table>
                         }
                       </Card>
-                      <Modal isOpen={this.state.linkModal} centered toggle={() => this.toggleLinkModal()}>
-                        <ModalHeader className="bg-info" toggle={() => this.toggleLinkModal()}>
-                          <h2 color="primary" className="text-left">Link</h2>
-                        </ModalHeader>
-                        <ModalBody className="d-block text-center">
-                          <Card className="p-2 bg-default">
-                          <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
-                          </Card>
-                        </ModalBody>
-                        <ModalFooter>
-                          <Button color="success" onClick={() => this.copyLink("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy</Button>{' '}
-                        </ModalFooter>
-                      </Modal>
+                      
 
                       <Modal isOpen={this.state.qrModal} centered toggle={() => this.toggleQRModal()}>
                         <ModalHeader  className="bg-info" toggle={() => this.toggleQRModal()}>
