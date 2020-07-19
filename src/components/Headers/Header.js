@@ -11,7 +11,10 @@ class Header extends React.Component {
     this.state = {
       surveyCount: 0,
       activeSurveyCount: 0,
-      inactiveSurveyCount: 0
+      inactiveSurveyCount: 0,
+      totalsurvey: false,
+      inactivesurvey: false, 
+      activesurvey: false
     }
   }
 
@@ -29,6 +32,24 @@ class Header extends React.Component {
     this.props.getDashboardData()
   }
 
+  totalSurveyTable(){
+    this.setState({ totalsurvey: !this.state.totalsurvey })
+    var survey = {totalsurvey: !this.state.totalsurvey} 
+    this.props.getAllSurvey(survey) 
+  }
+
+  activeSurveyTable(){
+    this.setState({ activesurvey: !this.state.activesurvey })
+    var survey = {activesurvey: !this.state.activesurvey}
+    this.props.getAllSurvey(survey)
+  }
+
+  inactiveSurveyTable(){
+    this.setState({ inactivesurvey: !this.state.inactivesurvey })
+    var survey = {inactivesurvey: !this.state.inactivesurvey}
+    this.props.getAllSurvey(survey)
+  }
+
 
   render() {
     return (
@@ -42,7 +63,7 @@ class Header extends React.Component {
                 ?
                 <Row>
                 <Col lg="6" xl="4">
-                  <Card className="card-stats mb-4 mb-xl-0">
+                  <Card className="card-stats mb-4 mb-xl-0" onClick={() => this.totalSurveyTable()}>
                     <CardBody>
                       <Row>
                         <div className="col">
@@ -66,7 +87,7 @@ class Header extends React.Component {
                   </Card>
                 </Col>
                 <Col lg="6" xl="4">
-                  <Card className="card-stats mb-4 mb-xl-0">
+                  <Card className="card-stats mb-4 mb-xl-0" onClick={() => this.activeSurveyTable()}>
                     <CardBody>
                       <Row>
                         <div className="col">
@@ -91,7 +112,7 @@ class Header extends React.Component {
                   </Card>
                 </Col>
                 <Col lg="6" xl="4">
-                  <Card className="card-stats mb-4 mb-xl-0">
+                  <Card className="card-stats mb-4 mb-xl-0" onClick={() => this.inactiveSurveyTable()}>
                     <CardBody>
                       <Row>
                         <div className="col">

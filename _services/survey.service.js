@@ -6,6 +6,8 @@ import axios from 'axios';
 export const surveyService = {
     create,
     getAll,
+    getActiveSurvey,
+    getInactiveSurvey,
     getLatest,
     search,
     update,
@@ -63,6 +65,24 @@ function getAll() {
     };
 
     return fetch(`${config.apiUrl}/survey/list`, requestOptions).then(handleResponse);
+}
+
+function getActiveSurvey() {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    };
+
+    return fetch(`${config.apiUrl}/survey/totalActive`, requestOptions).then(handleResponse);
+}
+
+function getInactiveSurvey() {
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    };
+
+    return fetch(`${config.apiUrl}/survey/totalInactive`, requestOptions).then(handleResponse);
 }
 
 function getById(dcode) {

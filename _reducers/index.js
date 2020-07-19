@@ -4,7 +4,7 @@ import { authentication } from './authentication.reducer';
 import { registration } from './registration.reducer';
 import { alert } from './alert.reducer';
 import { questionbank } from './questionbank.reducer';
-import { survey } from './survey.reducer';
+import { survey, activesurvey, inactivesurvey } from './survey.reducer';
 import { dashboard } from './dashboard.reducer';
 import { users } from './users.reducer';
 
@@ -15,6 +15,8 @@ const rootReducer = combineReducers({
   questionbank,
   dashboard,
   survey,
+  activesurvey,
+  inactivesurvey,
   users
 });
 

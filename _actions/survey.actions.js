@@ -6,6 +6,8 @@ import { history } from '../_helpers';
 export const surveyActions = {
     create,
     getAll,
+    getActiveSurvey,
+    getInactiveSurvey,
     latestSurvey,
     getById,
     getResult,
@@ -221,6 +223,47 @@ function getAll() {
     function request() { return { type: surveyConstants.GETALL_REQUEST } }
     function success(surveys) { return { type: surveyConstants.GETALL_SUCCESS, surveys } }
     function failure(error) { return { type: surveyConstants.GETALL_FAILURE, error } }
+}
+
+
+function getActiveSurvey() {
+    return dispatch => {
+        dispatch(request());
+
+        surveyService.getActiveSurvey()
+            .then(
+                activesurveys => {
+                    dispatch(success(activesurveys))
+                },
+                error => {
+                    dispatch(alertActions.error(error.toString()));
+                }
+            );
+    };
+
+    function request() { return { type: surveyConstants.GET_ACTIVE_REQUEST } }
+    function success(activesurveys) { return { type: surveyConstants.GET_ACTIVE_SUCCESS, activesurveys } }
+    function failure(error) { return { type: surveyConstants.GET_ACTIVE_FAILURE, error } }
+}
+
+function getInactiveSurvey() {
+    return dispatch => {
+        dispatch(request());
+
+        surveyService.getInactiveSurvey()
+            .then(
+                inactivesurveys => {
+                    dispatch(success(inactivesurveys))
+                },
+                error => {
+                    dispatch(alertActions.error(error.toString()));
+                }
+            );
+    };
+
+    function request() { return { type: surveyConstants.GET_INACTIVE_REQUEST } }
+    function success(inactivesurveys) { return { type: surveyConstants.GET_INACTIVE_SUCCESS, inactivesurveys } }
+    function failure(error) { return { type: surveyConstants.GET_INACTIVE_FAILURE, error } }
 }
 
 function latestSurvey() {

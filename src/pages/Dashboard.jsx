@@ -44,6 +44,7 @@ import { userActions, alertActions, surveyActions, dashboardActions } from '../.
 import QrReader from 'react-qr-reader';
 import {Header} from "../components/Headers/Header.js";
 import { Redirect } from "react-router-dom";
+import { survey } from "../../_reducers/survey.reducer";
 
 class Dashboard extends React.Component {
   constructor(props){
@@ -52,12 +53,17 @@ class Dashboard extends React.Component {
       recentCreatedSurveys: [],
       recentSubmittedSurveys: [],
       sureys:[],
+      activesurveylist: [],
+      inactivesurveylist: [],
       tabs: 1,
       deleteModal: false,
       linkModal: false,
       qrModal: false,
       selectSurveyQR: '',
       surveyCount: 0,
+      survey: false,
+      activesurvey: false,
+      inactivesurvey: false,
       activeSurveyCount: 0,
       inactiveSurveyCount: 0,
       searchText: '',
@@ -105,6 +111,18 @@ class Dashboard extends React.Component {
       this.setState({ comments: nextProps.survey.comments })
     }
 
+    if(nextProps.survey.data){
+      this.setState({ sureys: nextProps.survey.data})
+    }
+
+    if(nextProps.activesurvey.data){
+      this.setState({ activesurveylist: nextProps.activesurvey.data})
+    }
+
+    if(nextProps.inactivesurvey.data){
+      this.setState({ inactivesurveylist: nextProps.inactivesurvey.data})
+    }
+
     if(nextProps.alert.message){
       store.addNotification({
         title: 'Survey',
@@ -132,6 +150,9 @@ class Dashboard extends React.Component {
 
   componentDidMount(){
     this.props.getDashboardData()
+    this.props.getSurvey()
+    this.props.getActiveSurvey()
+    this.props.getInactiveSurvey()
   }
 
   onChangeSearch(e){
@@ -187,14 +208,23 @@ class Dashboard extends React.Component {
     this.setState({ commentModal: !this.state.commentModal })
   }
 
+  surveyactive(active){
+    this.setState({
+      survey: (active.totalsurvey) ? active.totalsurvey : false,
+      activesurvey: (active.activesurvey) ? active.activesurvey : false,
+      inactivesurvey: (active.inactivesurvey) ? active.inactivesurvey : false,
+    })
+  }
+
   
   render() {
     return (
       <>
-        <Header />
+        <Header getAllSurvey={(value) => this.surveyactive(value)}/>
         {/* Page content */}
         <Container className="mb-7" fluid>
-        <div className="nav-wrapper">
+        {!this.state.activesurvey && !this.state.inactivesurvey && !this.state.survey
+         ?<div className="nav-wrapper">
           <Nav
             className="nav-fill flex-column flex-sm-row"
             id="tabs-icons-text"
@@ -231,269 +261,769 @@ class Dashboard extends React.Component {
             </NavItem>
           </Nav>
         </div>
-        <Card className="shadow">
-          <CardBody>
-            <TabContent activeTab={"tabs" + this.state.tabs}>
-              <TabPane tabId="tabs1">
-                <Row className="">
-                  <Col className="mb-5 mb-xl-0" xl="12">
-                  <Card className="bg-default shadow">
-                      <CardHeader className="bg-transparent border-1">
-                        <Row className="align-items-center">
-                          <div className="col">
-                            <h3 className="mb-0 text-white">Recently Created Surveys</h3>
-                          </div>
-                          <div className="col text-right">
-                            <Button
-                              color="primary"
-                              href="#pablo"
-                              onClick={() => history.push('/admin/surveys')}
-                              size="sm"
-                            >
-                              SEE ALL
-                            </Button>
-                          </div>
-                        </Row>
-                        <Row>
-                          <Input                                     
-                            placeholder="Search" 
-                            type="search" 
-                            autoComplete="search-survey"
-                            className="bg-default shadow mt-3"
-                            value={this.state.searchText}
-                            onChange={(e) => this.onChangeSearch(e)}
-                          />
-                        </Row>
-                      </CardHeader>
-                      <Table className="align-items-center table-flush table-white" responsive>
-                        <thead className="thead-dark">
-                          <tr>
-                            <th scope="col">Survey name</th>
-                            <th scope="col">Questions</th>
-                            <th scope="col">Active</th>
-                            <th scope="col">Link</th>
-                            <th scope="col">Survey Code</th>
-                            <th scope="col">QR Code</th>
-                            <th scope="col">Report</th>
-                            <th scope="col">Result</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        
-                        {
-                            (this.props.survey.error == "No matched surveys") && this.state.searchText != ""
-                            ?
-                            <td colSpan={10} className="align-items-center bg-white">
-                              <div className="col">
-                                <h3 className="m-3 text-center text-dark">No matched surveys</h3>
+        : null}
+        {
+          this.state.survey
+          ?
+          <Row className="">
+          <Col className="mb-5 mb-xl-0" xl="12">
+          <Card className="bg-default shadow">
+              <CardHeader className="bg-transparent border-1">
+                <Row className="align-items-center">
+                  <div className="col">
+                    <h3 className="mb-0 text-white">Surveys</h3>
+                  </div>
+                  {/* <div className="col text-right">
+                    <Button
+                      color="primary"
+                      href="#pablo"
+                      onClick={() => history.push('/admin/surveys')}
+                      size="sm"
+                    >
+                      SEE ALL
+                    </Button>
+                  </div> */}
+                </Row>
+                <Row>
+                  <Input                                     
+                    placeholder="Search" 
+                    type="search" 
+                    autoComplete="search-survey"
+                    className="bg-default shadow mt-3"
+                    value={this.state.searchText}
+                    onChange={(e) => this.onChangeSearch(e)}
+                  />
+                </Row>
+              </CardHeader>
+              <Table className="align-items-center table-flush table-white" responsive>
+                <thead className="thead-dark">
+                  <tr>
+                    <th scope="col">Survey name</th>
+                    <th scope="col">Questions</th>
+                    <th scope="col">Active</th>
+                    <th scope="col">Link</th>
+                    <th scope="col">Survey Code</th>
+                    <th scope="col">QR Code</th>
+                    <th scope="col">Report</th>
+                    <th scope="col">Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                
+                {
+                    (this.props.survey.error == "No matched surveys") && this.state.searchText != ""
+                    ?
+                    <td colSpan={10} className="align-items-center bg-white">
+                      <div className="col">
+                        <h3 className="m-3 text-center text-dark">No matched surveys</h3>
+                      </div>
+                    </td>
+                    : 
+                    this.state.sureys && this.state.sureys instanceof Array && this.state.sureys.map((item, i) => (
+                      <tr>
+                      <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
+                      <Modal isOpen={this.state.popSurvey[i]} centered toggle={() => this.togglePopover(item,i)}>
+                        <ModalHeader>{item.surveyName}</ModalHeader>
+                        <ModalBody className="bg-default shadow">
+                          <Row className="justify-content-between">
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[0].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[1].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[2].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[3].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[4].icon}/>
+                            </span>
+                            <h3 className="text-info mt-1">{item.firstQuestionDetail.totalRatings} out of 5</h3>
+                          </Row>
+                          <h3 className="text-info text-center my-1">{item.visitorsCount} Customer Ratings</h3>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[0].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                                
+                              <Progress value={item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
                               </div>
-                            </td>
-                            : 
-                            this.state.recentCreatedSurveys && this.state.recentCreatedSurveys instanceof Array && this.state.recentCreatedSurveys.map((item, i) => (
-                              <tr>
-                              <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
-                              <Modal isOpen={this.state.popSurvey[i]} centered toggle={() => this.togglePopover(item,i)}>
-                                <ModalHeader>{item.surveyName}</ModalHeader>
-                                <ModalBody className="bg-default shadow">
-                                  <Row className="justify-content-between">
-                                    <span className="avatar avatar-sm rounded-circle mx-1 my-1">
-                                        <img src={this.state.imgSrc[0].icon}/>
-                                    </span>
-                                    <span className="avatar avatar-sm rounded-circle mx-1 my-1">
-                                        <img src={this.state.imgSrc[1].icon}/>
-                                    </span>
-                                    <span className="avatar avatar-sm rounded-circle mx-1 my-1">
-                                        <img src={this.state.imgSrc[2].icon}/>
-                                    </span>
-                                    <span className="avatar avatar-sm rounded-circle mx-1 my-1">
-                                        <img src={this.state.imgSrc[3].icon}/>
-                                    </span>
-                                    <span className="avatar avatar-sm rounded-circle mx-1 my-1">
-                                        <img src={this.state.imgSrc[4].icon}/>
-                                    </span>
-                                    <h3 className="text-info mt-1">{item.firstQuestionDetail.totalRatings} out of 5</h3>
-                                  </Row>
-                                  <h3 className="text-info text-center my-1">{item.visitorsCount} Customer Ratings</h3>
-                                    <Row className="justify-content-between">
-                                      <span className="avatar avatar-sm rounded-circle mx-3 my-1">
-                                        <img src={this.state.imgSrc[0].icon}/>
-                                      </span>
-                                      <div style={{width: 200}} className="mt-3">
-                                        
-                                      <Progress value={item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
-                                      </div>
-                                      <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100) || 0}%</h2>
-                                    </Row>
-                                    <Row className="justify-content-between">
-                                      <span className="avatar avatar-sm rounded-circle mx-3 my-1">
-                                        <img src={this.state.imgSrc[1].icon}/>
-                                      </span>
-                                      <div style={{width: 200}} className="mt-3">
-                                      <Progress value={item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
-                                      </div>
-                                      <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
-                                    </Row>
-                                    <Row className="justify-content-between">
-                                      <span className="avatar avatar-sm rounded-circle mx-3 my-1">
-                                        <img src={this.state.imgSrc[2].icon}/>
-                                      </span>
-                                      <div style={{width: 200}} className="mt-3">
-                                      <Progress value={item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
-                                      </div>
-                                      <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
-                                    </Row>
-                                    <Row className="justify-content-between">
-                                      <span className="avatar avatar-sm rounded-circle mx-3 my-1">
-                                        <img src={this.state.imgSrc[3].icon}/>
-                                      </span>
-                                      <div style={{width: 200}} className="mt-3">
-                                      <Progress value={item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
-                                      </div>
-                                      <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
-                                    </Row>
-                                    <Row className="justify-content-between">
-                                      <span className="avatar avatar-sm rounded-circle mx-3 my-1">
-                                        <img src={this.state.imgSrc[4].icon}/>
-                                      </span>
-                                      <div style={{width: 200}} className="mt-3">
-                                      <Progress value={item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
-                                      </div>
-                                      <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
-                                    </Row>
-                                    <Row className="justify-content-center">
-                                      <Button size="lg" className="btn btn-icon btn-3 btn-outline-primary align-center" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item.firstQuestionId)}>
-                                        <i className="fas fa-th-list text-warning"/>
-                                        <span className="btn-inner--text">Comments</span>
-                                      </Button>
-                                    </Row>
-                                  </ModalBody>
-                                </Modal>
-                              <td>{item.totalQuestions}</td>
-                              <td>
-                                <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
-                                  <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
-                                <span className="custom-toggle-slider rounded-circle "></span>
-                                </Label>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100) || 0}%</h2>
+                            </Row>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[1].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                            </Row>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[2].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                            </Row>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[3].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                            </Row>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[4].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                            </Row>
+                            <Row className="justify-content-center">
+                              <Button size="lg" className="btn btn-icon btn-3 btn-outline-primary align-center" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item.firstQuestionId)}>
+                                <i className="fas fa-th-list text-warning"/>
+                                <span className="btn-inner--text">Comments</span>
+                              </Button>
+                            </Row>
+                          </ModalBody>
+                        </Modal>
+                      <td>{item.totalQuestions}</td>
+                      <td>
+                        <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
+                          <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
+                        <span className="custom-toggle-slider rounded-circle "></span>
+                        </Label>
 
-                              </td>
-                              <td>
-                              <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
-                                  <i className="fas fa-link text-warning"/>
-                                  <span className="btn-inner--text">Link</span>
-                                </Button>
-                              </td>
-
-                              <th className="text-center">{item.dcode}</th>
-
-                              <td>
-                                <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
-                                  <i className="fas fa-qrcode text-success"/>
-                                  <span className="btn-inner--text">QR CODE</span>
-                                </Button>
-                              </td>
-                              <td>
-                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
-                          <i className="fas fa-download text-success"/>
-                          <span className="btn-inner--text">REPORT</span>
+                      </td>
+                      <td>
+                      <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
+                          <i className="fas fa-link text-warning"/>
+                          <span className="btn-inner--text">Link</span>
                         </Button>
                       </td>
+
+                      <th className="text-center">{item.dcode}</th>
 
                       <td>
-                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.surveyResult(item)}>
-                          <i className="fas fa-th-list text-warning"/>
-                          <span className="btn-inner--text">RESULT</span>
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
+                          <i className="fas fa-qrcode text-success"/>
+                          <span className="btn-inner--text">QR CODE</span>
                         </Button>
                       </td>
-                            </tr>
-                            ))
-                        }
+                      <td>
+                <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
+                  <i className="fas fa-download text-success"/>
+                  <span className="btn-inner--text">REPORT</span>
+                </Button>
+              </td>
 
-                        <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>
-                          <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
-                          <ModalBody className="d-block text-center">
-                            <QRCode
-                              id="qrcode"
-                              value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
-                              size={290}
-                              imageSettings= {{
-                                src: "/src/assets/img/icons/smiley/satisfied.png",
-                                x: null,
-                                y: null,
-                                height: 60,
-                                width: 60,
-                                excavate: true,
-                              }}
-                              level={"H"}
-                              includeMargin={true}
-                            />
-                          </ModalBody>
-                          <ModalFooter>
-                            <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
-                            <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button>
-                          </ModalFooter>
-                        </Modal>
-                        </tbody>
-                      </Table>
-                    </Card>
-                  </Col>
+              <td>
+                <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.surveyResult(item)}>
+                  <i className="fas fa-th-list text-warning"/>
+                  <span className="btn-inner--text">RESULT</span>
+                </Button>
+              </td>
+                    </tr>
+                    ))
+                }
+
+                <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>
+                  <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
+                  <ModalBody className="d-block text-center">
+                    <QRCode
+                      id="qrcode"
+                      value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                      size={290}
+                      imageSettings= {{
+                        src: "/src/assets/img/icons/smiley/satisfied.png",
+                        x: null,
+                        y: null,
+                        height: 60,
+                        width: 60,
+                        excavate: true,
+                      }}
+                      level={"H"}
+                      includeMargin={true}
+                    />
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
+                    <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button>
+                  </ModalFooter>
+                </Modal>
+                </tbody>
+              </Table>
+            </Card>
+          </Col>
+        </Row>
+        : null
+        }
+        {
+          this.state.activesurvey
+          ?
+          <Row className="">
+          <Col className="mb-5 mb-xl-0" xl="12">
+          <Card className="bg-default shadow">
+              <CardHeader className="bg-transparent border-1">
+                <Row className="align-items-center">
+                  <div className="col">
+                    <h3 className="mb-0 text-white">Active Surveys</h3>
+                  </div>
+                  {/* <div className="col text-right">
+                    <Button
+                      color="primary"
+                      href="#pablo"
+                      onClick={() => history.push('/admin/surveys')}
+                      size="sm"
+                    >
+                      SEE ALL
+                    </Button>
+                  </div> */}
                 </Row>
-              </TabPane>
-              <TabPane tabId="tabs2">
-                <Row className="">
-                  <Col className="mb-5 mb-xl-0" xl="12">
-                  <Card className="bg-default shadow">
-                      <CardHeader className="bg-transparent border-1">
-                        {
-                          this.state.recentSubmittedSurveys.length > 1
-                          ?
-                            <Row className="align-items-center">
-                              <div className="col">
-                                <h3 className="mb-0 text-white">Recently Submitted Surveys</h3>
+                <Row>
+                  <Input                                     
+                    placeholder="Search" 
+                    type="search" 
+                    autoComplete="search-survey"
+                    className="bg-default shadow mt-3"
+                    value={this.state.searchText}
+                    onChange={(e) => this.onChangeSearch(e)}
+                  />
+                </Row>
+              </CardHeader>
+              <Table className="align-items-center table-flush table-white" responsive>
+                <thead className="thead-dark">
+                  <tr>
+                    <th scope="col">Survey name</th>
+                    <th scope="col">Questions</th>
+                    <th scope="col">Active</th>
+                    <th scope="col">Link</th>
+                    <th scope="col">Survey Code</th>
+                    <th scope="col">QR Code</th>
+                    <th scope="col">Report</th>
+                    <th scope="col">Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                
+                {
+                    (this.props.survey.error == "No matched surveys") && this.state.searchText != ""
+                    ?
+                    <td colSpan={10} className="align-items-center bg-white">
+                      <div className="col">
+                        <h3 className="m-3 text-center text-dark">No matched surveys</h3>
+                      </div>
+                    </td>
+                    : 
+                    this.state.activesurveylist && this.state.activesurveylist instanceof Array && this.state.activesurveylist.map((item, i) => (
+                      <tr>
+                      <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
+                      <Modal isOpen={this.state.popSurvey[i]} centered toggle={() => this.togglePopover(item,i)}>
+                        <ModalHeader>{item.surveyName}</ModalHeader>
+                        <ModalBody className="bg-default shadow">
+                          <Row className="justify-content-between">
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[0].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[1].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[2].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[3].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[4].icon}/>
+                            </span>
+                            <h3 className="text-info mt-1">{item.firstQuestionDetail.totalRatings} out of 5</h3>
+                          </Row>
+                          <h3 className="text-info text-center my-1">{item.visitorsCount} Customer Ratings</h3>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[0].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                                
+                              <Progress value={item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
                               </div>
-                              <div className="col text-right">
-                                <Button
-                                  color="primary"
-                                  href="#pablo"
-                                  onClick={() => history.push('/admin/surveys')}
-                                  size="sm"
-                                >
-                                  SEE ALL
-                                </Button>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100) || 0}%</h2>
+                            </Row>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[1].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
                               </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
                             </Row>
-                            :
-                            <Row className="align-items-center">
-                              {/* <div className="col">
-                                <h3 className="mb-0 text-white">No Surveys Submitted</h3>
-                              </div> */}
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[2].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
                             </Row>
-                        }
-                      </CardHeader>
-                      {
-                        this.state.recentSubmittedSurveys.length < 1
-                          ?
-                            <div className="text-center vertical-center">
-                            <h3 className="m-2 text-white">No Surveys Submitted</h3>
-                          </div>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[3].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                            </Row>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[4].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                            </Row>
+                            <Row className="justify-content-center">
+                              <Button size="lg" className="btn btn-icon btn-3 btn-outline-primary align-center" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item.firstQuestionId)}>
+                                <i className="fas fa-th-list text-warning"/>
+                                <span className="btn-inner--text">Comments</span>
+                              </Button>
+                            </Row>
+                          </ModalBody>
+                        </Modal>
+                      <td>{item.totalQuestions}</td>
+                      <td>
+                        <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
+                          <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
+                        <span className="custom-toggle-slider rounded-circle "></span>
+                        </Label>
+
+                      </td>
+                      <td>
+                      <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
+                          <i className="fas fa-link text-warning"/>
+                          <span className="btn-inner--text">Link</span>
+                        </Button>
+                      </td>
+
+                      <th className="text-center">{item.dcode}</th>
+
+                      <td>
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
+                          <i className="fas fa-qrcode text-success"/>
+                          <span className="btn-inner--text">QR CODE</span>
+                        </Button>
+                      </td>
+                      <td>
+                <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
+                  <i className="fas fa-download text-success"/>
+                  <span className="btn-inner--text">REPORT</span>
+                </Button>
+              </td>
+
+              <td>
+                <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.surveyResult(item)}>
+                  <i className="fas fa-th-list text-warning"/>
+                  <span className="btn-inner--text">RESULT</span>
+                </Button>
+              </td>
+                    </tr>
+                    ))
+                }
+
+                <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>
+                  <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
+                  <ModalBody className="d-block text-center">
+                    <QRCode
+                      id="qrcode"
+                      value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                      size={290}
+                      imageSettings= {{
+                        src: "/src/assets/img/icons/smiley/satisfied.png",
+                        x: null,
+                        y: null,
+                        height: 60,
+                        width: 60,
+                        excavate: true,
+                      }}
+                      level={"H"}
+                      includeMargin={true}
+                    />
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
+                    <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button>
+                  </ModalFooter>
+                </Modal>
+                </tbody>
+              </Table>
+            </Card>
+          </Col>
+        </Row>
+        : null
+        }
+        {
+          this.state.inactivesurvey
+          ?
+          <Row className="">
+          <Col className="mb-5 mb-xl-0" xl="12">
+          <Card className="bg-default shadow">
+              <CardHeader className="bg-transparent border-1">
+                <Row className="align-items-center">
+                  <div className="col">
+                    <h3 className="mb-0 text-white">Inactive Survey</h3>
+                  </div>
+                  {/* <div className="col text-right">
+                    <Button
+                      color="primary"
+                      href="#pablo"
+                      onClick={() => history.push('/admin/surveys')}
+                      size="sm"
+                    >
+                      SEE ALL
+                    </Button>
+                  </div> */}
+                </Row>
+                <Row>
+                  <Input                                     
+                    placeholder="Search" 
+                    type="search" 
+                    autoComplete="search-survey"
+                    className="bg-default shadow mt-3"
+                    value={this.state.searchText}
+                    onChange={(e) => this.onChangeSearch(e)}
+                  />
+                </Row>
+              </CardHeader>
+              <Table className="align-items-center table-flush table-white" responsive>
+                <thead className="thead-dark">
+                  <tr>
+                    <th scope="col">Survey name</th>
+                    <th scope="col">Questions</th>
+                    <th scope="col">Active</th>
+                    <th scope="col">Link</th>
+                    <th scope="col">Survey Code</th>
+                    <th scope="col">QR Code</th>
+                    <th scope="col">Report</th>
+                    <th scope="col">Result</th>
+                  </tr>
+                </thead>
+                <tbody>
+                
+                {
+                    (this.props.survey.error == "No matched surveys") && this.state.searchText != ""
+                    ?
+                    <td colSpan={10} className="align-items-center bg-white">
+                      <div className="col">
+                        <h3 className="m-3 text-center text-dark">No matched surveys</h3>
+                      </div>
+                    </td>
+                    : 
+                    this.state.inactivesurveylist && this.state.inactivesurveylist instanceof Array && this.state.inactivesurveylist.map((item, i) => (
+                      <tr>
+                      <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
+                      <Modal isOpen={this.state.popSurvey[i]} centered toggle={() => this.togglePopover(item,i)}>
+                        <ModalHeader>{item.surveyName}</ModalHeader>
+                        <ModalBody className="bg-default shadow">
+                          <Row className="justify-content-between">
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[0].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[1].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[2].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[3].icon}/>
+                            </span>
+                            <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                <img src={this.state.imgSrc[4].icon}/>
+                            </span>
+                            <h3 className="text-info mt-1">{item.firstQuestionDetail.totalRatings} out of 5</h3>
+                          </Row>
+                          <h3 className="text-info text-center my-1">{item.visitorsCount} Customer Ratings</h3>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[0].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                                
+                              <Progress value={item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100) || 0}%</h2>
+                            </Row>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[1].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                            </Row>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[2].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                            </Row>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[3].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                            </Row>
+                            <Row className="justify-content-between">
+                              <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                <img src={this.state.imgSrc[4].icon}/>
+                              </span>
+                              <div style={{width: 200}} className="mt-3">
+                              <Progress value={item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                              </div>
+                              <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                            </Row>
+                            <Row className="justify-content-center">
+                              <Button size="lg" className="btn btn-icon btn-3 btn-outline-primary align-center" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item.firstQuestionId)}>
+                                <i className="fas fa-th-list text-warning"/>
+                                <span className="btn-inner--text">Comments</span>
+                              </Button>
+                            </Row>
+                          </ModalBody>
+                        </Modal>
+                      <td>{item.totalQuestions}</td>
+                      <td>
+                        <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
+                          <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
+                        <span className="custom-toggle-slider rounded-circle "></span>
+                        </Label>
+
+                      </td>
+                      <td>
+                      <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
+                          <i className="fas fa-link text-warning"/>
+                          <span className="btn-inner--text">Link</span>
+                        </Button>
+                      </td>
+
+                      <th className="text-center">{item.dcode}</th>
+
+                      <td>
+                        <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
+                          <i className="fas fa-qrcode text-success"/>
+                          <span className="btn-inner--text">QR CODE</span>
+                        </Button>
+                      </td>
+                      <td>
+                <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
+                  <i className="fas fa-download text-success"/>
+                  <span className="btn-inner--text">REPORT</span>
+                </Button>
+              </td>
+
+              <td>
+                <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.surveyResult(item)}>
+                  <i className="fas fa-th-list text-warning"/>
+                  <span className="btn-inner--text">RESULT</span>
+                </Button>
+              </td>
+                    </tr>
+                    ))
+                }
+
+                <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>
+                  <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
+                  <ModalBody className="d-block text-center">
+                    <QRCode
+                      id="qrcode"
+                      value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                      size={290}
+                      imageSettings= {{
+                        src: "/src/assets/img/icons/smiley/satisfied.png",
+                        x: null,
+                        y: null,
+                        height: 60,
+                        width: 60,
+                        excavate: true,
+                      }}
+                      level={"H"}
+                      includeMargin={true}
+                    />
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
+                    <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button>
+                  </ModalFooter>
+                </Modal>
+                </tbody>
+              </Table>
+            </Card>
+          </Col>
+        </Row>
+        : null
+        }
+
+        {
+          !this.state.activesurvey && !this.state.inactivesurvey && !this.state.survey
+          ?
+          <Card className="shadow">
+            <CardBody>
+              <TabContent activeTab={"tabs" + this.state.tabs}>
+                <TabPane tabId="tabs1">
+                  <Row className="">
+                    <Col className="mb-5 mb-xl-0" xl="12">
+                    <Card className="bg-default shadow">
+                        <CardHeader className="bg-transparent border-1">
+                          <Row className="align-items-center">
+                            <div className="col">
+                              <h3 className="mb-0 text-white">Recently Created Surveys</h3>
+                            </div>
+                            <div className="col text-right">
+                              <Button
+                                color="primary"
+                                href="#pablo"
+                                onClick={() => history.push('/admin/surveys')}
+                                size="sm"
+                              >
+                                SEE ALL
+                              </Button>
+                            </div>
+                          </Row>
+                          <Row>
+                            <Input                                     
+                              placeholder="Search" 
+                              type="search" 
+                              autoComplete="search-survey"
+                              className="bg-default shadow mt-3"
+                              value={this.state.searchText}
+                              onChange={(e) => this.onChangeSearch(e)}
+                            />
+                          </Row>
+                        </CardHeader>
+                        <Table className="align-items-center table-flush table-white" responsive>
+                          <thead className="thead-dark">
+                            <tr>
+                              <th scope="col">Survey name</th>
+                              <th scope="col">Questions</th>
+                              <th scope="col">Active</th>
+                              <th scope="col">Link</th>
+                              <th scope="col">Survey Code</th>
+                              <th scope="col">QR Code</th>
+                              <th scope="col">Report</th>
+                              <th scope="col">Result</th>
+                            </tr>
+                          </thead>
+                          <tbody>
                           
-                          :
-                          <Table className="align-items-center table-flush table-white" responsive>
-                            <thead className="thead-dark">
-                              <tr>
-                                <th scope="col">Survey name</th>
-                                <th scope="col">Questions</th>
-                                <th scope="col">Active</th>
-                                <th scope="col">Link</th>
-                                <th scope="col">QR Code</th>
-                                <th scope="col">Report</th>
-                                <th scope="col">Result</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                            {
-                              this.state.recentSubmittedSurveys && this.state.recentSubmittedSurveys instanceof Array && this.state.recentSubmittedSurveys.map((item, i) => (
+                          {
+                              (this.props.survey.error == "No matched surveys") && this.state.searchText != ""
+                              ?
+                              <td colSpan={10} className="align-items-center bg-white">
+                                <div className="col">
+                                  <h3 className="m-3 text-center text-dark">No matched surveys</h3>
+                                </div>
+                              </td>
+                              : 
+                              this.state.recentCreatedSurveys && this.state.recentCreatedSurveys instanceof Array && this.state.recentCreatedSurveys.map((item, i) => (
                                 <tr>
                                 <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
+                                <Modal isOpen={this.state.popSurvey[i]} centered toggle={() => this.togglePopover(item,i)}>
+                                  <ModalHeader>{item.surveyName}</ModalHeader>
+                                  <ModalBody className="bg-default shadow">
+                                    <Row className="justify-content-between">
+                                      <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                          <img src={this.state.imgSrc[0].icon}/>
+                                      </span>
+                                      <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                          <img src={this.state.imgSrc[1].icon}/>
+                                      </span>
+                                      <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                          <img src={this.state.imgSrc[2].icon}/>
+                                      </span>
+                                      <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                          <img src={this.state.imgSrc[3].icon}/>
+                                      </span>
+                                      <span className="avatar avatar-sm rounded-circle mx-1 my-1">
+                                          <img src={this.state.imgSrc[4].icon}/>
+                                      </span>
+                                      <h3 className="text-info mt-1">{item.firstQuestionDetail.totalRatings} out of 5</h3>
+                                    </Row>
+                                    <h3 className="text-info text-center my-1">{item.visitorsCount} Customer Ratings</h3>
+                                      <Row className="justify-content-between">
+                                        <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                          <img src={this.state.imgSrc[0].icon}/>
+                                        </span>
+                                        <div style={{width: 200}} className="mt-3">
+                                          
+                                        <Progress value={item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                                        </div>
+                                        <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.verySatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100) || 0}%</h2>
+                                      </Row>
+                                      <Row className="justify-content-between">
+                                        <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                          <img src={this.state.imgSrc[1].icon}/>
+                                        </span>
+                                        <div style={{width: 200}} className="mt-3">
+                                        <Progress value={item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                                        </div>
+                                        <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.satisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                                      </Row>
+                                      <Row className="justify-content-between">
+                                        <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                          <img src={this.state.imgSrc[2].icon}/>
+                                        </span>
+                                        <div style={{width: 200}} className="mt-3">
+                                        <Progress value={item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                                        </div>
+                                        <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.neutral/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                                      </Row>
+                                      <Row className="justify-content-between">
+                                        <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                          <img src={this.state.imgSrc[3].icon}/>
+                                        </span>
+                                        <div style={{width: 200}} className="mt-3">
+                                        <Progress value={item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                                        </div>
+                                        <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.unsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                                      </Row>
+                                      <Row className="justify-content-between">
+                                        <span className="avatar avatar-sm rounded-circle mx-3 my-1">
+                                          <img src={this.state.imgSrc[4].icon}/>
+                                        </span>
+                                        <div style={{width: 200}} className="mt-3">
+                                        <Progress value={item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0}/>
+                                        </div>
+                                        <h2 className="text-white mt-1 mx-2">{Math.round(item.firstQuestionDetail.veryUnsatisfied/ (item.firstQuestionDetail.verySatisfied + item.firstQuestionDetail.satisfied + item.firstQuestionDetail.neutral + item.firstQuestionDetail.unsatisfied + item.firstQuestionDetail.veryUnsatisfied) * 100 || 0)}%</h2>
+                                      </Row>
+                                      <Row className="justify-content-center">
+                                        <Button size="lg" className="btn btn-icon btn-3 btn-outline-primary align-center" onClick={() => this.toggleCommentModal(this.state.surveyCustId, item.firstQuestionId)}>
+                                          <i className="fas fa-th-list text-warning"/>
+                                          <span className="btn-inner--text">Comments</span>
+                                        </Button>
+                                      </Row>
+                                    </ModalBody>
+                                  </Modal>
                                 <td>{item.totalQuestions}</td>
                                 <td>
                                   <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
@@ -507,120 +1037,249 @@ class Dashboard extends React.Component {
                                     <i className="fas fa-link text-warning"/>
                                     <span className="btn-inner--text">Link</span>
                                   </Button>
-
                                 </td>
+
+                                <th className="text-center">{item.dcode}</th>
+
                                 <td>
                                   <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
                                     <i className="fas fa-qrcode text-success"/>
                                     <span className="btn-inner--text">QR CODE</span>
                                   </Button>
                                 </td>
-
                                 <td>
-                                  <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
-                                    <i className="fas fa-download text-success"/>
-                                    <span className="btn-inner--text">REPORT</span>
-                                  </Button>
-                                </td>
+                          <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
+                            <i className="fas fa-download text-success"/>
+                            <span className="btn-inner--text">REPORT</span>
+                          </Button>
+                        </td>
 
-                                <td>
-                                  <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.surveyResult(item)}>
-                                    <i className="fas fa-th-list text-warning"/>
-                                    <span className="btn-inner--text">RESULT</span>
-                                  </Button>
-                                </td>
+                        <td>
+                          <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.surveyResult(item)}>
+                            <i className="fas fa-th-list text-warning"/>
+                            <span className="btn-inner--text">RESULT</span>
+                          </Button>
+                        </td>
                               </tr>
                               ))
-                            }
-                            </tbody>
-                          </Table>
-                      }
-                    </Card>
-                    <Modal isOpen={this.state.linkModal} centered toggle={() => this.toggleLinkModal()}>
-                      <ModalHeader className="bg-info" toggle={() => this.toggleLinkModal()}>
-                        <h2 color="primary" className="text-left">Link</h2>
-                      </ModalHeader>
-                      <ModalBody className="d-block text-center">
-                        <Card className="p-2 bg-default">
-                        <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
-                        </Card>
-                      </ModalBody>
-                      <ModalFooter>
-                        <Button color="success" onClick={() => this.copyLink("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy</Button>{' '}
-                      </ModalFooter>
-                    </Modal>
+                          }
 
-                    <Modal isOpen={this.state.qrModal} centered toggle={() => this.toggleQRModal()}>
-                      <ModalHeader  className="bg-info" toggle={() => this.toggleQRModal()}>
-                      <Row>
-                           <Col>
-                            <h2 color="primary" className="text-left">Survey QRCode</h2>
-                          </Col>
-                      </Row>
-                      </ModalHeader>
-                      <ModalBody className="d-block text-center">
-                        <QRCode
-                          id="qrcode"
-                          value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
-                          size={290}
-                          imageSettings= {{
-                            src: "/src/assets/img/icons/smiley/satisfied.png",
-                            x: null,
-                            y: null,
-                            height: 60,
-                            width: 60,
-                            excavate: true,
-                          }}
-                          level={"H"}
-                          includeMargin={true}
-                        />
-                      </ModalBody>
-                      <ModalFooter>
-                        <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
-                        {/* <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button> */}
-                      </ModalFooter>
-                    </Modal>
-                  </Col>
-                </Row> 
-              </TabPane>
-            </TabContent>
-          </CardBody>
-          <Modal isOpen={this.state.commentModal} centered toggle={() => this.toggleCommentModal()}>
-                    <ModalHeader className="bg-info">
-                      <h2 color="primary" className="text-left">Comments</h2>
-                    </ModalHeader>
-                      <ModalBody className="d-block text-center">
-                        <Card className="p-2 bg-default">
-                        <Table className="align-items-center table-flush table-white" responsive>
-                          <thead className="thead-dark">
-                            <tr>
-                            <th scope="col">Sl No</th>
-                            <th scope="col">Comments</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {
-                              (Array.isArray(this.state.comments) && this.state.comments.length > 0)
-                              ?
-                                this.state.comments && this.state.comments instanceof Array && this.state.comments.map((comment, i) => (
-                                    <tr scope="row">
-                                      <td><h3 className="text-center">{i+1}</h3></td>
-                                      <td><h3 className="text-center">{comment}</h3></td>
-                                    </tr>
-                                  ))
-                              :
-                                <td colSpan={10} className="align-items-center bg-white">
-                                <div className="col">
-                                  <h3 className="m-3 text-center text-dark">No Comments</h3>
-                                </div>
-                              </td>
-                            }
+                          <Modal isOpen={this.state.qrModal} centered toggle={() => toggleModal()}>
+                            <ModalHeader><h2 color="primary">Survey QRCode</h2></ModalHeader>
+                            <ModalBody className="d-block text-center">
+                              <QRCode
+                                id="qrcode"
+                                value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                                size={290}
+                                imageSettings= {{
+                                  src: "/src/assets/img/icons/smiley/satisfied.png",
+                                  x: null,
+                                  y: null,
+                                  height: 60,
+                                  width: 60,
+                                  excavate: true,
+                                }}
+                                level={"H"}
+                                includeMargin={true}
+                              />
+                            </ModalBody>
+                            <ModalFooter>
+                              <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
+                              <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button>
+                            </ModalFooter>
+                          </Modal>
                           </tbody>
                         </Table>
-                        </Card>
-                      </ModalBody>
-                  </Modal>
-        </Card>
+                      </Card>
+                    </Col>
+                  </Row>
+                </TabPane>
+                <TabPane tabId="tabs2">
+                  <Row className="">
+                    <Col className="mb-5 mb-xl-0" xl="12">
+                    <Card className="bg-default shadow">
+                        <CardHeader className="bg-transparent border-1">
+                          {
+                            this.state.recentSubmittedSurveys.length > 1
+                            ?
+                              <Row className="align-items-center">
+                                <div className="col">
+                                  <h3 className="mb-0 text-white">Recently Submitted Surveys</h3>
+                                </div>
+                                <div className="col text-right">
+                                  <Button
+                                    color="primary"
+                                    href="#pablo"
+                                    onClick={() => history.push('/admin/surveys')}
+                                    size="sm"
+                                  >
+                                    SEE ALL
+                                  </Button>
+                                </div>
+                              </Row>
+                              :
+                              <Row className="align-items-center">
+                                {/* <div className="col">
+                                  <h3 className="mb-0 text-white">No Surveys Submitted</h3>
+                                </div> */}
+                              </Row>
+                          }
+                        </CardHeader>
+                        {
+                          this.state.recentSubmittedSurveys.length < 1
+                            ?
+                              <div className="text-center vertical-center">
+                              <h3 className="m-2 text-white">No Surveys Submitted</h3>
+                            </div>
+                            
+                            :
+                            <Table className="align-items-center table-flush table-white" responsive>
+                              <thead className="thead-dark">
+                                <tr>
+                                  <th scope="col">Survey name</th>
+                                  <th scope="col">Questions</th>
+                                  <th scope="col">Active</th>
+                                  <th scope="col">Link</th>
+                                  <th scope="col">QR Code</th>
+                                  <th scope="col">Report</th>
+                                  <th scope="col">Result</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              {
+                                this.state.recentSubmittedSurveys && this.state.recentSubmittedSurveys instanceof Array && this.state.recentSubmittedSurveys.map((item, i) => (
+                                  <tr>
+                                  <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
+                                  <td>{item.totalQuestions}</td>
+                                  <td>
+                                    <Label className="custom-toggle" onClick={(e) => this.updateStatus(item.surveyCustId, !item.active,e )}>
+                                      <Input type="checkbox" id='2' name="activeSwitch" checked={item.active}/>
+                                    <span className="custom-toggle-slider rounded-circle "></span>
+                                    </Label>
+
+                                  </td>
+                                  <td>
+                                  <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.toggleLinkModal(item.dcode )}>
+                                      <i className="fas fa-link text-warning"/>
+                                      <span className="btn-inner--text">Link</span>
+                                    </Button>
+
+                                  </td>
+                                  <td>
+                                    <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.toggleQRModal(item.dcode)}>
+                                      <i className="fas fa-qrcode text-success"/>
+                                      <span className="btn-inner--text">QR CODE</span>
+                                    </Button>
+                                  </td>
+
+                                  <td>
+                                    <Button size="sm" className="btn btn-icon btn-3 btn-outline-info" onClick={() => this.props.reportDownload(item.surveyCustId)}>
+                                      <i className="fas fa-download text-success"/>
+                                      <span className="btn-inner--text">REPORT</span>
+                                    </Button>
+                                  </td>
+
+                                  <td>
+                                    <Button size="sm" className="btn btn-icon btn-3 btn-outline-primary" onClick={() => this.surveyResult(item)}>
+                                      <i className="fas fa-th-list text-warning"/>
+                                      <span className="btn-inner--text">RESULT</span>
+                                    </Button>
+                                  </td>
+                                </tr>
+                                ))
+                              }
+                              </tbody>
+                            </Table>
+                        }
+                      </Card>
+                      <Modal isOpen={this.state.linkModal} centered toggle={() => this.toggleLinkModal()}>
+                        <ModalHeader className="bg-info" toggle={() => this.toggleLinkModal()}>
+                          <h2 color="primary" className="text-left">Link</h2>
+                        </ModalHeader>
+                        <ModalBody className="d-block text-center">
+                          <Card className="p-2 bg-default">
+                          <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
+                          </Card>
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button color="success" onClick={() => this.copyLink("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy</Button>{' '}
+                        </ModalFooter>
+                      </Modal>
+
+                      <Modal isOpen={this.state.qrModal} centered toggle={() => this.toggleQRModal()}>
+                        <ModalHeader  className="bg-info" toggle={() => this.toggleQRModal()}>
+                        <Row>
+                            <Col>
+                              <h2 color="primary" className="text-left">Survey QRCode</h2>
+                            </Col>
+                        </Row>
+                        </ModalHeader>
+                        <ModalBody className="d-block text-center">
+                          <QRCode
+                            id="qrcode"
+                            value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                            size={290}
+                            imageSettings= {{
+                              src: "/src/assets/img/icons/smiley/satisfied.png",
+                              x: null,
+                              y: null,
+                              height: 60,
+                              width: 60,
+                              excavate: true,
+                            }}
+                            level={"H"}
+                            includeMargin={true}
+                          />
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button color="success" onClick={() => this.downloadQR()}>Download QR</Button>{' '}
+                          {/* <Button color="secondary" onClick={() => this.toggleQRModal()} >Close</Button> */}
+                        </ModalFooter>
+                      </Modal>
+                    </Col>
+                  </Row> 
+                </TabPane>
+              </TabContent>
+            </CardBody>
+            <Modal isOpen={this.state.commentModal} centered toggle={() => this.toggleCommentModal()}>
+                      <ModalHeader className="bg-info">
+                        <h2 color="primary" className="text-left">Comments</h2>
+                      </ModalHeader>
+                        <ModalBody className="d-block text-center">
+                          <Card className="p-2 bg-default">
+                          <Table className="align-items-center table-flush table-white" responsive>
+                            <thead className="thead-dark">
+                              <tr>
+                              <th scope="col">Sl No</th>
+                              <th scope="col">Comments</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {
+                                (Array.isArray(this.state.comments) && this.state.comments.length > 0)
+                                ?
+                                  this.state.comments && this.state.comments instanceof Array && this.state.comments.map((comment, i) => (
+                                      <tr scope="row">
+                                        <td><h3 className="text-center">{i+1}</h3></td>
+                                        <td><h3 className="text-center">{comment}</h3></td>
+                                      </tr>
+                                    ))
+                                :
+                                  <td colSpan={10} className="align-items-center bg-white">
+                                  <div className="col">
+                                    <h3 className="m-3 text-center text-dark">No Comments</h3>
+                                  </div>
+                                </td>
+                              }
+                            </tbody>
+                          </Table>
+                          </Card>
+                        </ModalBody>
+                    </Modal>
+          </Card>
+          : null
+        }
+        
         </Container>
       </>
     );
@@ -629,13 +1288,18 @@ class Dashboard extends React.Component {
 
 function mapState(state) {
   const survey = state.survey;
+  const activesurvey = state.activesurvey;
+  const inactivesurvey = state.inactivesurvey;
   const dashboarddata = state.dashboard;
   const alert = state.alert;
-    return { survey, dashboarddata, alert };
+    return { survey, dashboarddata, alert, activesurvey, inactivesurvey };
 }
 
 const actionCreators = {
   getDashboardData: dashboardActions.getData,
+  getSurvey: surveyActions.getAll,
+  getActiveSurvey: surveyActions.getActiveSurvey,
+  getInactiveSurvey: surveyActions.getInactiveSurvey,
   searchSurvey: surveyActions.search,
   updateSurveyStatus: surveyActions.updateStatus,
   getComments: surveyActions.getComments,

@@ -1,8 +1,35 @@
 import { surveyConstants } from '../_constants';
+import { func } from 'prop-types';
 const initialState = {
     pending: false,
     questions: [],
     error: null
+}
+
+export function activesurvey(state = initialState, action){
+  switch(action.type){
+    case surveyConstants.GET_ACTIVE_REQUEST:
+      return { loading: true };
+    case surveyConstants.GET_ACTIVE_SUCCESS:
+      return  action.activesurveys
+    case surveyConstants.GET_ACTIVE_FAILURE:
+      return { error: action.error };
+      default:
+        return state
+  }
+}
+
+export function inactivesurvey(state = initialState, action){
+  switch(action.type){
+    case surveyConstants.GET_INACTIVE_REQUEST:
+      return { loading: true };
+    case surveyConstants.GET_INACTIVE_SUCCESS:
+      return  action.inactivesurveys
+    case surveyConstants.GET_INACTIVE_FAILURE:
+      return { error: action.error };
+      default:
+        return state
+  }
 }
 
 export function survey(state = initialState, action) {
@@ -37,6 +64,7 @@ export function survey(state = initialState, action) {
       return  action.surveys
     case surveyConstants.GETALL_FAILURE:
       return { error: action.error };
+
     case surveyConstants.GET_RESULT_REQUEST:
       return { loading: true };
     case surveyConstants.GET_RESULT_SUCCESS:
