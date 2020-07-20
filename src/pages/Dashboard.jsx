@@ -244,6 +244,7 @@ class Dashboard extends React.Component {
 
   
   render() {
+    var surveyList = (this.state.searchText != '') ? this.state.sureys :this.state.recentCreatedSurveys;
     return (
       <>
         <Header getAllSurvey={(value) => this.surveyactive(value)}/>
@@ -998,7 +999,7 @@ class Dashboard extends React.Component {
                                 </div>
                               </td>
                               : 
-                              this.state.recentCreatedSurveys && this.state.recentCreatedSurveys instanceof Array && this.state.recentCreatedSurveys.map((item, i) => (
+                              surveyList && surveyList instanceof Array && surveyList.map((item, i) => (
                                 <tr>
                                 <th onClick={() => this.togglePopover(item,i)} id={"survey" + i}>{item.surveyName}</th>
                                 <Modal isOpen={this.state.popSurvey[i]} centered toggle={() => this.togglePopover(item,i)}>
