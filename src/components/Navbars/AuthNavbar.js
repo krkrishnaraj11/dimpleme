@@ -82,16 +82,16 @@ class AuthNavbar extends React.Component {
                   : null
                 }
                 {
-                  history.location.pathname != '/auth/register'
+                  history.location.pathname != '/auth/signup'
                   ?
                   <NavItem>
                     <NavLink
                       className="nav-link-icon"
-                      to="/auth/register"
+                      to="/auth/signup"
                       tag={Link}
                     >
                       <i className="ni ni-circle-08" />
-                      <span className="nav-link-inner--text">Register</span>
+                      <span className="nav-link-inner--text">Signup</span>
                     </NavLink>
                   </NavItem>
                   : null

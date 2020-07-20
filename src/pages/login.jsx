@@ -425,8 +425,7 @@ responseGoogle = (response) => {
             <Col className="text-right" xs="6">
               <a
                 className="text-light"
-                target={Link}
-                href="/auth/register"
+                href="/auth/signup"
               >
                 <small>Create new account</small>
               </a>

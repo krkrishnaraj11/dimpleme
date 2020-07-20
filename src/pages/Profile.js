@@ -245,24 +245,31 @@ class Profile extends React.Component {
                   </Col>
                 </Row>
                 <CardHeader className="text-center border-0 pt-8 pt-md-7 pb-0 pb-md-4 mb-4 p-3">
-                  <div className="d-flex justify-content-center">
-                    <Button
-                      className="mx-5 p-2"
-                      color="default"
-                      innerRef={this.inputReference}
-                      onClick={e => this.fileUploadAction(e)}
-                      size="sm"
-                    >
-                      Upload
-                    </Button>
-                    <Input
-                      type="file"
-                      innerRef={this.inputReference}
-                      onChange={(e) => this.fileUploadInputChange(e)}
-                      style={{display: 'none'}}
-                    />
-                  </div>
-                  <h3 className="mt-1">{ this.state.firstName } { this.state.lastName}</h3>
+                  
+                    {
+                      this.state.update 
+                      ?
+                      <div className="d-flex justify-content-center">
+                        <Button
+                          className="mx-5 p-2"
+                          color="default"
+                          innerRef={this.inputReference}
+                          onClick={e => this.fileUploadAction(e)}
+                          size="sm"
+                        >
+                          Upload
+                        </Button>
+                        <Input
+                          type="file"
+                          innerRef={this.inputReference}
+                          onChange={(e) => this.fileUploadInputChange(e)}
+                          style={{display: 'none'}}
+                        />
+                      </div>
+                      : 
+                      <div className="d-flex justify-content-center mb-4"/>
+                    }
+                  <h2 className="mt-1 text-bold">{ this.state.firstName } { this.state.lastName}</h2>
                 </CardHeader>
                     <div className="pl-lg-4">
                       <Row>

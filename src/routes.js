@@ -66,8 +66,8 @@ const routes = [
     layout: "/auth"
   },
   {
-    path: "/register",
-    name: "Register",
+    path: "/signup",
+    name: "Sign Up",
     icon: "ni ni-key-25 text-info",
     component: Register,
     layout: "/auth" 
