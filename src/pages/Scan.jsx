@@ -15,7 +15,7 @@ import {
   Col,
   Spinner
 } from "reactstrap";
-import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { history } from '../../_helpers';
 import classnames from "classnames";
@@ -39,7 +39,6 @@ class Scan extends React.Component {
 
     this.state = {
       scan: false,
-      result: 'No Result',
       forgot: false,
       email: '',
       emailState: '',
@@ -124,10 +123,7 @@ handleSubmit(e) {
 
   handleScan = data => {
     if (data) {
-      // this.setState({
-      //   result: data
-      // })
-      <Link to={data} />
+      history.push(data.replace('https://dimpleme.herokuapp.com', ''))
     }
   }
 
@@ -216,7 +212,6 @@ responseGoogle = (response) => {
                     onScan={this.handleScan}
                     style={{ width: '100%' }}
                   />
-                  <p>{this.state.result}</p>
                 </CardBody>
               : null}   
               <CardBody className="px-lg-5 py-lg-5">
