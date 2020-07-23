@@ -124,9 +124,10 @@ handleSubmit(e) {
 
   handleScan = data => {
     if (data) {
-      this.setState({
-        result: data
-      })
+      // this.setState({
+      //   result: data
+      // })
+      <Link to={data} />
     }
   }
 
