@@ -27,3 +27,6 @@ yarn.lock
 /client/node_modules
 public/build/bundle.js
 public/build/bundle.js
+
+# CI GitLab
+.gitlab-ci.yml
