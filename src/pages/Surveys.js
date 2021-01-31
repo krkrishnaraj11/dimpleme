@@ -206,7 +206,7 @@ class Survey extends React.Component {
         <Modal isOpen={this.state.deleteModal} toggle={() => toggleModal()}>
           <ModalHeader>Delete Survey</ModalHeader>
           <ModalBody>
-            Are you Sure to Delete Survey?
+          Permanently DELETE this Survey?
           </ModalBody>
           <ModalFooter>
             <Button color="danger" onClick={() => this.deleteSurvey(this.state.surveyCustId)}>Delete</Button>{' '}
@@ -480,10 +480,21 @@ class Survey extends React.Component {
                   <CardFooter>
                     <Row className="float-right">
                       <h3 className="mt-1 mx-1 font-weight-normal">Rows per table</h3>
-                      <Select options={selectOption} autosize={true} defaultValue={{ value: 5, label: 5}} onChange={(value) => this.onRowsChange(value)}/>
+                      <div style={{width: '70px'}}>
+                        <Select options={selectOption} autosize={true} defaultValue={{ value: 5, label: 5}} onChange={(value) => this.onRowsChange(value)}/>
+                      </div>
                       <Pagination className="mx-1">
                         <PaginationItem disabled={this.state.initialrow == 0}>
                           <PaginationLink previous onClick={() => this.prevPagination()}/>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink next onClick={() => this.nextPagination()}>1</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink next onClick={() => this.nextPagination()}>2</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink next onClick={() => this.nextPagination()}>3</PaginationLink>
                         </PaginationItem>
                         <PaginationItem>
                           <PaginationLink next onClick={() => this.nextPagination()}/>

@@ -74,19 +74,20 @@ class Profile extends React.Component {
    if(nextProps.users.items){
      console.log(nextProps.users.items)
      this.setState({
-       address: nextProps.users.items.data.address,
-       city: nextProps.users.items.data.city,
-       country: nextProps.users.items.data.country,
-       postalCode: nextProps.users.items.data.postalCode,
+       address: nextProps.users.items.data.address == 'undefined' ? '' : nextProps.users.items.data.address,
+       city: nextProps.users.items.data.city == 'undefined' ? '' : nextProps.users.items.data.city,
+       country: nextProps.users.items.data.country  == 'undefined' ? '' : nextProps.users.items.data.country,
+       postalCode: nextProps.users.items.data.postalCode == 'undefined' ? '' : nextProps.users.items.data.postalCode,
        firstName: nextProps.users.items.data.firstName,
        lastName: nextProps.users.items.data.lastName,
        email: nextProps.users.items.data.email,
-       state: nextProps.users.items.data.state,
+       state: nextProps.users.items.data.state == 'undefined' ? '' : nextProps.users.items.data.state,
        profilePic: config.apiUrl+'/' + nextProps.users.items.data.img.path
      })
    }
 
    if(nextProps.alert.message){
+     console.log(nextProps.alert, "alert")
       store.addNotification({
         title: 'Survey',
         message: nextProps.alert.message,
@@ -104,7 +105,7 @@ class Profile extends React.Component {
 
   fileUploadAction = () =>this.inputReference.current.click();
   fileUploadInputChange = (e) =>{
-    this.setState({ imagePath: e.target.files[0]})
+    this.setState({ profilePic: URL.createObjectURL(e.target.files[0]), imagePath: e.target.files[0]})
   };
 
   handleChange(e) {
@@ -323,7 +324,7 @@ class Profile extends React.Component {
                               className="form-control-label"
                               htmlFor="password"
                             >
-                              Password
+                              Change Password
                             </label>
                             <InputGroup
                               className={classnames("input-group-merge input-group-alternative",

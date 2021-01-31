@@ -118,12 +118,15 @@ class Dashboard extends React.Component {
     });
   };
 
-    togglePopover(item, i){
-      var pSurvey = this.state.popSurvey;
-      pSurvey[i] = !pSurvey[i];
-      this.setState({ popSurvey: pSurvey, surveyCustId: item.surveyCustId })
-    }
+  togglePopover(item, i){
+    var pSurvey = this.state.popSurvey;
+    pSurvey[i] = !pSurvey[i];
+    this.setState({ popSurvey: pSurvey, surveyCustId: item.surveyCustId })
+  }
 
+  addSurvey(){
+    history.push('/admin/survey/add')
+  }
   UNSAFE_componentWillReceiveProps(nextProps){
     
     if(this.state.searchText == '' && nextProps.dashboarddata.data){
@@ -957,10 +960,10 @@ class Dashboard extends React.Component {
                               <Button
                                 color="primary"
                                 href="#pablo"
-                                onClick={() => history.push('/admin/surveys')}
+                                onClick={() => this.addSurvey()}
                                 size="sm"
                               >
-                                SEE ALL
+                                ADD
                               </Button>
                             </div>
                           </Row>
@@ -1164,10 +1167,10 @@ class Dashboard extends React.Component {
                                   <Button
                                     color="primary"
                                     href="#pablo"
-                                    onClick={() => history.push('/admin/surveys')}
+                                    onClick={() => this.addSurvey()}
                                     size="sm"
                                   >
-                                    SEE ALL
+                                    ADD
                                   </Button>
                                 </div>
                               </Row>

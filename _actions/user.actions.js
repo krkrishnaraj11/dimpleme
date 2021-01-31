@@ -95,7 +95,7 @@ function update(user) {
             .then(
                 user => { 
                     dispatch(success());
-                    dispatch(alertActions.success('Updated successful'));
+                    dispatch(alertActions.success('Update successful'));
                 },
                 error => {
                     // dispatch(failure(error.toString()));
