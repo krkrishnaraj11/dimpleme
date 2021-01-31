@@ -67,7 +67,7 @@ module.exports = {
     externals: {
         // global app config object
         config: JSON.stringify({
-            apiUrl: constants.urlConstants.BASE_URL
+            apiUrl: constants.URL_CONSTANTS.BASE_URL
         })
     }
 }

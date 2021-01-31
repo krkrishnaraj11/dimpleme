@@ -40,8 +40,8 @@ class AuthNavbar extends React.Component {
         >
           <Container className="px-4">
             <NavbarBrand to="/" tag={Link}>
-              <h1 className="d-none d-sm-block">{constants.urlConstants.APP_NAME}</h1>
-              <h2 className="d-block d-sm-none">{constants.urlConstants.APP_NAME}</h2>
+              <h1 className="d-none d-sm-block">{constants.URL_CONSTANTS.APP_NAME}</h1>
+              <h2 className="d-block d-sm-none">{constants.URL_CONSTANTS.APP_NAME}</h2>
             </NavbarBrand>
             <button className="navbar-toggler" id="navbar-collapse-main">
               <span className="navbar-toggler-icon" />
@@ -52,7 +52,7 @@ class AuthNavbar extends React.Component {
                 <Row>
                   <Col className="collapse-brand" xs="6">
                     <Link to="/">
-                    <h2 className="d-block d-sm-none">{constants.urlConstants.APP_NAME}</h2>
+                    <h2 className="d-block d-sm-none">{constants.URL_CONSTANTS.APP_NAME}</h2>
                     </Link>
                   </Col>
                   <Col className="collapse-close" xs="6">

@@ -16,10 +16,10 @@ class Login extends React.Component {
                   © 2020{" "}
                   <a
                     className="font-weight-bold ml-1"
-                    href={constants.urlConstants.HOMEPAGE_URL}
+                    href={constants.URL_CONSTANTS.HOMEPAGE_URL}
                     target="_blank"
                   >
-                    {constants.urlConstants.APP_NAME}
+                    {constants.URL_CONSTANTS.APP_NAME}
                   </a>
                 </div>
               </Col>

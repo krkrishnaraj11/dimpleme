@@ -124,7 +124,7 @@ handleSubmit(e) {
 
   handleScan = data => {
     if (data) {
-      history.push(data.replace(constants.urlConstants.BASE_URL, ''))
+      history.push(data.replace(constants.URL_CONSTANTS.BASE_URL, ''))
     }
   }
 

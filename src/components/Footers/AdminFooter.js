@@ -15,11 +15,11 @@ class Footer extends React.Component {
               © 2020{" "}
               <a
                 className="font-weight-bold ml-1"
-                href={constants.urlConstants.HOMEPAGE_URL}
+                href={constants.URL_CONSTANTS.HOMEPAGE_URL}
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                {constants.urlConstants.APP_NAME}
+                {constants.URL_CONSTANTS.APP_NAME}
               </a>
             </div>
           </Col>
@@ -28,17 +28,17 @@ class Footer extends React.Component {
             <Nav className="nav-footer justify-content-center justify-content-xl-end">
               <NavItem>
                 <NavLink
-                  href={constants.urlConstants.HOMEPAGE_URL}
+                  href={constants.URL_CONSTANTS.HOMEPAGE_URL}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  {constants.urlConstants.APP_NAME}
+                  {constants.URL_CONSTANTS.APP_NAME}
                 </NavLink>
               </NavItem>
 
               <NavItem>
                 <NavLink
-                  href={constants.urlConstants.HOMEPAGE_URL}
+                  href={constants.URL_CONSTANTS.HOMEPAGE_URL}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
@@ -48,7 +48,7 @@ class Footer extends React.Component {
 
               <NavItem>
                 <NavLink
-                  href={constants.urlConstants.HOMEPAGE_URL}
+                  href={constants.URL_CONSTANTS.HOMEPAGE_URL}
                   rel="noopener noreferrer"
                   target="_blank"
                 >

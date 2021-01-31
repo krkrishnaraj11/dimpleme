@@ -139,7 +139,7 @@ class Sidebar extends React.Component {
                 className="navbar-brand-img"
                 src={logo.imgSrc}
               /> */}
-              <span>{constants.urlConstants.APP_NAME}</span>
+              <span>{constants.URL_CONSTANTS.APP_NAME}</span>
             </NavbarBrand>
           ) : null}
           {/* User */}
@@ -196,12 +196,12 @@ class Sidebar extends React.Component {
                     {logo.innerLink ? (
                       <Link to={logo.innerLink}>
                         {/* <img alt={logo.imgAlt} src={logo.imgSrc} /> */}
-                        <span>{constants.urlConstants.APP_NAME}</span>
+                        <span>{constants.URL_CONSTANTS.APP_NAME}</span>
                       </Link>
                     ) : (
                       <a href={logo.outterLink}>
                         {/* <img alt={logo.imgAlt} src={logo.imgSrc} /> */}
-                        <span>{constants.urlConstants.APP_NAME}</span>
+                        <span>{constants.URL_CONSTANTS.APP_NAME}</span>
                       </a>
                     )}
                   </Col>
