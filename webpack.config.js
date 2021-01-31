@@ -2,6 +2,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var webpack = require('webpack');
 var path = require('path');
+var constants = require('./_constants')
 
 module.exports = {
     entry: [
@@ -66,7 +67,7 @@ module.exports = {
     externals: {
         // global app config object
         config: JSON.stringify({
-            apiUrl: 'https://dimpleme-apis.herokuapp.com'
+            apiUrl: constants.urlConstants.BASE_URL
         })
     }
 }

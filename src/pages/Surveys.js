@@ -39,6 +39,7 @@ const selectOption = [
   { value: 20, label: 20},
   { value: 30, label: 30}
 ]
+const constants = require('../../_constants')
 
 class Survey extends React.Component {
     constructor(props){
@@ -206,7 +207,7 @@ class Survey extends React.Component {
         <Modal isOpen={this.state.deleteModal} toggle={() => toggleModal()}>
           <ModalHeader>Delete Survey</ModalHeader>
           <ModalBody>
-            Are you Sure to Delete Survey?
+          Permanently DELETE this Survey?
           </ModalBody>
           <ModalFooter>
             <Button color="danger" onClick={() => this.deleteSurvey(this.state.surveyCustId)}>Delete</Button>{' '}
@@ -402,11 +403,11 @@ class Survey extends React.Component {
                       </ModalHeader>
                       <ModalBody className="d-block text-center">
                         <Card className="p-2 bg-default">
-                        <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
+                        <a href={constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR } className="text-white" target="_blank">{constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR }</a>
                         </Card>
                       </ModalBody>
                       <ModalFooter>
-                        <Button color="success" onClick={() => this.copyLink("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy</Button>{' '}
+                        <Button color="success" onClick={() => this.copyLink(constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR)}>Copy</Button>{' '}
                       </ModalFooter>
                     </Modal>
 
@@ -422,7 +423,7 @@ class Survey extends React.Component {
                       <ModalBody className="d-block text-center">
                         <QRCode
                           id="qrcode"
-                          value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                          value= {constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR }
                           size={290}
                           imageSettings= {{
                             src: "/src/assets/img/icons/smiley/satisfied.png",
@@ -480,10 +481,21 @@ class Survey extends React.Component {
                   <CardFooter>
                     <Row className="float-right">
                       <h3 className="mt-1 mx-1 font-weight-normal">Rows per table</h3>
-                      <Select options={selectOption} autosize={true} defaultValue={{ value: 5, label: 5}} onChange={(value) => this.onRowsChange(value)}/>
+                      <div style={{width: '70px'}}>
+                        <Select options={selectOption} autosize={true} defaultValue={{ value: 5, label: 5}} onChange={(value) => this.onRowsChange(value)}/>
+                      </div>
                       <Pagination className="mx-1">
                         <PaginationItem disabled={this.state.initialrow == 0}>
                           <PaginationLink previous onClick={() => this.prevPagination()}/>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink next onClick={() => this.nextPagination()}>1</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink next onClick={() => this.nextPagination()}>2</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                          <PaginationLink next onClick={() => this.nextPagination()}>3</PaginationLink>
                         </PaginationItem>
                         <PaginationItem>
                           <PaginationLink next onClick={() => this.nextPagination()}/>

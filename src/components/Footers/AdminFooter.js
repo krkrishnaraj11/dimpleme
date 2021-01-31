@@ -2,6 +2,9 @@ import React from "react";
 // reactstrap components
 import { Container, Row, Col, Nav, NavItem, NavLink } from "reactstrap";
 
+const constants = require('../../../_constants')
+
+
 class Footer extends React.Component {
   render() {
     return (
@@ -12,11 +15,11 @@ class Footer extends React.Component {
               © 2020{" "}
               <a
                 className="font-weight-bold ml-1"
-                href="https://www.dimpleme.com"
+                href={constants.urlConstants.HOMEPAGE_URL}
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                DimpleMe
+                {constants.urlConstants.APP_NAME}
               </a>
             </div>
           </Col>
@@ -25,17 +28,17 @@ class Footer extends React.Component {
             <Nav className="nav-footer justify-content-center justify-content-xl-end">
               <NavItem>
                 <NavLink
-                  href="https://www.dimpleme.com"
+                  href={constants.urlConstants.HOMEPAGE_URL}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  DimpleMe
+                  {constants.urlConstants.APP_NAME}
                 </NavLink>
               </NavItem>
 
               <NavItem>
                 <NavLink
-                  href="https://www.dimpleme.com"
+                  href={constants.urlConstants.HOMEPAGE_URL}
                   rel="noopener noreferrer"
                   target="_blank"
                 >
@@ -45,7 +48,7 @@ class Footer extends React.Component {
 
               <NavItem>
                 <NavLink
-                  href="https://www.dimpleme.com"
+                  href={constants.urlConstants.HOMEPAGE_URL}
                   rel="noopener noreferrer"
                   target="_blank"
                 >

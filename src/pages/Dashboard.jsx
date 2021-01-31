@@ -50,6 +50,9 @@ import QrReader from 'react-qr-reader';
 import {Header} from "../components/Headers/Header.js";
 import { Redirect } from "react-router-dom";
 import { survey } from "../../_reducers/survey.reducer";
+
+const constants = require('../../_constants')
+
 const selectOption = [
   { value: 5, label: 5},
   { value: 10, label: 10},
@@ -118,12 +121,15 @@ class Dashboard extends React.Component {
     });
   };
 
-    togglePopover(item, i){
-      var pSurvey = this.state.popSurvey;
-      pSurvey[i] = !pSurvey[i];
-      this.setState({ popSurvey: pSurvey, surveyCustId: item.surveyCustId })
-    }
+  togglePopover(item, i){
+    var pSurvey = this.state.popSurvey;
+    pSurvey[i] = !pSurvey[i];
+    this.setState({ popSurvey: pSurvey, surveyCustId: item.surveyCustId })
+  }
 
+  addSurvey(){
+    history.push('/admin/survey/add')
+  }
   UNSAFE_componentWillReceiveProps(nextProps){
     
     if(this.state.searchText == '' && nextProps.dashboarddata.data){
@@ -295,11 +301,11 @@ class Dashboard extends React.Component {
                         </ModalHeader>
                         <ModalBody className="d-block text-center">
                           <Card className="p-2 bg-default">
-                          <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
+                          <a href={constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR } className="text-white" target="_blank">{constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR }</a>
                           </Card>
                         </ModalBody>
                         <ModalFooter>
-                          <Button color="success" onClick={() => this.copyLink("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy</Button>{' '}
+                          <Button color="success" onClick={() => this.copyLink(constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR)}>Copy</Button>{' '}
                         </ModalFooter>
                       </Modal>
         {
@@ -483,7 +489,7 @@ class Dashboard extends React.Component {
                   <ModalBody className="d-block text-center">
                     <QRCode
                       id="qrcode"
-                      value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                      value= {constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR }
                       size={290}
                       imageSettings= {{
                         src: "/src/assets/img/icons/smiley/satisfied.png",
@@ -704,7 +710,7 @@ class Dashboard extends React.Component {
                   <ModalBody className="d-block text-center">
                     <QRCode
                       id="qrcode"
-                      value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                      value= {constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR }
                       size={290}
                       imageSettings= {{
                         src: "/src/assets/img/icons/smiley/satisfied.png",
@@ -911,7 +917,7 @@ class Dashboard extends React.Component {
                   <ModalBody className="d-block text-center">
                     <QRCode
                       id="qrcode"
-                      value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                      value= {constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR }
                       size={290}
                       imageSettings= {{
                         src: "/src/assets/img/icons/smiley/satisfied.png",
@@ -957,10 +963,10 @@ class Dashboard extends React.Component {
                               <Button
                                 color="primary"
                                 href="#pablo"
-                                onClick={() => history.push('/admin/surveys')}
+                                onClick={() => this.addSurvey()}
                                 size="sm"
                               >
-                                SEE ALL
+                                ADD
                               </Button>
                             </div>
                           </Row>
@@ -1123,7 +1129,7 @@ class Dashboard extends React.Component {
                             <ModalBody className="d-block text-center">
                               <QRCode
                                 id="qrcode"
-                                value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                                value= {constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR }
                                 size={290}
                                 imageSettings= {{
                                   src: "/src/assets/img/icons/smiley/satisfied.png",
@@ -1164,10 +1170,10 @@ class Dashboard extends React.Component {
                                   <Button
                                     color="primary"
                                     href="#pablo"
-                                    onClick={() => history.push('/admin/surveys')}
+                                    onClick={() => this.addSurvey()}
                                     size="sm"
                                   >
-                                    SEE ALL
+                                    ADD
                                   </Button>
                                 </div>
                               </Row>
@@ -1259,7 +1265,7 @@ class Dashboard extends React.Component {
                         <ModalBody className="d-block text-center">
                           <QRCode
                             id="qrcode"
-                            value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                            value= {constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR }
                             size={290}
                             imageSettings= {{
                               src: "/src/assets/img/icons/smiley/satisfied.png",

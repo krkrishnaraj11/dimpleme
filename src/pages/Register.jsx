@@ -53,6 +53,9 @@ class Register extends React.Component {
       password:'',
       passwordState: '',
       focusedPassword: false,
+      confirmPassword:'',
+      confirmPasswordState: '',
+      focusedConfirmPassword: false,
       dcode: '',
       dcodeState: '',
       focusedDcode: false,
@@ -62,19 +65,21 @@ class Register extends React.Component {
       submitted: false,
       login: false,
       register: false
-    }
+    } 
   }
 
   handleChange(e) {
     const { id, value } = e.target;
-      this.setState({ [id]: value });
-
-    if(e.target.value == "" || e.target.id == "email" && !emailregex.test(e.target.value)) {
+    this.setState({ [id]: value });
+    console.log(e.target)
+    if(e.target.value == "" || e.target.id == "email" && !emailregex.test(e.target.value) ) {
       this.setState({ [id + "State"]: "invalid"})
     }
     else{
       this.setState({ [id + "State"]: "valid"}) 
     }
+
+    console.log(this.state.confirmPasswordState)
   }
 
 handleDcode(e){
@@ -110,18 +115,19 @@ handleForgot(e) {
 
 handleSubmit(e) {
   e.preventDefault();
-  const { email, password, emailState, passwordState, firstName, lastName } = this.state;
+  const { email, password, emailState, passwordState, firstName, lastName,confirmPassword } = this.state;
 
-  if(firstName == '' || lastName == '' || email == '' || password == '' || !emailregex.test(email)){
-    this.setState({ focusedEmail: true , focusedPassword: true, focusedFirstName: true, focusedLastName: true })
-    this.setState( email == "" ? { emailState: "invalid"} : {passwordState: "invalid"})
-    this.setState( password == "" ? { passwordState: "invalid"} : {emailState: "invalid"})
-    this.setState( firstName == "" ? { firstNameState: "invalid"} : {lastNameState: "invalid"})
-    this.setState( lastName == "" ? { lastNameState: "invalid"} : {firstNameState: "invalid"})
+  if(firstName == '' || lastName == '' || email == '' || password == '' || confirmPassword == '' || !emailregex.test(email) || password !== confirmPassword ){
+    this.setState({ focusedEmail: true , focusedPassword: true, focusedFirstName: true, focusedLastName: true, focusedConfirmPassword: true })
+    this.setState( email == "" ? { emailState: "invalid"} : null)
+    this.setState( password == "" ? { passwordState: "invalid"} : null)
+    this.setState( confirmPassword == "" ? { confirmPasswordState: "invalid"} : null)
+    this.setState( firstName == "" ? { firstNameState: "invalid"} : null)
+    this.setState( lastName == "" ? { lastNameState: "invalid"} : null)
   }
   else{
     this.setState({ submitted: true });
-    if (email && password && firstName && lastName) {
+    if (email && password && firstName && lastName && confirmPassword) {
         this.props.register(firstName, lastName, email, password)
     }
   }
@@ -188,67 +194,12 @@ responseGoogle = (response) => {
     const { loggingIn } = this.props;
     const alert = this.props.alert;
     const user = this.props.user;
-    const {email, password, dcode, submitted, firstName, lastName} = this.state;
+    const {email, password, dcode, submitted, firstName, lastName, confirmPassword} = this.state;
     return (
       <>
         <Col lg="5" md="7" xs="0">
           
           <Card className="bg-secondary shadow border-0">
-            {/* <CardHeader className="bg-transparent pb-5">
-              <div className="text-muted text-center mt-2 mb-3">
-                <small>Sign in with</small>
-              </div>
-              <div className="btn-wrapper text-center">
-
-              <FacebookLogin
-                appId="949927522094402"
-                fields="name,email"
-                callback={this.facebookResponse}
-                render={renderProps => (
-                  <Button
-                  className="btn-neutral btn-icon"
-                  color="default"
-                  href="#facebook"
-                  onClick={() => renderProps.onClick()}
-                >
-                  <span className="btn-inner--icon">
-                    <img
-                      alt="..."
-                      src={require("../assets/img/icons/common/github.svg")}
-                    />
-                  </span>
-                  <span className="btn-inner--text">Facebook</span>
-                </Button>
-                )}
-              />
-
-              <GoogleLogin
-                clientId="7402931326-5ap356838ghblig4l2gas8n8rmu5smjn.apps.googleusercontent.com"
-                render={renderProps => (
-                  <Button
-                    className="btn-neutral btn-icon"
-                    color="default"
-                    href="#google"
-                    onClick={() => renderProps.onClick()}
-                  >
-                    <span className="btn-inner--icon">
-                      <img
-                        alt="..."
-                        src={require("../assets/img/icons/common/google.svg")}
-                      />
-                    </span>
-                    <span className="btn-inner--text">Google</span>
-                  </Button>
-                )}
-                buttonText="Login"
-                onSuccess={this.responseGoogle}
-                onFailure={this.responseGoogle}
-                cookiePolicy={'single_host_origin'}
-              />
-
-              </div>
-            </CardHeader> */}
-
             { !this.state.forgot
               ?
             
@@ -427,6 +378,48 @@ responseGoogle = (response) => {
                   </InputGroup>
                   <div className="invalid-feedback">Please enter the password.</div>
                 </FormGroup>
+
+                <FormGroup
+                  className={classnames(
+                    "mb-3",
+                    { focused: this.state.focusedConfirmPassword },
+                    { "has-danger": this.state.confirmPasswordState === "invalid" || this.state.confirmPassword !== this.state.password },
+                    { "has-success": this.state.confirmPasswordState === "valid" && this.state.confirmPassword === this.state.password }
+                  )}
+                >
+                  <InputGroup 
+                    className={classnames("input-group-merge input-group-alternative", {
+                      "is-invalid": this.state.confirmPasswordState === "invalid" || this.state.confirmPassword !== this.state.password
+                    })}
+                  >
+                    <InputGroupAddon addonType="prepend">
+                      <InputGroupText>
+                        <i 
+                          className={classnames(
+                            "ni ni-lock-circle-open",
+                            { "text-danger": this.state.confirmPasswordState === "invalid" || this.state.confirmPassword !== this.state.password },
+                            { "text-success": this.state.confirmPasswordState === "valid" && this.state.confirmPassword === this.state.password }
+                          )} 
+                        />
+                      </InputGroupText>
+                    </InputGroupAddon>
+                    <Input 
+                      placeholder="Confirm Password" 
+                      type="password"
+                      id="confirmPassword" 
+                      className={classnames(
+                        { "text-danger": this.state.confirmPasswordState === "invalid" || this.state.confirmPassword !== this.state.password },
+                        { "text-success": this.state.confirmPasswordState === "valid" && this.state.confirmPassword === this.state.password }
+                      )}
+                      value={confirmPassword}  
+                      onChange={(e) => this.handleChange(e)}
+                      onFocus={() => this.setState({ focusedConfirmPassword: true })}
+                      onBlur={() => this.setState({ focusedConfirmPassword: false })}
+                    />
+                  </InputGroup>
+                  <div className="invalid-feedback">Please confirm password.</div>
+                </FormGroup>
+
                 <div className="text-center">
                   <Button className="my-4" color="primary" type="submit" size="lg">
                     Create Account   

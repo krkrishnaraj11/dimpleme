@@ -61,6 +61,7 @@ class SurveyPage extends React.Component{
             questions: [],
             answers: [],
             surveyTitle: '',
+            surveyState: false,
             surveyCustId: '',
             report: [ { rating: 0, comment: '' }],
             loading: true,
@@ -123,6 +124,7 @@ class SurveyPage extends React.Component{
         })
 
         this.setState({ 
+          surveyState: nextProps.survey.data.active,
           loading: false,
           surveyTitle: nextProps.survey.data.surveyName,
           surveyCustId: nextProps.survey.data.surveyCustId,
@@ -279,6 +281,14 @@ class SurveyPage extends React.Component{
       )
     }
 
+    renderInactive(){
+      return(
+        <Col md={{ span: 6, offset: 5 }}>
+            <h2 className="ml-5">Inactive Survey</h2>
+        </Col>
+      )
+    }
+
     toggleModal(){
       this.setState({ thankyouModal: !this.state.thankyouModal})
     }
@@ -323,7 +333,7 @@ class SurveyPage extends React.Component{
                   {
                     this.state.loading 
                       ? this.renderSpinner()
-                      : this.renderForm()
+                      : (this.state.surveyState) ? this.renderForm() : this.renderInactive()
                   }
                 </CardBody>
               </Card>
