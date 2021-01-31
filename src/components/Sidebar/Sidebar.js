@@ -37,6 +37,7 @@ import { connect } from 'react-redux';
 import { history } from '../../../_helpers';
 import { userActions, alertActions } from '../../../_actions';
 var ps;
+const constants = require('../../../_constants')
 
 class Sidebar extends React.Component {
   state = {
@@ -138,7 +139,7 @@ class Sidebar extends React.Component {
                 className="navbar-brand-img"
                 src={logo.imgSrc}
               /> */}
-              <span>DimpleMe</span>
+              <span>{constants.urlConstants.APP_NAME}</span>
             </NavbarBrand>
           ) : null}
           {/* User */}
@@ -195,12 +196,12 @@ class Sidebar extends React.Component {
                     {logo.innerLink ? (
                       <Link to={logo.innerLink}>
                         {/* <img alt={logo.imgAlt} src={logo.imgSrc} /> */}
-                        <span>DimpleMe</span>
+                        <span>{constants.urlConstants.APP_NAME}</span>
                       </Link>
                     ) : (
                       <a href={logo.outterLink}>
                         {/* <img alt={logo.imgAlt} src={logo.imgSrc} /> */}
-                        <span>DimpleMe</span>
+                        <span>{constants.urlConstants.APP_NAME}</span>
                       </a>
                     )}
                   </Col>

@@ -39,6 +39,7 @@ const selectOption = [
   { value: 20, label: 20},
   { value: 30, label: 30}
 ]
+const constants = require('../../_constants')
 
 class Survey extends React.Component {
     constructor(props){
@@ -402,11 +403,11 @@ class Survey extends React.Component {
                       </ModalHeader>
                       <ModalBody className="d-block text-center">
                         <Card className="p-2 bg-default">
-                        <a href={"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR } className="text-white" target="_blank">{"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }</a>
+                        <a href={constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR } className="text-white" target="_blank">{constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR }</a>
                         </Card>
                       </ModalBody>
                       <ModalFooter>
-                        <Button color="success" onClick={() => this.copyLink("https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR)}>Copy</Button>{' '}
+                        <Button color="success" onClick={() => this.copyLink(constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR)}>Copy</Button>{' '}
                       </ModalFooter>
                     </Modal>
 
@@ -422,7 +423,7 @@ class Survey extends React.Component {
                       <ModalBody className="d-block text-center">
                         <QRCode
                           id="qrcode"
-                          value= {"https://dimpleme.herokuapp.com/survey/" + this.state.selectSurveyQR }
+                          value= {constants.urlConstants.SURVEY_URL + this.state.selectSurveyQR }
                           size={290}
                           imageSettings= {{
                             src: "/src/assets/img/icons/smiley/satisfied.png",

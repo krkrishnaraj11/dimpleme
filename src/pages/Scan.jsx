@@ -25,6 +25,7 @@ import { store } from 'react-notifications-component';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
 import GoogleLogin from 'react-google-login';
 var emailregex = /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/;
+const constants = require('../../_constants')
 
 class Scan extends React.Component {
   constructor(props){
@@ -123,7 +124,7 @@ handleSubmit(e) {
 
   handleScan = data => {
     if (data) {
-      history.push(data.replace('https://dimpleme.herokuapp.com', ''))
+      history.push(data.replace(constants.urlConstants.BASE_URL, ''))
     }
   }
 

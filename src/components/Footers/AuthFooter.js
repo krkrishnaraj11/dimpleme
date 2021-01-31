@@ -2,6 +2,7 @@ import React from "react";
 
 // reactstrap components
 import { NavItem, NavLink, Nav, Container, Row, Col } from "reactstrap";
+const constants = require('../../../_constants')
 
 class Login extends React.Component {
   render() {
@@ -15,10 +16,10 @@ class Login extends React.Component {
                   © 2020{" "}
                   <a
                     className="font-weight-bold ml-1"
-                    href="https://www.creative-tim.com?ref=adr-auth-footer"
+                    href={constants.urlConstants.HOMEPAGE_URL}
                     target="_blank"
                   >
-                    DimpleMe
+                    {constants.urlConstants.APP_NAME}
                   </a>
                 </div>
               </Col>
